@@ -4,172 +4,191 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>N잡크루 멤버스 허브</title>
-<meta property="og:title" content="N잡크루 멤버스 허브">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23003087'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial Black' font-size='28' font-weight='900' fill='%23FF6B00'%3EN%3C/text%3E%3Ctext x='50%25' y='80%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='12' font-weight='700' fill='white'%3ECREW%3C/text%3E%3C/svg%3E">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
 :root{--p:#003087;--pl:#0046b8;--a:#FF6B00;--al:#FF8C33;--bg:#F5F7FA;--w:#fff;--g50:#F8F9FB;--g100:#EEF0F5;--g200:#DDE1EA;--g400:#9BA3B5;--g600:#5A6278;--g800:#2D3247;--g900:#1A1F35;--ok:#00A878;--err:#E53E3E;--warn:#F59E0B;--r:14px;--rs:8px;--sh:0 2px 16px rgba(0,48,135,.06);--f:'Noto Sans KR',sans-serif}
-*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--f);background:var(--bg);color:var(--g900);min-height:100vh;-webkit-tap-highlight-color:transparent}
-.wm{position:fixed;bottom:6px;right:8px;font-size:8px;color:rgba(0,0,0,.07);pointer-events:none;z-index:9998;text-align:right;line-height:1.4;font-weight:600;user-select:none}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--g900);min-height:100vh;-webkit-tap-highlight-color:transparent;font-size:15px}
+.wm{position:fixed;bottom:6px;right:8px;font-size:9px;color:rgba(0,0,0,.06);pointer-events:none;z-index:9998;text-align:right;line-height:1.4;font-weight:600;user-select:none}
+
+/* ═══ AUTH SCREENS ═══ */
 .screen{display:none;min-height:100vh}.screen.active{display:flex}
 .aw{width:100%;min-height:100vh;background:linear-gradient(135deg,#001A5C,var(--p) 55%,var(--pl));display:flex;align-items:center;justify-content:center;padding:16px}
-.ab{background:rgba(255,255,255,.07);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.14);border-radius:22px;padding:44px 36px;width:100%;max-width:400px;animation:su .5s ease;max-height:95vh;overflow-y:auto}
+.ab{background:rgba(255,255,255,.07);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.14);border-radius:22px;padding:44px 36px;width:100%;max-width:420px;animation:su .5s ease;max-height:95vh;overflow-y:auto}
 @keyframes su{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
-.al{display:flex;align-items:center;gap:8px;margin-bottom:4px}.ali{width:38px;height:38px;background:var(--a);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:#fff}.aln{font-size:17px;font-weight:900;color:#fff}
-.as{font-size:11px;color:rgba(255,255,255,.4);margin-bottom:28px}.at{font-size:18px;font-weight:900;color:#fff;margin-bottom:4px}.ad{font-size:11px;color:rgba(255,255,255,.45);margin-bottom:20px;line-height:1.5}
-.fd{margin-bottom:12px}.fd label{display:block;font-size:9px;font-weight:700;color:rgba(255,255,255,.5);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px}
-.fd input,.fd select{width:100%;padding:11px 14px;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.12);border-radius:var(--rs);color:#fff;font-size:13px;font-family:var(--f);outline:none}
+.al{display:flex;align-items:center;gap:8px;margin-bottom:4px}.ali{width:40px;height:40px;background:var(--a);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;color:#fff}.aln{font-size:18px;font-weight:900;color:#fff}
+.as{font-size:13px;color:rgba(255,255,255,.4);margin-bottom:28px}.at{font-size:20px;font-weight:900;color:#fff;margin-bottom:6px}.ad{font-size:13px;color:rgba(255,255,255,.45);margin-bottom:22px;line-height:1.5}
+.fd{margin-bottom:14px}.fd label{display:block;font-size:12px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:6px}
+.fd input,.fd select{width:100%;padding:13px 16px;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.12);border-radius:var(--rs);color:#fff;font-size:15px;font-family:var(--f);outline:none}
 .fd input::placeholder{color:rgba(255,255,255,.22)}.fd input:focus,.fd select:focus{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.1)}
-.fd select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='rgba(255,255,255,0.4)' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}.fd select option{background:#1A1F35;color:#fff}
-.fr{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.abtn{width:100%;margin-top:6px;padding:13px;border:none;background:var(--a);color:#fff;font-size:13px;font-weight:700;border-radius:var(--rs);cursor:pointer;font-family:var(--f)}.abtn:hover{background:var(--al)}.abtn:disabled{opacity:.5;cursor:not-allowed}.abtn.sec{background:rgba(255,255,255,.1);margin-top:6px}
-.aerr{margin-top:6px;font-size:11px;color:#FF7070;display:none;text-align:center}
-.alk{margin-top:16px;text-align:center;font-size:11px;color:rgba(255,255,255,.35);cursor:pointer}.alk span{color:rgba(255,255,255,.6);text-decoration:underline}
-.anc{margin-top:16px;padding:10px 12px;background:rgba(255,255,255,.05);border-radius:8px;font-size:10px;color:rgba(255,255,255,.35);line-height:1.6}
+.fd select{appearance:none}.fd select option{background:#1A1F35;color:#fff}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.abtn{width:100%;margin-top:8px;padding:14px;border:none;background:var(--a);color:#fff;font-size:15px;font-weight:700;border-radius:var(--rs);cursor:pointer;font-family:var(--f)}.abtn:hover{background:var(--al)}.abtn:disabled{opacity:.5;cursor:not-allowed}.abtn.sec{background:rgba(255,255,255,.1);margin-top:8px}
+.aerr{margin-top:8px;font-size:13px;color:#FF7070;display:none;text-align:center}
+.alk{margin-top:18px;text-align:center;font-size:13px;color:rgba(255,255,255,.35);cursor:pointer}.alk span{color:rgba(255,255,255,.6);text-decoration:underline}
+.anc{margin-top:16px;padding:12px;background:rgba(255,255,255,.05);border-radius:8px;font-size:12px;color:rgba(255,255,255,.35);line-height:1.6}
 .pws{display:flex;gap:3px;margin-top:5px}.pwb{height:3px;flex:1;border-radius:2px;background:rgba(255,255,255,.1)}.pwb.weak{background:var(--err)}.pwb.fair{background:var(--warn)}.pwb.strong{background:var(--ok)}
-.pwr{font-size:9px;color:rgba(255,255,255,.25);margin-top:3px}
-.asc{font-size:9px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:.8px;margin:16px 0 8px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07)}
-.sid{display:flex;align-items:center;gap:6px;margin-top:10px;cursor:pointer}.sid input{width:14px;height:14px;accent-color:var(--a)}.sid span{font-size:11px;color:rgba(255,255,255,.4)}
+.pwr{font-size:11px;color:rgba(255,255,255,.25);margin-top:4px}
+.asc{font-size:11px;font-weight:700;color:rgba(255,255,255,.35);margin:18px 0 10px;padding-top:14px;border-top:1px solid rgba(255,255,255,.07)}
+.sid{display:flex;align-items:center;gap:7px;margin-top:12px;cursor:pointer}.sid input{width:16px;height:16px;accent-color:var(--a)}.sid span{font-size:13px;color:rgba(255,255,255,.4)}
 
-#app{display:none;min-height:100vh;flex-direction:column;padding-bottom:60px}#app.active{display:flex}
+/* ═══ DESKTOP LAYOUT ═══ */
+#app{display:none;min-height:100vh}#app.active{display:flex;flex-direction:column}
+/* 데스크탑: 사이드바 + 메인 */
+.desk-wrap{display:flex;flex:1;min-height:calc(100vh - 56px)}
+.desk-side{width:220px;background:var(--w);border-right:1.5px solid var(--g100);padding:20px 0;flex-shrink:0;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto}
+.desk-side .ds-section{padding:0 16px;margin-bottom:20px}
+.desk-side .ds-label{font-size:10px;font-weight:700;color:var(--g400);letter-spacing:.5px;margin-bottom:8px;text-transform:uppercase}
+.ds-btn{display:flex;align-items:center;gap:10px;width:100%;padding:10px 16px;background:none;border:none;cursor:pointer;font-family:var(--f);font-size:14px;font-weight:500;color:var(--g600);border-radius:0;transition:all .15s;text-align:left}
+.ds-btn:hover{background:var(--g50);color:var(--g900)}
+.ds-btn.active{background:#EBF0FF;color:var(--p);font-weight:700;border-right:3px solid var(--p)}
+.ds-btn .ds-ico{font-size:18px;width:24px;text-align:center}
+.ds-user{padding:16px;border-top:1.5px solid var(--g100);margin-top:auto}
+.ds-user-name{font-size:14px;font-weight:700;color:var(--g900)}.ds-user-role{font-size:11px;color:var(--g400)}
+.desk-main{flex:1;padding:28px 32px;overflow-y:auto;max-width:1000px}
+
 header{background:var(--p);position:sticky;top:0;z-index:100;box-shadow:0 1px 12px rgba(0,48,135,.2)}
-.hdr{max-width:1200px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:50px}
-.hl{display:flex;align-items:center;gap:6px;cursor:pointer}.hli{width:28px;height:28px;background:var(--a);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#fff}.hln{font-size:13px;font-weight:900;color:#fff}.hb{font-size:8px;font-weight:700;background:rgba(255,255,255,.12);color:rgba(255,255,255,.6);padding:2px 6px;border-radius:12px}
-.hn{display:flex;gap:1px}.nb{padding:5px 10px;background:transparent;border:none;color:rgba(255,255,255,.55);font-size:10px;font-weight:500;border-radius:5px;cursor:pointer;font-family:var(--f)}.nb:hover{background:rgba(255,255,255,.08);color:#fff}.nb.active{background:rgba(255,255,255,.13);color:#fff;font-weight:700}
-.hr{display:flex;align-items:center;gap:6px}.hu{font-size:10px;color:rgba(255,255,255,.5)}.hu strong{color:#fff}
-.ib{padding:4px 8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.55);font-size:9px;font-weight:600;border-radius:4px;cursor:pointer;font-family:var(--f)}.ib:hover{background:rgba(255,255,255,.15);color:#fff}
+.hdr{max-width:100%;margin:0;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px}
+.hl{display:flex;align-items:center;gap:8px;cursor:pointer}.hli{width:32px;height:32px;background:var(--a);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff}.hln{font-size:15px;font-weight:900;color:#fff}.hb{font-size:9px;font-weight:700;background:rgba(255,255,255,.12);color:rgba(255,255,255,.6);padding:2px 7px;border-radius:12px}
+.hn{display:none} /* 데스크탑에서는 사이드바 사용 */
+.hr{display:flex;align-items:center;gap:8px}.hu{font-size:13px;color:rgba(255,255,255,.6)}.hu strong{color:#fff}
+.ib{padding:6px 12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);font-size:12px;font-weight:600;border-radius:5px;cursor:pointer;font-family:var(--f)}.ib:hover{background:rgba(255,255,255,.15);color:#fff}
 
-/* 모바일 하단 네비 - 검은점 수정 */
-.mn{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--w);border-top:1.5px solid var(--g200);z-index:200;padding:6px 0 env(safe-area-inset-bottom,4px)}
-.mni{display:grid;grid-template-columns:repeat(5,1fr);max-width:400px;margin:0 auto}
-.mnb{display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;padding:4px 0;cursor:pointer;font-family:var(--f);-webkit-appearance:none;appearance:none;outline:none}
-.mnb .mi{font-size:16px;line-height:1;height:20px;display:flex;align-items:center;justify-content:center}
-.mnb .ml{font-size:8px;font-weight:600;color:var(--g400);line-height:1}
+/* ═══ 모바일 하단 네비 - SVG 아이콘 (검은점 해결) ═══ */
+.mn{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--w);border-top:1.5px solid var(--g200);z-index:200;padding:4px 0 env(safe-area-inset-bottom,2px)}
+.mni{display:grid;grid-template-columns:repeat(5,1fr)}
+.mnb{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:none;border:none;padding:6px 0;cursor:pointer;font-family:var(--f);-webkit-appearance:none;appearance:none;outline:none;min-height:44px}
+.mnb svg{width:20px;height:20px;fill:var(--g400);transition:fill .15s}
+.mnb.active svg{fill:var(--p)}
+.mnb .ml{font-size:10px;font-weight:600;color:var(--g400);line-height:1}
 .mnb.active .ml{color:var(--p);font-weight:800}
 
-.ct{max-width:1200px;margin:0 auto;padding:16px 12px 28px}
-.tp{display:none}.tp.active{display:block;animation:fi .25s ease}@keyframes fi{from{opacity:0}to{opacity:1}}
-.ph{margin-bottom:16px}.pt{font-size:18px;font-weight:900;letter-spacing:-.5px;margin-bottom:2px}.pd{font-size:10px;color:var(--g400)}
+.tp{display:none}.tp.active{display:block;animation:fi .2s ease}@keyframes fi{from{opacity:0}to{opacity:1}}
+.ph{margin-bottom:20px}.pt{font-size:22px;font-weight:900;letter-spacing:-.5px;margin-bottom:3px}.pd{font-size:13px;color:var(--g400)}
 
-/* 오늘 */
-.tg{margin-bottom:16px}.tdd{font-size:10px;font-weight:600;color:var(--g400);margin-bottom:2px}.thh{font-size:18px;font-weight:900;letter-spacing:-.4px}
-.ts{margin-bottom:16px}.tst{font-size:11px;font-weight:700;color:var(--g600);margin-bottom:8px}
+/* ═══ 오늘 ═══ */
+.tg{margin-bottom:18px}.tdd{font-size:13px;font-weight:600;color:var(--g400);margin-bottom:2px}.thh{font-size:22px;font-weight:900}
+.ts{margin-bottom:18px}.tst{font-size:14px;font-weight:700;color:var(--g600);margin-bottom:10px}
 .tgr{display:flex;flex-direction:column;gap:10px}
+/* 데스크탑: 오늘+주간 가로 배치 */
+.today-cols{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+
 .tc{background:var(--w);border-radius:var(--r);border:1.5px solid var(--g100);box-shadow:var(--sh);overflow:hidden}
 .tc.bday{border-color:#FFD4E8;background:linear-gradient(135deg,#FFF0F6,#FFF8FB)}
-.tch{padding:12px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--g100)}
-.tci{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
-.tcf{flex:1}.tcn{font-size:12px;font-weight:700;margin-bottom:1px}.tcm{font-size:9px;color:var(--g400)}
-.tct{font-size:8px;font-weight:700;padding:2px 7px;border-radius:10px;white-space:nowrap}
-.ta{padding:10px 14px}.tai{display:flex;align-items:flex-start;gap:7px;padding:5px 0;border-bottom:1px solid var(--g100)}.tai:last-child{border-bottom:none}
-.tac{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--g200);cursor:pointer;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;transition:all .15s}
+.tch{padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--g100)}
+.tci{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.tcf{flex:1}.tcn{font-size:14px;font-weight:700;margin-bottom:1px}.tcm{font-size:12px;color:var(--g400)}
+.tct{font-size:11px;font-weight:700;padding:3px 9px;border-radius:10px;white-space:nowrap}
+.ta{padding:12px 16px}.tai{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid var(--g100)}.tai:last-child{border-bottom:none}
+.tac{width:20px;height:20px;border-radius:5px;border:2px solid var(--g200);cursor:pointer;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:11px;color:transparent;transition:all .15s}
 .tac.done{background:var(--ok);border-color:var(--ok);color:#fff}
-.tat{font-size:11px;color:var(--g800);line-height:1.3}.tat.done{text-decoration:line-through;color:var(--g400)}
-.te{text-align:center;padding:32px 16px;color:var(--g400)}.tei{font-size:36px;margin-bottom:8px}.tet{font-size:13px;font-weight:700;color:var(--g600)}.tes{font-size:10px}
+.tat{font-size:14px;color:var(--g800);line-height:1.4}.tat.done{text-decoration:line-through;color:var(--g400)}
+.te{text-align:center;padding:36px;color:var(--g400)}.tei{font-size:40px;margin-bottom:8px}.tet{font-size:15px;font-weight:700;color:var(--g600)}.tes{font-size:13px}
 
-/* 가이드 */
+/* ═══ 가이드 ═══ */
 .guide-search{position:relative;margin-bottom:14px}
-.guide-search input{width:100%;padding:10px 14px 10px 36px;background:var(--w);border:1.5px solid var(--g200);border-radius:var(--r);font-size:12px;font-family:var(--f);outline:none}
+.guide-search input{width:100%;padding:12px 16px 12px 40px;background:var(--w);border:1.5px solid var(--g200);border-radius:var(--r);font-size:14px;font-family:var(--f);outline:none}
 .guide-search input:focus{border-color:var(--p)}
-.guide-search::before{content:'🔍';position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px}
-.main-cat-bar{display:flex;gap:4px;margin-bottom:8px}
-.main-cat{padding:6px 14px;background:var(--w);border:1.5px solid var(--g200);color:var(--g600);font-size:11px;font-weight:700;border-radius:20px;cursor:pointer;font-family:var(--f)}.main-cat:hover{border-color:var(--p);color:var(--p)}.main-cat.active{background:var(--p);border-color:var(--p);color:#fff}
-.sub-cat-bar{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:14px}
-.sub-cat{padding:4px 10px;background:var(--g50);border:1px solid var(--g200);color:var(--g600);font-size:10px;font-weight:600;border-radius:14px;cursor:pointer;font-family:var(--f)}.sub-cat:hover{border-color:var(--p);color:var(--p)}.sub-cat.active{background:var(--pl);border-color:var(--pl);color:#fff}
-.gg{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px}
-.gc{background:var(--w);border-radius:var(--r);border:1.5px solid var(--g100);padding:16px;cursor:pointer;transition:all .2s;box-shadow:var(--sh)}.gc:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(0,48,135,.1)}
-.gtp{display:flex;justify-content:space-between;margin-bottom:6px}.gic{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.guide-search::before{content:'🔍';position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px}
+.main-cat-bar{display:flex;gap:6px;margin-bottom:10px}
+.main-cat{padding:8px 18px;background:var(--w);border:1.5px solid var(--g200);color:var(--g600);font-size:14px;font-weight:700;border-radius:22px;cursor:pointer;font-family:var(--f)}.main-cat:hover{border-color:var(--p);color:var(--p)}.main-cat.active{background:var(--p);border-color:var(--p);color:#fff}
+.sub-cat-bar{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:14px}
+.sub-cat{padding:5px 12px;background:var(--g50);border:1px solid var(--g200);color:var(--g600);font-size:12px;font-weight:600;border-radius:14px;cursor:pointer;font-family:var(--f)}.sub-cat:hover{border-color:var(--p);color:var(--p)}.sub-cat.active{background:var(--pl);border-color:var(--pl);color:#fff}
+.gg{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
+.gc{background:var(--w);border-radius:var(--r);border:1.5px solid var(--g100);padding:18px;cursor:pointer;transition:all .2s;box-shadow:var(--sh)}.gc:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,48,135,.1)}
+.gtp{display:flex;justify-content:space-between;margin-bottom:8px}.gic{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px}
 .i-blue{background:#EBF0FF}.i-orange{background:#FFF3EA}.i-green{background:#E8F8F4}.i-purple{background:#F0EBFF}.i-pink{background:#FFF0F6}
-.gbg{font-size:8px;font-weight:700;padding:2px 7px;border-radius:14px}.b-new{background:#FFE8E8;color:#D63031}.b-up{background:#E8F4FF;color:#0063CC}.b-def{background:var(--g100);color:var(--g400)}
-.gti{font-size:11px;font-weight:700;margin-bottom:3px}.gds{font-size:9px;color:var(--g600);line-height:1.3}
-.gft{margin-top:8px;padding-top:8px;border-top:1px solid var(--g100);display:flex;justify-content:space-between;align-items:center}
-.gdt{font-size:8px;color:var(--g400)}.gsub{font-size:8px;color:var(--p);font-weight:600;background:var(--g50);padding:1px 6px;border-radius:8px}
-.gar{width:20px;height:20px;background:var(--g100);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--g400)}.gc:hover .gar{background:var(--p);color:#fff}
+.gbg{font-size:10px;font-weight:700;padding:3px 9px;border-radius:14px}.b-new{background:#FFE8E8;color:#D63031}.b-up{background:#E8F4FF;color:#0063CC}.b-def{background:var(--g100);color:var(--g400)}
+.gti{font-size:14px;font-weight:700;margin-bottom:4px}.gds{font-size:12px;color:var(--g600);line-height:1.4}
+.gft{margin-top:10px;padding-top:10px;border-top:1px solid var(--g100);display:flex;justify-content:space-between;align-items:center}
+.gsub{font-size:10px;color:var(--p);font-weight:600;background:var(--g50);padding:2px 8px;border-radius:8px}
+.gar{width:24px;height:24px;background:var(--g100);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--g400)}.gc:hover .gar{background:var(--p);color:#fff}
+/* 챗봇 플레이스홀더 */
+.chatbot-placeholder{position:fixed;bottom:80px;right:20px;width:56px;height:56px;background:var(--p);border-radius:50%;display:none;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 20px rgba(0,48,135,.3);z-index:300;font-size:24px;color:#fff;transition:transform .2s}
+.chatbot-placeholder:hover{transform:scale(1.1)}
 
-/* 캘린더 - 구글캘린더 스타일 */
+/* ═══ 캘린더 - 고정 높이 ═══ */
+.cal-layout{display:grid;grid-template-columns:1fr 280px;gap:16px;align-items:start}
 .cal-wrap{background:var(--w);border-radius:var(--r);border:1.5px solid var(--g100);box-shadow:var(--sh);overflow:hidden}
-.cal-hdr{background:var(--p);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
-.cal-nav{width:28px;height:28px;background:rgba(255,255,255,.15);border:none;border-radius:6px;color:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}.cal-nav:hover{background:rgba(255,255,255,.25)}
-.cal-mt{font-size:14px;font-weight:900;color:#fff}
+.cal-hdr{background:var(--p);padding:14px 18px;display:flex;align-items:center;justify-content:space-between}
+.cal-nav{width:32px;height:32px;background:rgba(255,255,255,.15);border:none;border-radius:6px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}.cal-nav:hover{background:rgba(255,255,255,.25)}
+.cal-mt{font-size:16px;font-weight:900;color:#fff}
 .cal-wk{display:grid;grid-template-columns:repeat(7,1fr);background:var(--g50);border-bottom:1px solid var(--g100)}
-.cal-wk div{text-align:center;padding:6px 0;font-size:9px;font-weight:700;color:var(--g400)}
+.cal-wk div{text-align:center;padding:8px 0;font-size:12px;font-weight:700;color:var(--g400)}
 .cal-wk div:first-child{color:#E55}.cal-wk div:last-child{color:#55A}
 .cal-body{display:grid;grid-template-columns:repeat(7,1fr)}
-.cal-cell{min-height:70px;border-right:1px solid var(--g100);border-bottom:1px solid var(--g100);padding:3px;cursor:pointer;transition:background .1s;position:relative;overflow:hidden}
+.cal-cell{height:80px;border-right:1px solid var(--g100);border-bottom:1px solid var(--g100);padding:3px 4px;cursor:pointer;position:relative;overflow:hidden}
 .cal-cell:nth-child(7n){border-right:none}
 .cal-cell:hover{background:var(--g50)}
 .cal-cell.today{background:#EBF0FF}
-.cal-cell.other{opacity:.3}
-.cal-num{font-size:10px;font-weight:700;color:var(--g800);margin-bottom:2px;padding:1px 3px}
-.cal-cell.today .cal-num{background:var(--p);color:#fff;border-radius:10px;width:20px;height:20px;display:flex;align-items:center;justify-content:center}
-.cal-cell:first-child .cal-num,.cal-cell.sun .cal-num{color:#E55}
-.cal-cell.sat .cal-num{color:#55A}
-.cal-cell.today .cal-num{color:#fff}
-.cal-ev{font-size:7px;font-weight:600;padding:1px 3px;margin-bottom:1px;border-radius:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.4}
-.cal-ev.ev-work{background:#E8F0FF;color:var(--p)}
-.cal-ev.ev-imp{background:#FFE8E8;color:#D63031}
-.cal-ev.ev-ddl{background:#FFF3EA;color:#E67E22}
-.cal-ev.ev-bday{background:#FFF0F6;color:#D63071}
-.cal-more{font-size:7px;color:var(--g400);padding:0 3px}
+.cal-cell.other{opacity:.25}
+.cal-num{font-size:12px;font-weight:700;color:var(--g800);margin-bottom:2px;width:24px;height:24px;display:flex;align-items:center;justify-content:center}
+.cal-cell.today .cal-num{background:var(--p);color:#fff;border-radius:50%}
+.cal-cell.sun .cal-num{color:#E55}.cal-cell.sat .cal-num{color:#55A}.cal-cell.today .cal-num{color:#fff}
+.cal-ev{font-size:10px;font-weight:600;padding:1px 4px;margin-bottom:1px;border-radius:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.5}
+.cal-ev.ev-work{background:#E8F0FF;color:var(--p)}.cal-ev.ev-imp{background:#FFE8E8;color:#D63031}.cal-ev.ev-ddl{background:#FFF3EA;color:#E67E22}.cal-ev.ev-bday{background:#FFF0F6;color:#D63071}
+.cal-more{font-size:9px;color:var(--g400);padding:0 4px}
 
-/* 사이드바 일정 */
 .ev-side{background:var(--w);border-radius:var(--r);border:1.5px solid var(--g100);box-shadow:var(--sh);overflow:hidden}
-.evh{padding:12px 14px 8px;border-bottom:1px solid var(--g100)}.evht{font-size:11px;font-weight:700}.evhs{font-size:8px;color:var(--g400)}
-.evl{padding:8px}.evi{display:flex;gap:7px;padding:7px 0;border-bottom:1px solid var(--g100)}.evi:last-child{border-bottom:none}
-.evd{min-width:30px;height:30px;background:var(--g50);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid var(--g100)}.evdn{font-size:12px;font-weight:900;color:var(--p);line-height:1}.evdm{font-size:6px;color:var(--g400);font-weight:600}
-.evb{flex:1;min-width:0}.evt{font-size:10px;font-weight:700;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.evdc{font-size:8px;color:var(--g400);line-height:1.2}
-.evtg{display:inline-block;margin-top:2px;font-size:7px;font-weight:700;padding:1px 4px;border-radius:3px}
+.evh{padding:14px 16px 10px;border-bottom:1px solid var(--g100)}.evht{font-size:14px;font-weight:700}.evhs{font-size:11px;color:var(--g400)}
+.evl{padding:10px;max-height:500px;overflow-y:auto}.evi{display:flex;gap:8px;padding:8px 0;border-bottom:1px solid var(--g100)}.evi:last-child{border-bottom:none}
+.evd{min-width:36px;height:36px;background:var(--g50);border-radius:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1.5px solid var(--g100)}.evdn{font-size:14px;font-weight:900;color:var(--p);line-height:1}.evdm{font-size:8px;color:var(--g400);font-weight:600}
+.evb{flex:1;min-width:0}.evt{font-size:13px;font-weight:700;margin-bottom:1px}.evdc{font-size:11px;color:var(--g400);line-height:1.3}
+.evtg{display:inline-block;margin-top:2px;font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px}
 .t-imp{background:#FFE8E8;color:#D63031}.t-reg{background:#E8F4FF;color:#0063CC}.t-ddl{background:#FFF3EA;color:#E67E22}.t-bday{background:#FFF0F6;color:#D63071}
-.cal-layout{display:grid;grid-template-columns:1fr 260px;gap:12px;align-items:start}
 
 /* 공지 */
-.nl{display:flex;flex-direction:column;gap:6px}.ni{background:var(--w);border-radius:var(--r);border:1.5px solid var(--g100);padding:12px 14px;cursor:pointer;transition:all .15s;box-shadow:var(--sh);display:flex;align-items:center;gap:8px}.ni:hover{box-shadow:0 4px 16px rgba(0,48,135,.08)}
-.nic{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}.nib{flex:1;min-width:0}.nit{font-size:11px;font-weight:700;margin-bottom:1px}.nim{font-size:8px;color:var(--g400)}.nia{color:var(--g400);font-size:12px}
+.nl{display:flex;flex-direction:column;gap:8px}.ni{background:var(--w);border-radius:var(--r);border:1.5px solid var(--g100);padding:16px 18px;cursor:pointer;transition:all .15s;box-shadow:var(--sh);display:flex;align-items:center;gap:12px}.ni:hover{box-shadow:0 4px 16px rgba(0,48,135,.08)}
+.nic{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}.nib{flex:1}.nit{font-size:14px;font-weight:700;margin-bottom:2px}.nim{font-size:12px;color:var(--g400)}.nia{color:var(--g400);font-size:14px}
 
 /* 관리자 */
-.atb{display:flex;gap:3px;margin-bottom:14px;flex-wrap:wrap}.atbn{padding:6px 12px;background:var(--w);border:1.5px solid var(--g200);color:var(--g600);font-size:10px;font-weight:600;border-radius:16px;cursor:pointer;font-family:var(--f)}.atbn.active{background:var(--p);border-color:var(--p);color:#fff}
+.atb{display:flex;gap:5px;margin-bottom:16px;flex-wrap:wrap}.atbn{padding:8px 16px;background:var(--w);border:1.5px solid var(--g200);color:var(--g600);font-size:13px;font-weight:600;border-radius:18px;cursor:pointer;font-family:var(--f)}.atbn.active{background:var(--p);border-color:var(--p);color:#fff}
 .ap{display:none}.ap.active{display:block}
-.sr{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}.sb{background:var(--w);border-radius:var(--r);border:1.5px solid var(--g100);padding:14px;box-shadow:var(--sh)}.sl{font-size:8px;font-weight:700;color:var(--g400);margin-bottom:3px}.sv{font-size:20px;font-weight:900}
-.fc{background:var(--w);border-radius:var(--r);border:1.5px solid var(--g100);padding:18px;box-shadow:var(--sh);margin-bottom:12px}.fct{font-size:12px;font-weight:700;margin-bottom:14px}
-.frow{margin-bottom:8px}.fr2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-.fl{font-size:8px;font-weight:700;color:var(--g600);margin-bottom:4px;display:block}
-.fi,.fsl,.fta{width:100%;padding:8px 10px;background:var(--g50);border:1.5px solid var(--g200);border-radius:var(--rs);font-size:11px;font-family:var(--f);color:var(--g900);outline:none}.fi:focus,.fsl:focus,.fta:focus{border-color:var(--p);background:#fff}.fta{resize:vertical;min-height:60px}
-.sbtn{padding:9px 18px;background:var(--p);color:#fff;font-size:11px;font-weight:700;border:none;border-radius:var(--rs);cursor:pointer;font-family:var(--f)}.sbtn:hover{background:var(--pl)}.sbtn.sm{padding:5px 10px;font-size:9px}
-.tw{overflow-x:auto}table{width:100%;border-collapse:collapse}th{font-size:8px;font-weight:700;color:var(--g400);text-align:left;padding:6px 8px;border-bottom:2px solid var(--g100);background:var(--g50)}td{font-size:10px;color:var(--g800);padding:7px 8px;border-bottom:1px solid var(--g100)}
-.tbg{font-size:7px;font-weight:700;padding:2px 5px;border-radius:3px}.tba{background:#E8F8F4;color:#00A878}.tbi{background:#FFF3EA;color:#E67E22}
-.tbb{padding:3px 6px;font-size:8px;font-weight:700;border:1px solid var(--g200);background:#fff;border-radius:3px;cursor:pointer;font-family:var(--f);color:var(--g600);margin-right:2px}.tbb:hover{border-color:var(--p);color:var(--p)}.tbb.red:hover{border-color:var(--err);color:var(--err)}
-.cz{border:2px dashed var(--g200);border-radius:var(--r);padding:20px;text-align:center;cursor:pointer}.cz:hover{border-color:var(--p);background:var(--g50)}.czi{font-size:20px;margin-bottom:4px}.czt{font-size:11px;font-weight:600;color:var(--g600)}.czs{font-size:9px;color:var(--g400)}
+.sr{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}.sb{background:var(--w);border-radius:var(--r);border:1.5px solid var(--g100);padding:18px;box-shadow:var(--sh)}.sl{font-size:11px;font-weight:700;color:var(--g400);margin-bottom:4px}.sv{font-size:24px;font-weight:900}
+.fc{background:var(--w);border-radius:var(--r);border:1.5px solid var(--g100);padding:22px;box-shadow:var(--sh);margin-bottom:14px}.fct{font-size:15px;font-weight:700;margin-bottom:16px}
+.frow{margin-bottom:10px}.fr2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.fl{font-size:11px;font-weight:700;color:var(--g600);margin-bottom:5px;display:block}
+.fi,.fsl,.fta{width:100%;padding:10px 13px;background:var(--g50);border:1.5px solid var(--g200);border-radius:var(--rs);font-size:14px;font-family:var(--f);color:var(--g900);outline:none}.fi:focus,.fsl:focus,.fta:focus{border-color:var(--p);background:#fff}.fta{resize:vertical;min-height:70px}
+.sbtn{padding:11px 22px;background:var(--p);color:#fff;font-size:14px;font-weight:700;border:none;border-radius:var(--rs);cursor:pointer;font-family:var(--f)}.sbtn:hover{background:var(--pl)}.sbtn.sm{padding:6px 14px;font-size:12px}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse}th{font-size:11px;font-weight:700;color:var(--g400);text-align:left;padding:8px 10px;border-bottom:2px solid var(--g100);background:var(--g50)}td{font-size:13px;color:var(--g800);padding:10px}
+.tbg{font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px}.tba{background:#E8F8F4;color:#00A878}.tbi{background:#FFF3EA;color:#E67E22}
+.tbb{padding:4px 8px;font-size:11px;font-weight:700;border:1.5px solid var(--g200);background:#fff;border-radius:4px;cursor:pointer;font-family:var(--f);color:var(--g600);margin-right:3px}.tbb:hover{border-color:var(--p);color:var(--p)}.tbb.red:hover{border-color:var(--err);color:var(--err)}
+.cz{border:2px dashed var(--g200);border-radius:var(--r);padding:24px;text-align:center;cursor:pointer}.cz:hover{border-color:var(--p);background:var(--g50)}.czi{font-size:24px;margin-bottom:6px}.czt{font-size:14px;font-weight:600;color:var(--g600)}.czs{font-size:12px;color:var(--g400)}
 
 /* 모달 */
-.mo{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(3px);z-index:500;display:none;align-items:center;justify-content:center;padding:12px}.mo.open{display:flex}
-.md{background:var(--w);border-radius:18px;max-width:480px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:0 16px 48px rgba(0,0,0,.2);animation:mi .25s ease}@keyframes mi{from{transform:scale(.96);opacity:0}to{transform:scale(1);opacity:1}}
-.mh{padding:16px 20px 12px;border-bottom:1px solid var(--g100);display:flex;justify-content:space-between;align-items:center}.mt{font-size:14px;font-weight:900}
-.mx{width:24px;height:24px;border-radius:5px;background:var(--g100);border:none;cursor:pointer;font-size:13px;color:var(--g600);display:flex;align-items:center;justify-content:center}
-.mb{padding:16px 20px}.msc{font-size:8px;font-weight:700;color:var(--g400);letter-spacing:.6px;margin-bottom:6px;margin-top:12px}.msc:first-child{margin-top:0}
-.msp{display:flex;gap:7px;margin-bottom:5px}.msn{width:16px;height:16px;border-radius:50%;background:var(--p);color:#fff;font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}.mst{font-size:10px;color:var(--g800);line-height:1.4}
-.mno{background:var(--g50);border-radius:8px;padding:10px;border-left:3px solid var(--p);font-size:10px;color:var(--g800);line-height:1.5}
-.mtx{font-size:11px;color:var(--g800);line-height:1.5}
-/* 복사 버튼 */
-.copy-block{background:var(--g50);border:1px solid var(--g200);border-radius:8px;padding:10px 12px;margin-top:8px;position:relative}
-.copy-block pre{font-size:10px;color:var(--g800);line-height:1.6;white-space:pre-wrap;word-break:break-word;font-family:var(--f);margin:0}
-.copy-btn{position:absolute;top:6px;right:6px;padding:4px 10px;background:var(--p);color:#fff;border:none;border-radius:4px;font-size:9px;font-weight:700;cursor:pointer;font-family:var(--f)}.copy-btn:hover{background:var(--pl)}.copy-btn.copied{background:var(--ok)}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(3px);z-index:500;display:none;align-items:center;justify-content:center;padding:16px}.mo.open{display:flex}
+.md{background:var(--w);border-radius:18px;max-width:520px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:0 16px 48px rgba(0,0,0,.2);animation:mi .25s ease}@keyframes mi{from{transform:scale(.96);opacity:0}to{transform:scale(1);opacity:1}}
+.mh{padding:18px 22px 14px;border-bottom:1px solid var(--g100);display:flex;justify-content:space-between;align-items:center}.mt{font-size:17px;font-weight:900}
+.mx{width:28px;height:28px;border-radius:6px;background:var(--g100);border:none;cursor:pointer;font-size:14px;color:var(--g600);display:flex;align-items:center;justify-content:center}
+.mb{padding:18px 22px}.msc{font-size:11px;font-weight:700;color:var(--g400);letter-spacing:.6px;margin-bottom:8px;margin-top:14px}.msc:first-child{margin-top:0}
+.msp{display:flex;gap:8px;margin-bottom:6px}.msn{width:20px;height:20px;border-radius:50%;background:var(--p);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}.mst{font-size:14px;color:var(--g800);line-height:1.4}
+.mno{background:var(--g50);border-radius:8px;padding:12px;border-left:3px solid var(--p);font-size:13px;color:var(--g800);line-height:1.6}
+.mtx{font-size:14px;color:var(--g800);line-height:1.6}
+.copy-block{background:var(--g50);border:1px solid var(--g200);border-radius:8px;padding:12px 14px;margin-top:10px;position:relative}
+.copy-block pre{font-size:13px;color:var(--g800);line-height:1.6;white-space:pre-wrap;word-break:break-word;font-family:var(--f);margin:0}
+.copy-btn{position:absolute;top:8px;right:8px;padding:5px 12px;background:var(--p);color:#fff;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--f)}.copy-btn:hover{background:var(--pl)}.copy-btn.copied{background:var(--ok)}
 
-.ld{text-align:center;padding:24px;color:var(--g400);font-size:11px}
-#toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%) translateY(80px);background:#1A1F35;color:#fff;padding:9px 16px;border-radius:8px;font-size:10px;font-weight:700;z-index:9999;transition:transform .3s ease;pointer-events:none;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.ld{text-align:center;padding:28px;color:var(--g400);font-size:14px}
+#toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(80px);background:#1A1F35;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:700;z-index:9999;transition:transform .3s ease;pointer-events:none}
 
-@media(max-width:768px){
-  .hn,.hu,.hb{display:none}
-  .mn{display:block}
-  #app{padding-bottom:56px}
-  .ct{padding:10px 6px 24px}
+/* ═══ 모바일 ═══ */
+@media(max-width:900px){
+  .desk-side{display:none}
+  .desk-main{padding:14px 10px 24px}
+  .mn{display:grid}
+  #app{padding-bottom:60px}
   .cal-layout{grid-template-columns:1fr}
-  .cal-cell{min-height:56px}
+  .cal-cell{height:64px}
+  .cal-ev{font-size:8px}
+  .today-cols{grid-template-columns:1fr}
   .sr,.fr2{grid-template-columns:1fr 1fr}
   .fr3{grid-template-columns:1fr}
   .gg{grid-template-columns:1fr}
-  .ab{padding:32px 20px}
-  .hdr{height:44px;padding:0 10px}
+  .ab{padding:28px 18px}
+  .hdr{height:48px;padding:0 12px}
+  .chatbot-placeholder{bottom:72px;right:14px;width:48px;height:48px;font-size:20px}
 }
 </style>
 </head>
@@ -197,9 +216,9 @@ header{background:var(--p);position:sticky;top:0;z-index:100;box-shadow:0 1px 12
   <div class="at">개인 정보 설정</div>
   <div class="fd"><label>이름</label><input type="text" id="f-name" placeholder="실명"></div>
   <div class="fd"><label>휴대폰</label><input type="tel" id="f-phone" placeholder="010-0000-0000" maxlength="13"></div>
-  <div class="asc">🎂 생일</div>
+  <div class="asc">생일 정보</div>
   <div class="fr"><div class="fd"><label>생일 (월-일)</label><input type="text" id="f-bday" placeholder="03-15" maxlength="5"></div><div class="fd"><label>양력/음력</label><select id="f-btype"><option value="solar">양력</option><option value="lunar">음력</option></select></div></div>
-  <div class="asc">🔒 비밀번호</div>
+  <div class="asc">비밀번호 변경</div>
   <div class="fd"><label>새 비밀번호</label><input type="password" id="f-pw1" placeholder="영문+숫자 8자 이상" oninput="ckPw(this.value)"><div class="pws"><div class="pwb" id="pb1"></div><div class="pwb" id="pb2"></div><div class="pwb" id="pb3"></div></div><div class="pwr">영문+숫자 조합 8자 이상</div></div>
   <div class="fd"><label>비밀번호 확인</label><input type="password" id="f-pw2" placeholder="재입력"></div>
   <button class="abtn" onclick="doFirst()">설정 완료</button>
@@ -221,111 +240,100 @@ header{background:var(--p);position:sticky;top:0;z-index:100;box-shadow:0 1px 12
 <div id="app">
 <header><div class="hdr">
   <div class="hl"><div class="hli">N</div><div class="hln">N잡크루</div><span class="hb">MEMBERS</span></div>
-  <nav class="hn">
-    <button class="nb active" onclick="sT('today',this)">🏠 오늘</button>
-    <button class="nb" onclick="sT('guide',this)">📋 가이드</button>
-    <button class="nb" onclick="sT('calendar',this)">📅 월력</button>
-    <button class="nb" onclick="sT('notice',this)">📢 공지</button>
-    <button class="nb an" onclick="sT('admin',this)">⚙ 관리</button>
-  </nav>
-  <div class="hr"><span class="hu"><strong id="hname"></strong></span><button class="ib" onclick="myPage()">내 정보</button><button class="ib" onclick="logout()">로그아웃</button></div>
+  <div class="hr"><span class="hu"><strong id="hname"></strong> 님</span><button class="ib" onclick="myPage()">내 정보</button><button class="ib" onclick="logout()">로그아웃</button></div>
 </div></header>
-<div class="mn"><div class="mni">
-  <button class="mnb active" onclick="sTM('today',this)"><span class="mi">🏠</span><span class="ml">오늘</span></button>
-  <button class="mnb" onclick="sTM('guide',this)"><span class="mi">📋</span><span class="ml">가이드</span></button>
-  <button class="mnb" onclick="sTM('calendar',this)"><span class="mi">📅</span><span class="ml">월력</span></button>
-  <button class="mnb" onclick="sTM('notice',this)"><span class="mi">📢</span><span class="ml">공지</span></button>
-  <button class="mnb am" onclick="sTM('admin',this)"><span class="mi">⚙️</span><span class="ml">관리</span></button>
-</div></div>
-<div class="ct">
-  <!-- 오늘 -->
-  <div class="tp active" id="tab-today">
-    <div class="tg"><div class="tdd" id="td-d"></div><div class="thh" id="td-h"></div></div>
-    <div class="ts"><div class="tst">📌 오늘의 할일</div><div class="tgr" id="td-t"></div></div>
-    <div class="ts"><div class="tst">📅 이번 주 주요 일정</div><div class="tgr" id="td-w"></div></div>
-  </div>
-  <!-- 가이드 -->
-  <div class="tp" id="tab-guide">
-    <div class="ph"><div class="pt">업무 가이드</div><div class="pd">매뉴얼과 가이드를 검색하세요</div></div>
-    <div class="guide-search"><input type="text" id="g-search" placeholder="가이드 검색 (제목, 내용)" oninput="searchGuide(this.value)"></div>
-    <div class="main-cat-bar" id="main-cat-bar"></div>
-    <div class="sub-cat-bar" id="sub-cat-bar"></div>
-    <div class="gg" id="gGrid"></div>
-  </div>
-  <!-- 월력 -->
-  <div class="tp" id="tab-calendar">
-    <div class="ph"><div class="pt">업무 월력</div><div class="pd">업무 일정과 생일을 확인하세요</div></div>
-    <div class="cal-layout">
-      <div class="cal-wrap">
-        <div class="cal-hdr"><button class="cal-nav" onclick="chM(-1)">‹</button><div class="cal-mt" id="cmt"></div><button class="cal-nav" onclick="chM(1)">›</button></div>
-        <div class="cal-wk"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div>
-        <div class="cal-body" id="cbody"></div>
-      </div>
-      <div class="ev-side">
-        <div class="evh"><div class="evht">📋 이번 달 일정</div><div class="evhs">업무 + 생일</div></div>
-        <div class="evl" id="evl"></div>
+
+<div class="desk-wrap">
+  <!-- 데스크탑 사이드바 -->
+  <aside class="desk-side">
+    <div class="ds-section">
+      <div class="ds-label">메뉴</div>
+      <button class="ds-btn active" onclick="sT('today',this)"><span class="ds-ico">🏠</span> 오늘</button>
+      <button class="ds-btn" onclick="sT('guide',this)"><span class="ds-ico">📋</span> 업무 가이드</button>
+      <button class="ds-btn" onclick="sT('calendar',this)"><span class="ds-ico">📅</span> 업무 월력</button>
+      <button class="ds-btn" onclick="sT('notice',this)"><span class="ds-ico">📢</span> 공지사항</button>
+      <button class="ds-btn an" onclick="sT('admin',this)"><span class="ds-ico">⚙️</span> 관리자</button>
+    </div>
+    <div class="ds-user">
+      <div class="ds-user-name" id="ds-name"></div>
+      <div class="ds-user-role" id="ds-role"></div>
+    </div>
+  </aside>
+
+  <!-- 메인 콘텐츠 -->
+  <main class="desk-main">
+    <!-- 오늘 -->
+    <div class="tp active" id="tab-today">
+      <div class="tg"><div class="tdd" id="td-d"></div><div class="thh" id="td-h"></div></div>
+      <div class="today-cols">
+        <div class="ts"><div class="tst">📌 오늘의 할일</div><div class="tgr" id="td-t"></div></div>
+        <div class="ts"><div class="tst">📅 이번 주 주요 일정</div><div class="tgr" id="td-w"></div></div>
       </div>
     </div>
-  </div>
-  <!-- 공지 -->
-  <div class="tp" id="tab-notice">
-    <div class="ph"><div class="pt">공지사항</div><div class="pd">운영 정책 변경, 중요 안내</div></div>
-    <div class="nl" id="nList"></div>
-  </div>
-  <!-- 관리자 -->
-  <div class="tp" id="tab-admin">
-    <div class="ph"><div class="pt">관리자 패널</div></div>
-    <div class="atb">
-      <button class="atbn active" onclick="sA('acc',this)">👥 계정</button>
-      <button class="atbn" onclick="sA('gr',this)">📋 가이드</button>
-      <button class="atbn" onclick="sA('ev',this)">📅 일정</button>
-      <button class="atbn" onclick="sA('no',this)">📢 공지</button>
+    <!-- 가이드 -->
+    <div class="tp" id="tab-guide">
+      <div class="ph"><div class="pt">업무 가이드</div><div class="pd">매뉴얼과 가이드를 검색하세요</div></div>
+      <div class="guide-search"><input type="text" id="g-search" placeholder="가이드 검색 (제목, 내용)" oninput="searchG(this.value)"></div>
+      <div class="main-cat-bar" id="mcb"></div>
+      <div class="sub-cat-bar" id="scb"></div>
+      <div class="gg" id="gGrid"></div>
     </div>
-    <div class="ap active" id="adm-acc">
-      <div class="sr"><div class="sb"><div class="sl">전체</div><div class="sv" id="xT">-</div></div><div class="sb"><div class="sl">활성</div><div class="sv" id="xA">-</div></div><div class="sb"><div class="sl">대기</div><div class="sv" id="xI">-</div></div></div>
-      <div class="fc"><div class="fct">계정 등록</div>
-        <div class="fr2"><div class="frow"><label class="fl">아이디(8자리)</label><input type="text" class="fi" id="ru" maxlength="8" inputmode="numeric"></div><div class="frow"><label class="fl">이름</label><input type="text" class="fi" id="rn"></div></div>
-        <div class="fr2"><div class="frow"><label class="fl">휴대폰</label><input type="tel" class="fi" id="rp" maxlength="13"></div><div class="frow"><label class="fl">직책</label><input type="text" class="fi" id="rr" placeholder="팀장, 센터장 등"></div></div>
-        <div class="fr3"><div class="frow"><label class="fl">사업부</label><input type="text" class="fi" id="rdv"></div><div class="frow"><label class="fl">대권역</label><input type="text" class="fi" id="rrg"></div><div class="frow"><label class="fl">소권역</label><input type="text" class="fi" id="rsu"></div></div>
-        <div class="frow"><label class="fl">멤버스센터</label><input type="text" class="fi" id="rct"></div>
-        <button class="sbtn" onclick="regU()">등록 (초기PW: n1234)</button>
+    <!-- 월력 -->
+    <div class="tp" id="tab-calendar">
+      <div class="ph"><div class="pt">업무 월력</div><div class="pd">업무 일정과 생일을 확인하세요</div></div>
+      <div class="cal-layout">
+        <div class="cal-wrap"><div class="cal-hdr"><button class="cal-nav" onclick="chM(-1)">‹</button><div class="cal-mt" id="cmt"></div><button class="cal-nav" onclick="chM(1)">›</button></div><div class="cal-wk"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div><div class="cal-body" id="cbody"></div></div>
+        <div class="ev-side"><div class="evh"><div class="evht">📋 이번 달 일정</div><div class="evhs">업무 + 생일</div></div><div class="evl" id="evl"></div></div>
       </div>
-      <div class="fc"><div class="fct">CSV 일괄 등록</div><div class="cz" onclick="$('csvF').click()"><div class="czi">📂</div><div class="czt">CSV 업로드</div><div class="czs">아이디,이름,번호,직책,사업부,대권역,소권역,센터</div><input type="file" id="csvF" accept=".csv" style="display:none" onchange="hCSV(this)"></div><div style="margin-top:6px"><button class="sbtn sm" onclick="dlT()">📥 템플릿</button></div></div>
-      <div class="fc"><div class="fct" style="display:flex;justify-content:space-between"><span>계정 목록</span><input type="text" class="fi" style="width:120px;padding:5px 8px;font-size:9px" placeholder="검색" oninput="sU(this.value)"></div><div class="tw"><table><thead><tr><th>ID</th><th>이름</th><th>직책</th><th>소속</th><th>연락처</th><th>상태</th><th>관리</th></tr></thead><tbody id="utb"></tbody></table></div></div>
     </div>
-    <div class="ap" id="adm-gr"><div class="fc"><div class="fct">📋 가이드 등록</div>
-      <div class="fr2"><div class="frow"><label class="fl">메인 카테고리</label><select class="fsl" id="gMC"><option value="njob">N잡크루</option><option value="rebuild">리빌딩</option><option value="faq">FAQ</option></select></div><div class="frow"><label class="fl">서브 카테고리</label><input type="text" class="fi" id="gSC" placeholder="유입단계, 이관 등"></div></div>
-      <div class="frow"><label class="fl">제목</label><input type="text" class="fi" id="gTi"></div>
-      <div class="frow"><label class="fl">요약</label><textarea class="fta" id="gD"></textarea></div>
-      <div class="frow"><label class="fl">단계별 (줄바꿈)</label><textarea class="fta" id="gS"></textarea></div>
-      <div class="frow"><label class="fl">핵심 포인트</label><textarea class="fta" id="gN"></textarea></div>
-      <div class="frow"><label class="fl">복사 가능 텍스트 (스크립트/카톡 문구 등)</label><textarea class="fta" id="gCP" placeholder="팀장들이 복사하여 카카오톡으로 보낼 수 있는 문구"></textarea></div>
-      <button class="sbtn" onclick="regG()">등록</button>
-    </div></div>
-    <div class="ap" id="adm-ev"><div class="fc"><div class="fct">📅 일정 등록</div>
-      <div class="fr2"><div class="frow"><label class="fl">날짜</label><input type="date" class="fi" id="eD"></div><div class="frow"><label class="fl">유형</label><select class="fsl" id="eT"><option value="t-imp">중요</option><option value="t-reg">정기</option><option value="t-ddl">마감</option></select></div></div>
-      <div class="fr2"><div class="frow"><label class="fl">업무명</label><input type="text" class="fi" id="eN"></div><div class="frow"><label class="fl">카테고리</label><select class="fsl" id="eC"><option value="exam">시험</option><option value="report">보고</option><option value="reward">시상</option><option value="education">교육</option><option value="meeting">미팅</option><option value="sign">전자서명</option><option value="general">일반</option></select></div></div>
-      <div class="frow"><label class="fl">상세</label><textarea class="fta" id="eDc"></textarea></div>
-      <div class="frow"><label class="fl">액션 (줄바꿈) — 오늘의 할일</label><textarea class="fta" id="eA"></textarea></div>
-      <button class="sbtn" onclick="regE()">등록</button>
-    </div></div>
-    <div class="ap" id="adm-no"><div class="fc"><div class="fct">📢 공지 등록</div>
-      <div class="frow"><label class="fl">제목</label><input type="text" class="fi" id="nTi"></div>
-      <div class="frow"><label class="fl">내용</label><textarea class="fta" id="nB" style="min-height:90px"></textarea></div>
-      <button class="sbtn" onclick="regN()">등록</button>
-    </div></div>
-  </div>
+    <!-- 공지 -->
+    <div class="tp" id="tab-notice">
+      <div class="ph"><div class="pt">공지사항</div><div class="pd">운영 정책 변경, 중요 안내</div></div>
+      <div class="nl" id="nList"></div>
+    </div>
+    <!-- 관리자 -->
+    <div class="tp" id="tab-admin">
+      <div class="ph"><div class="pt">관리자 패널</div></div>
+      <div class="atb">
+        <button class="atbn active" onclick="sA('acc',this)">👥 계정</button>
+        <button class="atbn" onclick="sA('gr',this)">📋 가이드</button>
+        <button class="atbn" onclick="sA('ev',this)">📅 일정</button>
+        <button class="atbn" onclick="sA('no',this)">📢 공지</button>
+      </div>
+      <div class="ap active" id="adm-acc">
+        <div class="sr"><div class="sb"><div class="sl">전체</div><div class="sv" id="xT">-</div></div><div class="sb"><div class="sl">활성</div><div class="sv" id="xA">-</div></div><div class="sb"><div class="sl">대기</div><div class="sv" id="xI">-</div></div></div>
+        <div class="fc"><div class="fct">계정 등록</div><div class="fr2"><div class="frow"><label class="fl">아이디(8자리)</label><input type="text" class="fi" id="ru" maxlength="8" inputmode="numeric"></div><div class="frow"><label class="fl">이름</label><input type="text" class="fi" id="rn"></div></div><div class="fr2"><div class="frow"><label class="fl">휴대폰</label><input type="tel" class="fi" id="rp" maxlength="13"></div><div class="frow"><label class="fl">직책</label><input type="text" class="fi" id="rr" placeholder="팀장, 센터장 등"></div></div><div class="fr3"><div class="frow"><label class="fl">사업부</label><input type="text" class="fi" id="rdv"></div><div class="frow"><label class="fl">대권역</label><input type="text" class="fi" id="rrg"></div><div class="frow"><label class="fl">소권역</label><input type="text" class="fi" id="rsu"></div></div><div class="frow"><label class="fl">멤버스센터</label><input type="text" class="fi" id="rct"></div><button class="sbtn" onclick="regU()">등록 (초기PW: n1234)</button></div>
+        <div class="fc"><div class="fct">CSV 일괄 등록</div><div class="cz" onclick="$('csvF').click()"><div class="czi">📂</div><div class="czt">CSV 업로드</div><div class="czs">아이디,이름,번호,직책,사업부,대권역,소권역,센터</div><input type="file" id="csvF" accept=".csv" style="display:none" onchange="hCSV(this)"></div><div style="margin-top:6px"><button class="sbtn sm" onclick="dlT()">📥 템플릿</button></div></div>
+        <div class="fc"><div class="fct" style="display:flex;justify-content:space-between"><span>계정 목록</span><input type="text" class="fi" style="width:160px;padding:7px 10px;font-size:13px" placeholder="검색" oninput="sU(this.value)"></div><div class="tw"><table><thead><tr><th>ID</th><th>이름</th><th>직책</th><th>소속</th><th>연락처</th><th>상태</th><th>관리</th></tr></thead><tbody id="utb"></tbody></table></div></div>
+      </div>
+      <div class="ap" id="adm-gr"><div class="fc"><div class="fct">📋 가이드 등록</div><div class="fr2"><div class="frow"><label class="fl">메인 카테고리</label><select class="fsl" id="gMC"><option value="njob">N잡크루</option><option value="rebuild">리빌딩</option><option value="faq">FAQ</option></select></div><div class="frow"><label class="fl">서브 카테고리</label><input type="text" class="fi" id="gSC" placeholder="유입단계, 이관 등"></div></div><div class="frow"><label class="fl">제목</label><input type="text" class="fi" id="gTi"></div><div class="frow"><label class="fl">요약</label><textarea class="fta" id="gD"></textarea></div><div class="frow"><label class="fl">단계별 (줄바꿈)</label><textarea class="fta" id="gS"></textarea></div><div class="frow"><label class="fl">핵심 포인트</label><textarea class="fta" id="gN"></textarea></div><div class="frow"><label class="fl">복사 가능 텍스트 (스크립트/카톡 문구)</label><textarea class="fta" id="gCP" placeholder="팀장이 복사하여 카톡으로 보낼 문구"></textarea></div><button class="sbtn" onclick="regG()">등록</button></div></div>
+      <div class="ap" id="adm-ev"><div class="fc"><div class="fct">📅 일정 등록</div><div class="fr2"><div class="frow"><label class="fl">날짜</label><input type="date" class="fi" id="eD"></div><div class="frow"><label class="fl">유형</label><select class="fsl" id="eT"><option value="t-imp">중요</option><option value="t-reg">정기</option><option value="t-ddl">마감</option></select></div></div><div class="fr2"><div class="frow"><label class="fl">업무명</label><input type="text" class="fi" id="eN"></div><div class="frow"><label class="fl">카테고리</label><select class="fsl" id="eC"><option value="exam">시험</option><option value="report">보고</option><option value="reward">시상</option><option value="education">교육</option><option value="meeting">미팅</option><option value="sign">전자서명</option><option value="general">일반</option></select></div></div><div class="frow"><label class="fl">상세</label><textarea class="fta" id="eDc"></textarea></div><div class="frow"><label class="fl">액션 (줄바꿈)</label><textarea class="fta" id="eA"></textarea></div><button class="sbtn" onclick="regE()">등록</button></div></div>
+      <div class="ap" id="adm-no"><div class="fc"><div class="fct">📢 공지 등록</div><div class="frow"><label class="fl">제목</label><input type="text" class="fi" id="nTi"></div><div class="frow"><label class="fl">내용</label><textarea class="fta" id="nB" style="min-height:100px"></textarea></div><button class="sbtn" onclick="regN()">등록</button></div></div>
+    </div>
+  </main>
 </div>
+
+<!-- 모바일 하단 네비 (SVG 아이콘 - 검은점 해결) -->
+<div class="mn"><div class="mni">
+  <button class="mnb active" onclick="sTM('today',this)"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg><span class="ml">오늘</span></button>
+  <button class="mnb" onclick="sTM('guide',this)"><svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zM6 20V4h5v7h7v9H6z"/></svg><span class="ml">가이드</span></button>
+  <button class="mnb" onclick="sTM('calendar',this)"><svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg><span class="ml">월력</span></button>
+  <button class="mnb" onclick="sTM('notice',this)"><svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg><span class="ml">공지</span></button>
+  <button class="mnb am" onclick="sTM('admin',this)"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.48.48 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 00-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1115.6 12 3.6 3.6 0 0112 15.6z"/></svg><span class="ml">관리</span></button>
+</div></div>
+
+<!-- 챗봇 플레이스홀더 (개발 예정) -->
+<div class="chatbot-placeholder" id="chatbot" onclick="toast('챗봇 기능 준비 중입니다')">💬</div>
 </div>
 
 <!-- MODALS -->
 <div class="mo" id="myO" onclick="if(event.target===this)this.classList.remove('open')"><div class="md"><div class="mh"><div class="mt">내 정보</div><button class="mx" onclick="$('myO').classList.remove('open')">✕</button></div><div class="mb">
-  <div class="msc">계정</div><div style="background:var(--g50);border-radius:6px;padding:8px 10px;font-size:10px;color:var(--g600);line-height:2" id="myI"></div>
+  <div class="msc">계정</div><div style="background:var(--g50);border-radius:8px;padding:12px;font-size:14px;color:var(--g600);line-height:2" id="myI"></div>
   <div class="msc">비밀번호 변경</div>
   <div class="frow"><label class="fl">현재</label><input type="password" class="fi" id="mC"></div>
   <div class="frow"><label class="fl">새 비밀번호</label><input type="password" class="fi" id="mN"></div>
   <div class="frow"><label class="fl">확인</label><input type="password" class="fi" id="mN2"></div>
-  <div id="mE" style="display:none;font-size:9px;color:var(--err);margin-bottom:4px"></div>
+  <div id="mE" style="display:none;font-size:12px;color:var(--err);margin-bottom:6px"></div>
   <button class="sbtn" style="width:100%" onclick="chPw()">변경</button>
 </div></div></div>
 <div class="mo" id="gO" onclick="if(event.target===this)this.classList.remove('open')"><div class="md"><div class="mh"><div class="mt" id="gMt"></div><button class="mx" onclick="$('gO').classList.remove('open')">✕</button></div><div class="mb" id="gMb"></div></div></div>
@@ -336,7 +344,7 @@ header{background:var(--p);position:sticky;top:0;z-index:100;box-shadow:0 1px 12
 const SU='https://vvgghtpntxffysxijkxk.supabase.co',SK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2Z2dodHBudHhmZnlzeGlqa3hrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMTMzMTksImV4cCI6MjA5MjU4OTMxOX0.zb449uHH6QteQphwi8Rf48ZzTJzfZuolhZS8PZ-_lO4';
 const db=supabase.createClient(SU,SK),NH='8072d5211bb5f9f9c2408abb8408015fdb7f42b892e5ea9e86f3d4a8faf79c10',ADS=['10000001','10000002','10000003','10000004','10000005'];
 let CU=null,cY=new Date().getFullYear(),cM=new Date().getMonth(),G=[],EV=[],NO=[],US=[];
-let curMainCat='all',curSubCat='all',searchQ='';
+let curMC='all',curSC='all',sQ='';
 const $=id=>document.getElementById(id);
 async function sha(m){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(m));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
 function ss(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id)?.classList.add('active');}
@@ -348,72 +356,70 @@ function updWM(){if(!CU){$('wm').textContent='';return;}const d=new Date();$('wm
 function loadSid(){const s=localStorage.getItem('sid');if(s){$('l-id').value=s;$('sid-chk').checked=true;}}
 function saveSid(){if($('sid-chk').checked)localStorage.setItem('sid',$('l-id').value.trim());else localStorage.removeItem('sid');}
 
-// ── AUTH ──
-async function doLogin(){const id=$('l-id').value.trim(),pw=$('l-pw').value;$('l-err').style.display='none';if(!id||!pw){sE('l-err','아이디와 비밀번호를 입력하세요.');return;}saveSid();const btn=$('lbtn');btn.disabled=true;btn.textContent='로그인 중...';try{const h=await sha(pw);const{data,error}=await db.from('members').select('*').eq('user_id',id).eq('password_hash',h).single();if(error||!data){sE('l-err','아이디 또는 비밀번호가 올바르지 않습니다.');return;}CU=data;if(data.is_first||data.password_hash===NH){$('f-name').value=data.name||'';ss('s-first');}else{await db.from('members').update({last_login:new Date().toISOString()}).eq('id',data.id);enter();}}catch(e){sE('l-err','서버 연결 실패');console.error(e);}finally{btn.disabled=false;btn.textContent='로그인';}}
-async function doFirst(){const nm=$('f-name').value.trim(),ph=$('f-phone').value.trim(),pw1=$('f-pw1').value,pw2=$('f-pw2').value,bd=$('f-bday').value.trim(),bt=$('f-btype').value;if(!nm){sE('f-err','이름');return;}if(!/^010-\d{4}-\d{4}$/.test(ph)){sE('f-err','번호 형식: 010-0000-0000');return;}if(bd&&!/^\d{2}-\d{2}$/.test(bd)){sE('f-err','생일: MM-DD');return;}if(pw1==='n1234'){sE('f-err','초기PW 사용불가');return;}if(!pwV(pw1)){sE('f-err','영문+숫자 8자 이상');return;}if(pw1!==pw2){sE('f-err','PW 불일치');return;}const h=await sha(pw1);await db.from('members').update({name:nm,phone:ph,password_hash:h,is_first:false,status:'active',last_login:new Date().toISOString(),birthday:bd,birthday_type:bt}).eq('id',CU.id);Object.assign(CU,{name:nm,phone:ph,status:'active',is_first:false,password_hash:h,birthday:bd,birthday_type:bt});toast('설정 완료 ✅');enter();}
+// AUTH
+async function doLogin(){const id=$('l-id').value.trim(),pw=$('l-pw').value;$('l-err').style.display='none';if(!id||!pw){sE('l-err','아이디와 비밀번호를 입력하세요.');return;}saveSid();const btn=$('lbtn');btn.disabled=true;btn.textContent='로그인 중...';try{const h=await sha(pw);const{data,error}=await db.from('members').select('*').eq('user_id',id).eq('password_hash',h).single();if(error||!data){sE('l-err','아이디 또는 비밀번호가 올바르지 않습니다.');return;}CU=data;if(data.is_first||data.password_hash===NH){$('f-name').value=data.name||'';ss('s-first');}else{await db.from('members').update({last_login:new Date().toISOString()}).eq('id',data.id);enter();}}catch(e){sE('l-err','서버 연결 실패');}finally{btn.disabled=false;btn.textContent='로그인';}}
+async function doFirst(){const nm=$('f-name').value.trim(),ph=$('f-phone').value.trim(),pw1=$('f-pw1').value,pw2=$('f-pw2').value,bd=$('f-bday').value.trim(),bt=$('f-btype').value;if(!nm){sE('f-err','이름을 입력해주세요.');return;}if(!/^010-\d{4}-\d{4}$/.test(ph)){sE('f-err','번호 형식: 010-0000-0000');return;}if(bd&&!/^\d{2}-\d{2}$/.test(bd)){sE('f-err','생일: MM-DD');return;}if(pw1==='n1234'){sE('f-err','초기PW 사용불가');return;}if(!pwV(pw1)){sE('f-err','영문+숫자 8자 이상');return;}if(pw1!==pw2){sE('f-err','PW 불일치');return;}const h=await sha(pw1);await db.from('members').update({name:nm,phone:ph,password_hash:h,is_first:false,status:'active',last_login:new Date().toISOString(),birthday:bd,birthday_type:bt}).eq('id',CU.id);Object.assign(CU,{name:nm,phone:ph,status:'active',is_first:false,password_hash:h,birthday:bd,birthday_type:bt});toast('설정 완료 ✅');enter();}
 async function doReset(){const id=$('r-id').value.trim(),ph=$('r-phone').value.trim();$('r-err').style.display='none';const{data}=await db.from('members').select('*').eq('user_id',id).eq('phone',ph).single();if(!data){sE('r-err','정보 불일치');return;}const tmp='n'+Math.floor(10000+Math.random()*90000),h=await sha(tmp);await db.from('members').update({password_hash:h,is_first:true,status:'init'}).eq('id',data.id);console.log(`[SMS] ${ph} → ${tmp}`);toast('임시PW 발송 📱');setTimeout(()=>ss('s-login'),2e3);}
-function enter(){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$('app').classList.add('active');$('hname').textContent=CU.name;const isA=ADS.includes(CU.user_id)||CU.role==='admin';document.querySelectorAll('.an,.am').forEach(b=>b.style.display=isA?'':'none');updWM();init();}
-function logout(){CU=null;$('app').classList.remove('active');$('l-pw').value='';updWM();ss('s-login');}
+function enter(){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$('app').classList.add('active');$('hname').textContent=CU.name;$('ds-name').textContent=CU.name;$('ds-role').textContent=CU.role||CU.org_title||'';const isA=ADS.includes(CU.user_id)||CU.role==='admin';document.querySelectorAll('.an,.am').forEach(b=>b.style.display=isA?'':'none');$('chatbot').style.display='flex';updWM();init();}
+function logout(){CU=null;$('app').classList.remove('active');$('l-pw').value='';$('chatbot').style.display='none';updWM();ss('s-login');}
 function myPage(){const org=[CU.org_division,CU.org_region,CU.org_sub_region,CU.org_center].filter(Boolean).join(' > ')||'-';$('myI').innerHTML=`ID: <strong>${CU.user_id}</strong><br>이름: <strong>${CU.name}</strong><br>직책: <strong>${CU.role||CU.org_title||'-'}</strong><br>소속: <strong>${org}</strong><br>연락처: <strong>${CU.phone||'-'}</strong><br>생일: <strong>${CU.birthday||'-'} ${CU.birthday_type==='lunar'?'(음력)':'(양력)'}</strong>`;['mC','mN','mN2'].forEach(i=>$(i).value='');$('mE').style.display='none';$('myO').classList.add('open');}
 async function chPw(){const cur=$('mC').value,nw=$('mN').value,nw2=$('mN2').value,el=$('mE');el.style.display='none';if(await sha(cur)!==CU.password_hash){el.textContent='현재PW 불일치';el.style.display='block';return;}if(!pwV(nw)){el.textContent='영문+숫자 8자 이상';el.style.display='block';return;}if(nw!==nw2){el.textContent='불일치';el.style.display='block';return;}const h=await sha(nw);await db.from('members').update({password_hash:h}).eq('id',CU.id);CU.password_hash=h;$('myO').classList.remove('open');toast('PW 변경 ✅');}
-
 async function init(){await Promise.all([lG(),lE(),lN(),lU()]);rCal();rToday();}
 
-// ── TODAY ──
-function rToday(){const now=new Date(),days=['일','월','화','수','목','금','토'];$('td-d').textContent=`${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일 (${days[now.getDay()]})`;$('td-h').textContent=`${CU.name} 님, 오늘의 업무를 확인하세요`;const today=now.toISOString().split('T')[0],mm=String(now.getMonth()+1).padStart(2,'0'),dd=String(now.getDate()).padStart(2,'0'),todayMD=mm+'-'+dd;const bdP=US.filter(u=>u.birthday===todayMD&&u.role!=='admin');const todayEv=EV.filter(e=>e.event_date===today);const cI={exam:'📝',report:'📊',reward:'🏆',education:'📚',meeting:'🤝',sign:'✍️',general:'📌'};const cC={exam:'i-purple',report:'i-blue',reward:'i-orange',education:'i-green',meeting:'i-blue',sign:'i-orange',general:'i-blue'};const tM={'t-imp':['t-imp','중요'],'t-reg':['t-reg','정기'],'t-ddl':['t-ddl','마감']};let h='';bdP.forEach(p=>{h+=`<div class="tc bday"><div class="tch"><div class="tci i-pink">🎂</div><div class="tcf"><div class="tcn">${p.name} 님 생일 축하! 🎉</div><div class="tcm">${p.org_center||p.org_sub_region||''} ${p.birthday_type==='lunar'?'(음력)':''}</div></div><span class="tct t-bday">생일</span></div></div>`;});todayEv.forEach(ev=>{const acts=Array.isArray(ev.actions)?ev.actions:JSON.parse(ev.actions||'[]');const cat=ev.category||'general';const[tc,tt]=tM[ev.tag]||['t-reg','정기'];h+=`<div class="tc"><div class="tch"><div class="tci ${cC[cat]||'i-blue'}">${cI[cat]||'📌'}</div><div class="tcf"><div class="tcn">${ev.title}</div><div class="tcm">${ev.description||''}</div></div><span class="tct ${tc}">${tt}</span></div>${acts.length?`<div class="ta">${acts.map((a,i)=>`<div class="tai"><div class="tac" onclick="tgC(this)" data-key="td-${ev.id}-${i}">✓</div><div class="tat">${a}</div></div>`).join('')}</div>`:''}</div>`;});$('td-t').innerHTML=h||'<div class="te"><div class="tei">✅</div><div class="tet">오늘 예정 업무 없음</div></div>';
+// TODAY
+function rToday(){const now=new Date(),days=['일','월','화','수','목','금','토'];$('td-d').textContent=`${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일 (${days[now.getDay()]})`;$('td-h').textContent=`${CU.name} 님, 오늘의 업무를 확인하세요`;const today=now.toISOString().split('T')[0],mm=String(now.getMonth()+1).padStart(2,'0'),dd=String(now.getDate()).padStart(2,'0'),todayMD=mm+'-'+dd;const bdP=US.filter(u=>u.birthday===todayMD&&u.role!=='admin');const todayEv=EV.filter(e=>e.event_date===today);const cI={exam:'📝',report:'📊',reward:'🏆',education:'📚',meeting:'🤝',sign:'✍️',general:'📌'};const cC={exam:'i-purple',report:'i-blue',reward:'i-orange',education:'i-green',meeting:'i-blue',sign:'i-orange',general:'i-blue'};const tM={'t-imp':['t-imp','중요'],'t-reg':['t-reg','정기'],'t-ddl':['t-ddl','마감']};let h='';bdP.forEach(p=>{h+=`<div class="tc bday"><div class="tch"><div class="tci i-pink">🎂</div><div class="tcf"><div class="tcn">${p.name} 님 생일 축하! 🎉</div><div class="tcm">${p.org_center||''} ${p.birthday_type==='lunar'?'(음력)':''}</div></div><span class="tct t-bday">생일</span></div></div>`;});todayEv.forEach(ev=>{const acts=Array.isArray(ev.actions)?ev.actions:JSON.parse(ev.actions||'[]');const cat=ev.category||'general';const[tc,tt]=tM[ev.tag]||['t-reg','정기'];h+=`<div class="tc"><div class="tch"><div class="tci ${cC[cat]||'i-blue'}">${cI[cat]||'📌'}</div><div class="tcf"><div class="tcn">${ev.title}</div><div class="tcm">${ev.description||''}</div></div><span class="tct ${tc}">${tt}</span></div>${acts.length?`<div class="ta">${acts.map((a,i)=>`<div class="tai"><div class="tac" onclick="tgC(this)" data-key="td-${ev.id}-${i}">✓</div><div class="tat">${a}</div></div>`).join('')}</div>`:''}</div>`;});$('td-t').innerHTML=h||'<div class="te"><div class="tei">✅</div><div class="tet">오늘 예정 업무 없음</div></div>';
 const dow=now.getDay(),mon=new Date(now);mon.setDate(now.getDate()-(dow===0?6:dow-1));const sun=new Date(mon);sun.setDate(mon.getDate()+6);const wEv=EV.filter(e=>{const d=new Date(e.event_date);return d>=mon&&d<=sun&&e.event_date!==today;});const wBd=US.filter(u=>{if(!u.birthday||u.role==='admin')return false;const[bm,bd]=u.birthday.split('-').map(Number);for(let i=0;i<7;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);if(d.toISOString().split('T')[0]===today)continue;if(d.getMonth()+1===bm&&d.getDate()===bd)return true;}return false;});let wH='';wBd.forEach(p=>{wH+=`<div class="tc bday"><div class="tch"><div class="tci i-pink">🎂</div><div class="tcf"><div class="tcn">${p.name} 님 생일 (${p.birthday})</div><div class="tcm">${p.org_center||''}</div></div><span class="tct t-bday">생일</span></div></div>`;});wEv.forEach(ev=>{const cat=ev.category||'general';const[tc,tt]=tM[ev.tag]||['t-reg','정기'];const ed=new Date(ev.event_date);wH+=`<div class="tc"><div class="tch"><div class="tci ${cC[cat]||'i-blue'}">${cI[cat]||'📌'}</div><div class="tcf"><div class="tcn">${ev.title}</div><div class="tcm">${ed.getMonth()+1}/${ed.getDate()}(${days[ed.getDay()]}) · ${ev.description||''}</div></div><span class="tct ${tc}">${tt}</span></div></div>`;});$('td-w').innerHTML=wH||'<div class="ld">이번 주 추가 일정 없음</div>';document.querySelectorAll('.tac').forEach(el=>{if(localStorage.getItem(el.dataset.key)==='1'){el.classList.add('done');el.nextElementSibling.classList.add('done');}});}
 function tgC(el){el.classList.toggle('done');el.nextElementSibling.classList.toggle('done');el.classList.contains('done')?localStorage.setItem(el.dataset.key,'1'):localStorage.removeItem(el.dataset.key);}
 
-// ── GUIDES (카테고리 구조) ──
-const CAT_MAP={njob:{label:'N잡크루',subs:['유입단계','학습단계','시험단계','코드등록단계','가동단계']},rebuild:{label:'리빌딩',subs:['이관','친숙','가동','수수료전환','계속분관리']},faq:{label:'FAQ',subs:[]}};
-async function lG(){const{data}=await db.from('guides').select('*').order('created_at',{ascending:false});G=data||[];renderCatBar();rG();}
-function renderCatBar(){let h='<button class="main-cat active" onclick="setMainCat(\'all\',this)">전체</button>';Object.entries(CAT_MAP).forEach(([k,v])=>{h+=`<button class="main-cat" onclick="setMainCat('${k}',this)">${v.label}</button>`;});$('main-cat-bar').innerHTML=h;renderSubCatBar();}
-function renderSubCatBar(){if(curMainCat==='all'||!CAT_MAP[curMainCat]||!CAT_MAP[curMainCat].subs.length){$('sub-cat-bar').innerHTML='';return;}let h=`<button class="sub-cat active" onclick="setSubCat('all',this)">전체</button>`;CAT_MAP[curMainCat].subs.forEach(s=>{h+=`<button class="sub-cat" onclick="setSubCat('${s}',this)">${s}</button>`;});$('sub-cat-bar').innerHTML=h;}
-function setMainCat(c,btn){curMainCat=c;curSubCat='all';document.querySelectorAll('.main-cat').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderSubCatBar();rG();}
-function setSubCat(c,btn){curSubCat=c;document.querySelectorAll('.sub-cat').forEach(b=>b.classList.remove('active'));btn.classList.add('active');rG();}
-function searchGuide(q){searchQ=q.toLowerCase();rG();}
-function rG(){let items=G;if(curMainCat!=='all')items=items.filter(g=>g.main_category===curMainCat);if(curSubCat!=='all')items=items.filter(g=>g.category===curSubCat);if(searchQ)items=items.filter(g=>(g.title+g.description+(g.note||'')).toLowerCase().includes(searchQ));const iM={customer:'👋',rebuild:'🔄',script:'💬',reward:'🏆',policy:'📄','유입단계':'📥','학습단계':'📚','시험단계':'📝','코드등록단계':'🔑','가동단계':'🚀','이관':'📦','친숙':'🤝','가동':'⚡','수수료전환':'💰','계속분관리':'📊'};const cM2={customer:'i-blue',rebuild:'i-orange',script:'i-purple',reward:'i-orange',policy:'i-green','유입단계':'i-blue','학습단계':'i-green','시험단계':'i-purple','코드등록단계':'i-orange','가동단계':'i-green','이관':'i-blue','친숙':'i-green','가동':'i-orange','수수료전환':'i-orange','계속분관리':'i-blue'};$('gGrid').innerHTML=items.length?items.map(g=>{const ic=iM[g.category]||g.icon||'📋';const icC=cM2[g.category]||g.icon_class||'i-blue';const mcLabel=CAT_MAP[g.main_category]?.label||'';return`<div class="gc" onclick="oG(${g.id})"><div class="gtp"><div class="gic ${icC}">${ic}</div><span class="gbg ${g.badge}">${g.badge_text}</span></div><div class="gti">${g.title}</div><div class="gds">${g.description}</div><div class="gft"><span class="gsub">${mcLabel} ${g.category!==g.main_category?'> '+g.category:''}</span><div class="gar">→</div></div></div>`;}).join(''):'<div class="ld">가이드 없음</div>';}
-function oG(id){const g=G.find(x=>x.id===id);if(!g)return;$('gMt').textContent=g.title;let h='';const steps=Array.isArray(g.steps)?g.steps:JSON.parse(g.steps||'[]');if(steps.length){h+='<div class="msc">진행 순서</div>';steps.forEach((s,i)=>{h+=`<div class="msp"><div class="msn">${i+1}</div><div class="mst">${s}</div></div>`;});}if(g.note)h+=`<div class="msc">핵심 포인트</div><div class="mno">${g.note}</div>`;if(g.copyable_text)h+=`<div class="msc">📋 복사 가능 텍스트</div><div class="copy-block"><pre>${g.copyable_text}</pre><button class="copy-btn" onclick="copyText(this,'${encodeURIComponent(g.copyable_text)}')">복사</button></div>`;$('gMb').innerHTML=h;$('gO').classList.add('open');}
-function copyText(btn,encoded){const text=decodeURIComponent(encoded);navigator.clipboard.writeText(text).then(()=>{btn.textContent='복사 완료!';btn.classList.add('copied');setTimeout(()=>{btn.textContent='복사';btn.classList.remove('copied');},1500);}).catch(()=>toast('복사 실패'));}
+// GUIDES
+const CM={njob:{label:'N잡크루',subs:['유입단계','학습단계','시험단계','코드등록단계','가동단계']},rebuild:{label:'리빌딩',subs:['이관','친숙','가동','수수료전환','계속분관리']},faq:{label:'FAQ',subs:[]}};
+async function lG(){const{data}=await db.from('guides').select('*').order('created_at',{ascending:false});G=data||[];renderCB();rG();}
+function renderCB(){let h='<button class="main-cat active" onclick="setMC(\'all\',this)">전체</button>';Object.entries(CM).forEach(([k,v])=>{h+=`<button class="main-cat" onclick="setMC('${k}',this)">${v.label}</button>`;});$('mcb').innerHTML=h;renderSCB();}
+function renderSCB(){if(curMC==='all'||!CM[curMC]||!CM[curMC].subs.length){$('scb').innerHTML='';return;}let h=`<button class="sub-cat active" onclick="setSC('all',this)">전체</button>`;CM[curMC].subs.forEach(s=>{h+=`<button class="sub-cat" onclick="setSC('${s}',this)">${s}</button>`;});$('scb').innerHTML=h;}
+function setMC(c,btn){curMC=c;curSC='all';document.querySelectorAll('.main-cat').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderSCB();rG();}
+function setSC(c,btn){curSC=c;document.querySelectorAll('.sub-cat').forEach(b=>b.classList.remove('active'));btn.classList.add('active');rG();}
+function searchG(q){sQ=q.toLowerCase();rG();}
+function rG(){let items=G;if(curMC!=='all')items=items.filter(g=>g.main_category===curMC);if(curSC!=='all')items=items.filter(g=>g.category===curSC);if(sQ)items=items.filter(g=>(g.title+g.description+(g.note||'')+(g.copyable_text||'')).toLowerCase().includes(sQ));const iM2={njob:'📋',rebuild:'🔄',faq:'❓'};const cM2={njob:'i-blue',rebuild:'i-orange',faq:'i-green'};$('gGrid').innerHTML=items.length?items.map(g=>{const mc=CM[g.main_category]?.label||'';return`<div class="gc" onclick="oG(${g.id})"><div class="gtp"><div class="gic ${g.icon_class||cM2[g.main_category]||'i-blue'}">${g.icon||iM2[g.main_category]||'📋'}</div><span class="gbg ${g.badge}">${g.badge_text}</span></div><div class="gti">${g.title}</div><div class="gds">${g.description}</div><div class="gft"><span class="gsub">${mc}${g.category&&g.category!==g.main_category?' > '+g.category:''}</span><div class="gar">→</div></div></div>`;}).join(''):'<div class="ld">검색 결과가 없습니다</div>';}
+function oG(id){const g=G.find(x=>x.id===id);if(!g)return;$('gMt').textContent=g.title;let h='';const steps=Array.isArray(g.steps)?g.steps:JSON.parse(g.steps||'[]');if(steps.length){h+='<div class="msc">진행 순서</div>';steps.forEach((s,i)=>{h+=`<div class="msp"><div class="msn">${i+1}</div><div class="mst">${s}</div></div>`;});}if(g.note)h+=`<div class="msc">핵심 포인트</div><div class="mno">${g.note}</div>`;if(g.copyable_text)h+=`<div class="msc">📋 복사 가능 텍스트</div><div class="copy-block"><pre>${g.copyable_text}</pre><button class="copy-btn" onclick="cpTx(this,\`${encodeURIComponent(g.copyable_text)}\`)">복사</button></div>`;$('gMb').innerHTML=h;$('gO').classList.add('open');}
+function cpTx(btn,enc){navigator.clipboard.writeText(decodeURIComponent(enc)).then(()=>{btn.textContent='복사 완료!';btn.classList.add('copied');setTimeout(()=>{btn.textContent='복사';btn.classList.remove('copied');},1500);}).catch(()=>toast('복사 실패'));}
 
-// ── CALENDAR (구글캘린더 스타일) ──
+// CALENDAR
 async function lE(){const{data}=await db.from('events').select('*').order('event_date');EV=data||[];rEv();}
-function rCal(){const mN=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];$('cmt').textContent=`${cY}년 ${mN[cM]}`;const now=new Date(),fd=new Date(cY,cM,1).getDay(),ld=new Date(cY,cM+1,0).getDate(),pld=new Date(cY,cM,0).getDate();
-const mm=String(cM+1).padStart(2,'0');const evByDay={};EV.forEach(e=>{const d=new Date(e.event_date);if(d.getMonth()===cM&&d.getFullYear()===cY){const day=d.getDate();if(!evByDay[day])evByDay[day]=[];evByDay[day].push(e);}});
-const bdByDay={};US.filter(u=>u.birthday&&u.role!=='admin'&&u.birthday.startsWith(mm)).forEach(u=>{const d=parseInt(u.birthday.split('-')[1]);if(!bdByDay[d])bdByDay[d]=[];bdByDay[d].push(u);});
-let h='';for(let i=0;i<fd;i++){const d=pld-fd+1+i;h+=`<div class="cal-cell other"><div class="cal-num">${d}</div></div>`;}
-for(let d=1;d<=ld;d++){const isTd=d===now.getDate()&&cM===now.getMonth()&&cY===now.getFullYear();const dow=(fd+d-1)%7;const evs=evByDay[d]||[];const bds=bdByDay[d]||[];let cls=`cal-cell${isTd?' today':''}${dow===0?' sun':''}${dow===6?' sat':''}`;h+=`<div class="${cls}"><div class="cal-num">${d}</div>`;bds.forEach(u=>{h+=`<div class="cal-ev ev-bday">🎂${u.name}</div>`;});evs.slice(0,2).forEach(e=>{const ec=e.tag==='t-imp'?'ev-imp':e.tag==='t-ddl'?'ev-ddl':'ev-work';h+=`<div class="cal-ev ${ec}">${e.title}</div>`;});if(evs.length>2)h+=`<div class="cal-more">+${evs.length-2}개</div>`;h+=`</div>`;}
-const rem=42-fd-ld;for(let d=1;d<=rem;d++)h+=`<div class="cal-cell other"><div class="cal-num">${d}</div></div>`;$('cbody').innerHTML=h;}
+function rCal(){const mN=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];$('cmt').textContent=`${cY}년 ${mN[cM]}`;const now=new Date(),fd=new Date(cY,cM,1).getDay(),ld=new Date(cY,cM+1,0).getDate(),pld=new Date(cY,cM,0).getDate();const mm=String(cM+1).padStart(2,'0');const evByDay={};EV.forEach(e=>{const d=new Date(e.event_date);if(d.getMonth()===cM&&d.getFullYear()===cY){const day=d.getDate();if(!evByDay[day])evByDay[day]=[];evByDay[day].push(e);}});const bdByDay={};US.filter(u=>u.birthday&&u.role!=='admin'&&u.birthday.startsWith(mm)).forEach(u=>{const d=parseInt(u.birthday.split('-')[1]);if(!bdByDay[d])bdByDay[d]=[];bdByDay[d].push(u);});
+// 항상 6주 고정
+const totalCells=42;let h='';for(let i=0;i<fd;i++){h+=`<div class="cal-cell other"><div class="cal-num">${pld-fd+1+i}</div></div>`;}
+for(let d=1;d<=ld;d++){const isTd=d===now.getDate()&&cM===now.getMonth()&&cY===now.getFullYear();const dow=(fd+d-1)%7;const evs=evByDay[d]||[];const bds=bdByDay[d]||[];h+=`<div class="cal-cell${isTd?' today':''}${dow===0?' sun':''}${dow===6?' sat':''}"><div class="cal-num">${d}</div>`;bds.forEach(u=>{h+=`<div class="cal-ev ev-bday">🎂${u.name}</div>`;});evs.slice(0,2).forEach(e=>{const ec=e.tag==='t-imp'?'ev-imp':e.tag==='t-ddl'?'ev-ddl':'ev-work';h+=`<div class="cal-ev ${ec}">${e.title}</div>`;});if(evs.length>2)h+=`<div class="cal-more">+${evs.length-2}개</div>`;h+=`</div>`;}
+const rem=totalCells-fd-ld;for(let d=1;d<=rem;d++)h+=`<div class="cal-cell other"><div class="cal-num">${d}</div></div>`;$('cbody').innerHTML=h;}
 function chM(d){cM+=d;if(cM>11){cM=0;cY++;}if(cM<0){cM=11;cY--;}rCal();rEv();}
 function rEv(){const mm=String(cM+1).padStart(2,'0');const bdI=US.filter(u=>u.birthday&&u.role!=='admin'&&u.birthday.startsWith(mm)).map(u=>{const d=parseInt(u.birthday.split('-')[1]);return{day_num:d,month_label:['','JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][cM+1],title:`🎂 ${u.name}`,description:u.org_center||'',tag:'t-bday',tag_text:'생일'};});const curEv=EV.filter(e=>{const d=new Date(e.event_date);return d.getMonth()===cM&&d.getFullYear()===cY;});const all=[...curEv,...bdI].sort((a,b)=>a.day_num-b.day_num);$('evl').innerHTML=all.length?all.map(e=>`<div class="evi"><div class="evd"><div class="evdn">${e.day_num}</div><div class="evdm">${e.month_label||''}</div></div><div class="evb"><div class="evt">${e.title}</div><div class="evdc">${e.description||''}</div><span class="evtg ${e.tag}">${e.tag_text}</span></div></div>`).join(''):'<div class="ld">일정 없음</div>';}
 
-// ── NOTICES ──
+// NOTICES
 async function lN(){const{data}=await db.from('notices').select('*').order('created_at',{ascending:false});NO=data||[];rN();}
-function rN(){$('nList').innerHTML=NO.length?NO.map((n,i)=>`<div class="ni" onclick="oN(${i})"><div class="nic ${n.icon_class}">${n.icon}</div><div class="nib"><div class="nit">${n.title}</div><div class="nim"><span>${n.author}</span> · <span>${new Date(n.created_at).toLocaleDateString('ko-KR')}</span></div></div><div class="nia">›</div></div>`).join(''):'<div class="ld">공지 없음</div>';}
+function rN(){$('nList').innerHTML=NO.length?NO.map((n,i)=>`<div class="ni" onclick="oN(${i})"><div class="nic ${n.icon_class}">${n.icon}</div><div class="nib"><div class="nit">${n.title}</div><div class="nim">${n.author} · ${new Date(n.created_at).toLocaleDateString('ko-KR')}</div></div><div class="nia">›</div></div>`).join(''):'<div class="ld">공지 없음</div>';}
 function oN(i){const n=NO[i];$('nMt').textContent=n.title;$('nMb').innerHTML=`<div class="msc">발신</div><div class="mtx">${n.author} · ${new Date(n.created_at).toLocaleDateString('ko-KR')}</div><div class="msc">내용</div><div class="mno">${n.body}</div>`;$('nO').classList.add('open');}
 
-// ── USERS ──
+// USERS
 async function lU(){const{data}=await db.from('members').select('*').order('created_at');US=data||[];rUT();uSt();}
-function rUT(f=''){const list=f?US.filter(u=>u.name.includes(f)||u.user_id.includes(f)):US;$('utb').innerHTML=list.map(u=>{const[sc,st]={active:['tba','활성'],init:['tbi','대기']}[u.status]||['',''];const org=[u.org_region,u.org_sub_region,u.org_center].filter(Boolean).join('>');return`<tr><td><code style="font-size:9px;background:var(--g50);padding:1px 3px;border-radius:2px">${u.user_id}</code></td><td><strong>${u.name}</strong></td><td>${u.role||u.org_title||''}</td><td style="font-size:8px;color:var(--g600)">${org||'-'}</td><td>${u.phone}</td><td><span class="tbg ${sc}">${st}</span></td><td><button class="tbb" onclick="aRP('${u.user_id}')">PW</button><button class="tbb red" onclick="dU('${u.user_id}')">삭제</button></td></tr>`;}).join('');}
+function rUT(f=''){const list=f?US.filter(u=>u.name.includes(f)||u.user_id.includes(f)):US;$('utb').innerHTML=list.map(u=>{const[sc,st]={active:['tba','활성'],init:['tbi','대기']}[u.status]||['',''];const org=[u.org_region,u.org_sub_region,u.org_center].filter(Boolean).join(' > ');return`<tr><td><code style="font-size:12px;background:var(--g50);padding:2px 5px;border-radius:3px">${u.user_id}</code></td><td><strong>${u.name}</strong></td><td>${u.role||u.org_title||''}</td><td style="font-size:11px;color:var(--g600)">${org||'-'}</td><td>${u.phone}</td><td><span class="tbg ${sc}">${st}</span></td><td><button class="tbb" onclick="aRP('${u.user_id}')">PW</button><button class="tbb red" onclick="dU('${u.user_id}')">삭제</button></td></tr>`;}).join('');}
 function uSt(){$('xT').textContent=US.filter(u=>u.role!=='admin').length;$('xA').textContent=US.filter(u=>u.status==='active'&&u.role!=='admin').length;$('xI').textContent=US.filter(u=>u.status==='init'&&u.role!=='admin').length;}
 function sU(v){rUT(v);}
 async function regU(){const id=$('ru').value.trim(),nm=$('rn').value.trim(),ph=$('rp').value.trim(),rl=$('rr').value.trim(),dv=$('rdv').value.trim(),rg=$('rrg').value.trim(),su=$('rsu').value.trim(),ct=$('rct').value.trim();if(!/^\d{8}$/.test(id)){toast('⚠ 8자리');return;}if(!nm){toast('⚠ 이름');return;}if(US.find(u=>u.user_id===id)){toast('⚠ 중복');return;}await db.from('members').insert({user_id:id,password_hash:NH,name:nm,phone:ph,role:rl,status:'init',is_first:true,org_division:dv,org_region:rg,org_sub_region:su,org_center:ct,org_title:rl});['ru','rn','rp','rr','rdv','rrg','rsu','rct'].forEach(i=>$(i).value='');await lU();toast(`등록 ✅ ${nm}`);}
 async function aRP(uid){const u=US.find(x=>x.user_id===uid);if(!u)return;const tmp='n'+Math.floor(10000+Math.random()*90000),h=await sha(tmp);await db.from('members').update({password_hash:h,is_first:true,status:'init'}).eq('user_id',uid);console.log(`[SMS] ${u.phone} → ${tmp}`);await lU();toast('PW초기화 ✅');}
-async function dU(uid){if(!confirm('삭제?'))return;await db.from('members').delete().eq('user_id',uid);await lU();toast('삭제');}
-async function hCSV(input){const file=input.files[0];if(!file)return;const text=await file.text();const lines=text.split('\n').filter(l=>l.trim());let a=0,s=0;for(const line of lines.slice(1)){const p=line.split(',').map(x=>x.trim().replace(/"/g,''));const[id,nm,ph,rl,dv,rg,su,ct]=p;if(!id||!/^\d{8}$/.test(id)){s++;continue;}if(US.find(u=>u.user_id===id)){s++;continue;}const{error}=await db.from('members').insert({user_id:id,password_hash:NH,name:nm||'',phone:ph||'',role:rl||'팀장',status:'init',is_first:true,org_division:dv||'',org_region:rg||'',org_sub_region:su||'',org_center:ct||'',org_title:rl||'팀장'});if(error)s++;else a++;}await lU();toast(`CSV ✅ +${a} /${s}skip`);input.value='';}
+async function dU(uid){if(!confirm('삭제하시겠습니까?'))return;await db.from('members').delete().eq('user_id',uid);await lU();toast('삭제');}
+async function hCSV(input){const file=input.files[0];if(!file)return;const text=await file.text();const lines=text.split('\n').filter(l=>l.trim());let a=0,s=0;for(const line of lines.slice(1)){const p=line.split(',').map(x=>x.trim().replace(/"/g,''));const[id,nm,ph,rl,dv,rg,su,ct]=p;if(!id||!/^\d{8}$/.test(id)){s++;continue;}if(US.find(u=>u.user_id===id)){s++;continue;}const{error}=await db.from('members').insert({user_id:id,password_hash:NH,name:nm||'',phone:ph||'',role:rl||'팀장',status:'init',is_first:true,org_division:dv||'',org_region:rg||'',org_sub_region:su||'',org_center:ct||'',org_title:rl||''});if(error)s++;else a++;}await lU();toast(`CSV ✅ +${a} /${s}skip`);input.value='';}
 function dlT(){const csv='아이디,이름,휴대폰,직책,사업부,대권역,소권역,센터\n20260010,홍길동,010-1234-5678,팀장,리빌딩사업부,수도권,강남권,강남멤버스센터';const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv'}));a.download='계정등록_템플릿.csv';a.click();}
 
-// ── ADMIN REG ──
-async function regG(){const mc=$('gMC').value,sc=$('gSC').value.trim(),t=$('gTi').value.trim(),d=$('gD').value.trim(),sR=$('gS').value.trim(),n=$('gN').value.trim()||null,cp=$('gCP').value.trim()||'';if(!t){toast('⚠ 제목');return;}const steps=sR?sR.split('\n').filter(Boolean):[];const cat=sc||mc;const iM2={njob:'📋',rebuild:'🔄',faq:'❓'};const cM3={njob:'i-blue',rebuild:'i-orange',faq:'i-green'};await db.from('guides').insert({main_category:mc,category:cat,icon:iM2[mc]||'📋',icon_class:cM3[mc]||'i-blue',title:t,description:d,badge:'b-new',badge_text:'NEW',steps,note:n,copyable_text:cp});['gTi','gD','gS','gN','gCP','gSC'].forEach(i=>$(i).value='');await lG();toast('가이드 등록 ✅');}
+// ADMIN REG
+async function regG(){const mc=$('gMC').value,sc=$('gSC').value.trim(),t=$('gTi').value.trim(),d=$('gD').value.trim(),sR=$('gS').value.trim(),n=$('gN').value.trim()||null,cp=$('gCP').value.trim()||'';if(!t){toast('⚠ 제목');return;}const steps=sR?sR.split('\n').filter(Boolean):[];const cat=sc||mc;await db.from('guides').insert({main_category:mc,category:cat,icon:({njob:'📋',rebuild:'🔄',faq:'❓'})[mc]||'📋',icon_class:({njob:'i-blue',rebuild:'i-orange',faq:'i-green'})[mc]||'i-blue',title:t,description:d,badge:'b-new',badge_text:'NEW',steps,note:n,copyable_text:cp});['gTi','gD','gS','gN','gCP','gSC'].forEach(i=>$(i).value='');await lG();toast('가이드 등록 ✅');}
 async function regE(){const date=$('eD').value,tag=$('eT').value,title=$('eN').value.trim(),desc=$('eDc').value.trim(),cat=$('eC').value,actR=$('eA').value.trim();if(!date||!title){toast('⚠ 날짜/업무명');return;}const d=new Date(date);const tMap={'t-imp':'중요','t-reg':'정기','t-ddl':'마감'};const mL=['','JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];const actions=actR?actR.split('\n').filter(Boolean):[];await db.from('events').insert({event_date:date,day_num:d.getDate(),month_label:mL[d.getMonth()+1],title,description:desc,tag,tag_text:tMap[tag]||'정기',category:cat,actions});['eD','eN','eDc','eA'].forEach(i=>$(i).value='');await lE();rCal();rToday();toast('일정 ✅');}
 async function regN(){const t=$('nTi').value.trim(),b=$('nB').value.trim();if(!t||!b){toast('⚠ 제목/내용');return;}await db.from('notices').insert({icon:'📢',icon_class:'i-blue',title:t,author:CU.name||'관리자',body:b});['nTi','nB'].forEach(i=>$(i).value='');await lN();toast('공지 ✅');}
 
-// ── TABS ──
-function sT(n,btn){document.querySelectorAll('.tp').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));$('tab-'+n).classList.add('active');btn?.classList.add('active');if(n==='calendar'){rCal();rEv();}}
+// TABS
+function sT(n,btn){document.querySelectorAll('.tp').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.ds-btn').forEach(b=>b.classList.remove('active'));$('tab-'+n).classList.add('active');btn?.classList.add('active');if(n==='calendar'){rCal();rEv();}}
 function sTM(n,btn){document.querySelectorAll('.tp').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.mnb').forEach(b=>b.classList.remove('active'));$('tab-'+n).classList.add('active');btn.classList.add('active');if(n==='calendar'){rCal();rEv();}}
 function sA(n,btn){document.querySelectorAll('.ap').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.atbn').forEach(b=>b.classList.remove('active'));$('adm-'+n).classList.add('active');btn.classList.add('active');}
 
-// ── INIT ──
+// INIT
 ['f-phone','r-phone','rp'].forEach(id=>{const el=$(id);if(!el)return;el.addEventListener('input',function(){let v=this.value.replace(/\D/g,'');if(v.length>3&&v.length<=7)v=v.slice(0,3)+'-'+v.slice(3);else if(v.length>7)v=v.slice(0,3)+'-'+v.slice(3,7)+'-'+v.slice(7,11);this.value=v;});});
 document.addEventListener('keydown',e=>{if(e.key!=='Enter')return;if($('s-login').classList.contains('active'))doLogin();else if($('s-first').classList.contains('active'))doFirst();else if($('s-reset').classList.contains('active'))doReset();});
 loadSid();
