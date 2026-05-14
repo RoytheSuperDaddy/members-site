@@ -182,6 +182,15 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
 .cal-ev{font-size:10px;font-weight:600;padding:1px 4px;margin-bottom:1px;border-radius:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.5}
 .cal-ev.ev-work{background:#E6EFFF;color:var(--p)}.cal-ev.ev-imp{background:#FFE8E0;color:#E5563A}.cal-ev.ev-ddl{background:#FFF3EA;color:#E67E22}.cal-ev.ev-bday{background:#FFF0F6;color:#D63071}
 .cal-more{font-size:9px;color:var(--g400);padding:0 4px}
+.sync-wrap{position:relative;display:inline-block}
+.cal-sync-btn{background:var(--gr-hero);color:#fff;border:none;padding:8px 16px;border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:var(--f)}
+.cal-sync-btn:hover{opacity:.88}
+.sync-dd{position:absolute;right:0;top:calc(100% + 6px);background:var(--w);border:1.5px solid var(--g100);border-radius:var(--r);box-shadow:var(--sh-lg);min-width:190px;z-index:100;overflow:hidden;display:none}
+.sync-dd.open{display:block;animation:mi .15s ease}
+.sync-dd button{display:flex;align-items:center;gap:10px;width:100%;padding:11px 14px;border:none;background:none;font-size:13px;font-weight:500;color:var(--g800);cursor:pointer;font-family:var(--f);text-align:left}
+.sync-dd button:hover{background:var(--g50)}
+.sync-dd button+button{border-top:1px solid var(--g100)}
+.sync-ico{width:20px;height:20px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0}
 
 .ev-side{background:var(--w);border-radius:var(--r);border:1.5px solid var(--g100);box-shadow:var(--sh);overflow:hidden}
 .evh{padding:14px 16px 10px;border-bottom:1px solid var(--g100)}.evht{font-size:14px;font-weight:700}.evhs{font-size:11px;color:var(--g400)}
@@ -346,7 +355,7 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
     </div>
     <!-- 월력 -->
     <div class="tp" id="tab-calendar">
-      <div class="ph"><div class="pt">업무 월력</div><div class="pd">업무 일정과 생일을 확인하세요</div></div>
+      <div class="ph" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px"><div><div class="pt">업무 월력</div><div class="pd">업무 일정과 생일을 확인하세요</div></div><div class="sync-wrap"><button class="cal-sync-btn" onclick="tgSync(event)">📤 캘린더 동기화</button><div class="sync-dd" id="syncDd"><button onclick="syncTo('google')"><span class="sync-ico" style="background:#E8F0FE;color:#1a73e8">G</span>Google 캘린더</button><button onclick="syncTo('naver')"><span class="sync-ico" style="background:#E6F8EE;color:#03C75A">N</span>네이버 캘린더</button><button onclick="syncTo('ics')"><span class="sync-ico" style="background:var(--g100);color:var(--g600)">📥</span>.ics 다운로드</button></div></div></div>
       <div class="cal-layout">
         <div class="cal-wrap"><div class="cal-hdr"><button class="cal-nav" onclick="chM(-1)">‹</button><div class="cal-mt" id="cmt"></div><button class="cal-nav" onclick="chM(1)">›</button></div><div class="cal-wk"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div><div class="cal-body" id="cbody"></div></div>
         <div class="ev-side"><div class="evh"><div class="evht">📋 이번 달 일정</div><div class="evhs">업무 + 생일</div></div><div class="evl" id="evl"></div></div>
@@ -475,6 +484,10 @@ const totalCells=42;let h='';for(let i=0;i<fd;i++){h+=`<div class="cal-cell othe
 for(let d=1;d<=ld;d++){const isTd=d===now.getDate()&&cM===now.getMonth()&&cY===now.getFullYear();const dow=(fd+d-1)%7;const evs=evByDay[d]||[];const bds=bdByDay[d]||[];h+=`<div class="cal-cell${isTd?' today':''}${dow===0?' sun':''}${dow===6?' sat':''}"><div class="cal-num">${d}</div>`;bds.forEach(u=>{h+=`<div class="cal-ev ev-bday">🎂${u.name}</div>`;});evs.slice(0,2).forEach(e=>{const ec=e.tag==='t-imp'?'ev-imp':e.tag==='t-ddl'?'ev-ddl':'ev-work';h+=`<div class="cal-ev ${ec}">${e.title}</div>`;});if(evs.length>2)h+=`<div class="cal-more">+${evs.length-2}개</div>`;h+=`</div>`;}
 const rem=totalCells-fd-ld;for(let d=1;d<=rem;d++)h+=`<div class="cal-cell other"><div class="cal-num">${d}</div></div>`;$('cbody').innerHTML=h;}
 function chM(d){cM+=d;if(cM>11){cM=0;cY++;}if(cM<0){cM=11;cY--;}rCal();rEv();}
+function tgSync(e){e.stopPropagation();const d=$('syncDd');const isOpen=d.classList.contains('open');d.classList.toggle('open');if(!isOpen){const h=function(ev){if(!ev.target.closest('.sync-wrap')){d.classList.remove('open');document.removeEventListener('click',h);}};document.addEventListener('click',h);}}
+function mkIcs(){const esc=s=>(s||'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n');const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//멤버스허브//멤버스센터//KR','CALSCALE:GREGORIAN','X-WR-CALNAME:업무 월력','X-WR-CALDESC:삼성화재 멤버스센터 업무 일정'];EV.forEach(e=>{const dt=(e.event_date||'').replace(/-/g,'');if(!dt)return;const next=new Date(e.event_date);next.setDate(next.getDate()+1);const dtEnd=next.toISOString().slice(0,10).replace(/-/g,'');const uid=`ev-${e.id||Math.random().toString(36).slice(2)}@memberscenter`;lines.push('BEGIN:VEVENT',`UID:${uid}`,`DTSTART;VALUE=DATE:${dt}`,`DTEND;VALUE=DATE:${dtEnd}`,`SUMMARY:${esc(e.title)}`,`DESCRIPTION:${esc(e.description)}`,`STATUS:CONFIRMED`,'END:VEVENT');});lines.push('END:VCALENDAR');return lines.join('\r\n');}
+function dlIcs(){const blob=new Blob([mkIcs()],{type:'text/calendar;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='멤버스허브_업무월력.ics';document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(()=>URL.revokeObjectURL(url),1000);}
+function syncTo(type){$('syncDd').classList.remove('open');dlIcs();if(type==='google'){toast('📥 다운로드 완료 → Google 캘린더 설정에서 가져오기를 선택하세요');setTimeout(()=>window.open('https://calendar.google.com/calendar/r/settings/import','_blank'),600);}else if(type==='naver'){toast('📥 다운로드 완료 → 네이버 캘린더 설정에서 가져오기를 선택하세요');setTimeout(()=>window.open('https://calendar.naver.com','_blank'),600);}else{toast('📥 .ics 파일 다운로드 완료');}}
 function rEv(){const mm=String(cM+1).padStart(2,'0');const bdI=US.filter(u=>u.birthday&&u.role!=='admin'&&u.birthday.startsWith(mm)).map(u=>{const d=parseInt(u.birthday.split('-')[1]);return{day_num:d,month_label:['','JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][cM+1],title:`🎂 ${u.name}`,description:u.org_center||'',tag:'t-bday',tag_text:'생일'};});const curEv=EV.filter(e=>{const d=new Date(e.event_date);return d.getMonth()===cM&&d.getFullYear()===cY;});const all=[...curEv,...bdI].sort((a,b)=>a.day_num-b.day_num);$('evl').innerHTML=all.length?all.map(e=>`<div class="evi"><div class="evd"><div class="evdn">${e.day_num}</div><div class="evdm">${e.month_label||''}</div></div><div class="evb"><div class="evt">${e.title}</div><div class="evdc">${e.description||''}</div><span class="evtg ${e.tag}">${e.tag_text}</span></div></div>`).join(''):'<div class="ld">일정 없음</div>';}
 
 // NOTICES
