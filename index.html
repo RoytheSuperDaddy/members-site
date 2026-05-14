@@ -250,6 +250,10 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
   .ab{padding:28px 18px}
   .hdr{height:48px;padding:0 12px}
   .chatbot-placeholder{bottom:72px;right:14px;width:48px;height:48px;font-size:20px}
+  .sync-wrap{width:100%}
+  .cal-sync-btn{width:100%;justify-content:center;padding:10px 16px;font-size:14px}
+  .sync-dd{left:0;right:0;min-width:auto}
+  .sync-dd button{padding:13px 16px;font-size:14px}
 }
 </style>
 </head>
@@ -490,7 +494,19 @@ function chM(d){cM+=d;if(cM>11){cM=0;cY++;}if(cM<0){cM=11;cY--;}rCal();rEv();}
 function tgSync(e){e.stopPropagation();const d=$('syncDd');const isOpen=d.classList.contains('open');d.classList.toggle('open');if(!isOpen){const h=function(ev){if(!ev.target.closest('.sync-wrap')){d.classList.remove('open');document.removeEventListener('click',h);}};document.addEventListener('click',h);}}
 function mkIcs(){const esc=s=>(s||'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n');const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//멤버스허브//멤버스센터//KR','CALSCALE:GREGORIAN','X-WR-CALNAME:업무 월력','X-WR-CALDESC:삼성화재 멤버스센터 업무 일정'];EV.forEach(e=>{const dt=(e.event_date||'').replace(/-/g,'');if(!dt)return;const next=new Date(e.event_date);next.setDate(next.getDate()+1);const dtEnd=next.toISOString().slice(0,10).replace(/-/g,'');const uid=`ev-${e.id||Math.random().toString(36).slice(2)}@memberscenter`;lines.push('BEGIN:VEVENT',`UID:${uid}`,`DTSTART;VALUE=DATE:${dt}`,`DTEND;VALUE=DATE:${dtEnd}`,`SUMMARY:${esc(e.title)}`,`DESCRIPTION:${esc(e.description)}`,`STATUS:CONFIRMED`,'END:VEVENT');});lines.push('END:VCALENDAR');return lines.join('\r\n');}
 function dlIcs(){const blob=new Blob([mkIcs()],{type:'text/calendar;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='멤버스허브_업무월력.ics';document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(()=>URL.revokeObjectURL(url),1000);}
-function syncTo(type){$('syncDd').classList.remove('open');dlIcs();if(type==='google'){toast('📥 다운로드 완료 → Google 캘린더 설정에서 가져오기를 선택하세요');setTimeout(()=>window.open('https://calendar.google.com/calendar/r/settings/import','_blank'),600);}else if(type==='naver'){toast('📥 다운로드 완료 → 네이버 캘린더 설정에서 가져오기를 선택하세요');setTimeout(()=>window.open('https://calendar.naver.com','_blank'),600);}else{toast('📥 .ics 파일 다운로드 완료');}}
+function syncTo(type){
+  $('syncDd').classList.remove('open');
+  const mob=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  dlIcs();
+  if(mob){
+    const msg={google:'📥 다운로드된 파일을 열면 Google 캘린더 앱으로 가져오기됩니다',naver:'📥 다운로드된 파일을 열면 네이버 캘린더 앱으로 가져오기됩니다',ics:'📥 .ics 파일 다운로드 완료 — 캘린더 앱에서 열어주세요'};
+    toast(msg[type]||msg.ics);
+  }else{
+    if(type==='google'){toast('📥 다운로드 완료 → Google 캘린더 설정에서 가져오기를 선택하세요');setTimeout(()=>window.open('https://calendar.google.com/calendar/r/settings/import','_blank'),600);}
+    else if(type==='naver'){toast('📥 다운로드 완료 → 네이버 캘린더 설정에서 가져오기를 선택하세요');setTimeout(()=>window.open('https://calendar.naver.com','_blank'),600);}
+    else{toast('📥 .ics 파일 다운로드 완료');}
+  }
+}
 function rEv(){const mm=String(cM+1).padStart(2,'0');const bdI=US.filter(u=>u.birthday&&u.role!=='admin'&&u.birthday.startsWith(mm)).map(u=>{const d=parseInt(u.birthday.split('-')[1]);return{day_num:d,month_label:['','JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][cM+1],title:`🎂 ${u.name}`,description:u.org_center||'',tag:'t-bday',tag_text:'생일'};});const curEv=EV.filter(e=>{const d=new Date(e.event_date);return d.getMonth()===cM&&d.getFullYear()===cY;});const all=[...curEv,...bdI].sort((a,b)=>a.day_num-b.day_num);$('evl').innerHTML=all.length?all.map(e=>`<div class="evi"><div class="evd"><div class="evdn">${e.day_num}</div><div class="evdm">${e.month_label||''}</div></div><div class="evb"><div class="evt">${e.title}</div><div class="evdc">${e.description||''}</div><span class="evtg ${e.tag}">${e.tag_text}</span></div></div>`).join(''):'<div class="ld">일정 없음</div>';}
 
 // NOTICES
