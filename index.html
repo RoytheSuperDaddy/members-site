@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>N잡크루 멤버스 허브</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230061B8'/%3E%3Cpath d='M13 50 L13 15 L22 15 L36 34 L36 15 L44 15 L44 26' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Cpath d='M30 31 L44 50' stroke='%235BC2E7' stroke-width='4' stroke-linecap='round'/%3E%3Ccircle cx='44' cy='50' r='3.5' fill='%235BC2E7'/%3E%3C/svg%3E">
+<title>삼성화재 멤버스팀장 전용 허브</title>
+<link rel="icon" href="assets/members-symbol.png">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
@@ -430,7 +430,7 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
 </div>
 
 <!-- 모바일 하단 네비 (SVG 아이콘 - 검은점 해결) -->
-<div class="mn"><div class="mni">
+<div class="mn" id="mn"><div class="mni">
   <button class="mnb active" onclick="sTM('today',this)"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg><span class="ml">오늘</span></button>
   <button class="mnb" onclick="sTM('guide',this)"><svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zM6 20V4h5v7h7v9H6z"/></svg><span class="ml">가이드</span></button>
   <button class="mnb" onclick="sTM('calendar',this)"><svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg><span class="ml">월력</span></button>
