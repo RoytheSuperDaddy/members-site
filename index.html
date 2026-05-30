@@ -740,7 +740,7 @@ async function hCSV(input){const file=input.files[0];if(!file)return;const text=
 function dlT(){const csv='아이디,이름,휴대폰,직책,사업부,대권역,소권역,센터\n20260010,홍길동,010-1234-5678,팀장,리빌딩사업부,수도권,강남권,강남멤버스센터';const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv'}));a.download='계정등록_템플릿.csv';a.click();}
 
 // MEDIA UPLOAD
-async function uploadMedia(file,prefix){const path=`${prefix}/${Date.now()}_${file.name}`;const{error}=await db.storage.from('media').upload(path,file,{upsert:true});if(error){toast('업로드 실패');return null;}return db.storage.from('media').getPublicUrl(path).data.publicUrl;}
+async function uploadMedia(file,prefix){const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');const path=`${prefix}/${Date.now()}_${safe}`;const{error}=await db.storage.from('media').upload(path,file,{upsert:true,contentType:file.type});if(error){toast('업로드 실패: '+error.message);return null;}return db.storage.from('media').getPublicUrl(path).data.publicUrl;}
 async function uploadFiles(files,prefix){const results=[];for(const f of files){const url=await uploadMedia(f,prefix);if(url)results.push({name:f.name,url});}return results;}
 function renderImgList(p){const el=$(p+'EImgList');if(!el)return;const arr=p==='g'?gEImgUrls:nEImgUrls;el.innerHTML=arr.length?arr.map((url,i)=>`<div class="img-thumb"><img src="${url}" alt=""><button class="img-del" onclick="rmImg('${p}',${i})">✕</button></div>`).join(''):'';el.style.display=arr.length?'flex':'none';}
 function rmImg(p,i){if(p==='g')gEImgUrls.splice(i,1);else nEImgUrls.splice(i,1);renderImgList(p);}
