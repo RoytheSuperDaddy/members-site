@@ -79,7 +79,7 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
 
 /* ═══ 모바일 하단 네비 - SVG 아이콘 (검은점 해결) ═══ */
 .mn{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--w);border-top:1.5px solid var(--g200);z-index:200;padding:4px 0 env(safe-area-inset-bottom,2px)}
-.mni{display:grid;grid-template-columns:repeat(5,1fr)}
+.mni{display:grid;grid-template-columns:repeat(6,1fr)}
 .mnb{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:none;border:none;padding:6px 0;cursor:pointer;font-family:var(--f);-webkit-appearance:none;appearance:none;outline:none;min-height:44px}
 .mnb svg{width:20px;height:20px;fill:var(--g400);transition:fill .15s}
 .mnb.active svg{fill:var(--p)}
@@ -217,6 +217,7 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
 .tbg{font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px}.tba{background:#E8F8F4;color:#00A878}.tbi{background:#FFF3EA;color:#E67E22}
 .tbb{padding:4px 8px;font-size:11px;font-weight:700;border:1.5px solid var(--g200);background:#fff;border-radius:4px;cursor:pointer;font-family:var(--f);color:var(--g600);margin-right:3px}.tbb:hover{border-color:var(--p);color:var(--p)}.tbb.red:hover{border-color:var(--err);color:var(--err)}
 .fchip{padding:4px 11px;background:var(--w);border:1.5px solid var(--g200);color:var(--g600);font-size:12px;font-weight:600;border-radius:12px;cursor:pointer;font-family:var(--f);transition:.15s}.fchip.active{background:var(--p);border-color:var(--p);color:#fff}.fchip:hover:not(.active){background:var(--g50);border-color:var(--g400)}.tbl{background:#F0EBFF;color:#7B2FBE}
+.lk-card{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--w);border:1.5px solid var(--g100);border-radius:var(--r);text-decoration:none;transition:.2s;color:var(--g900)}.lk-card:hover{border-color:var(--p);transform:translateY(-2px);box-shadow:var(--sh-lg)}.lk-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.lcn{font-size:14px;font-weight:700;color:var(--g900)}.lcm{font-size:12px;color:var(--g400);margin-top:2px}.lca{font-size:16px;color:var(--g400);flex-shrink:0}
 .adm-list{margin-top:12px;border:1.5px solid var(--g100);border-radius:var(--rs);overflow:hidden}
 .adm-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--g100)}.adm-row:last-child{border-bottom:none}.adm-row:hover{background:var(--g50)}
 .adm-ri{flex:1;min-width:0}.adm-rt{font-size:13px;font-weight:600;color:var(--g900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.adm-rm{font-size:11px;color:var(--g400);margin-top:2px}
@@ -309,7 +310,8 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
   .cal-sync-btn{width:100%;justify-content:center;padding:10px 16px;font-size:14px}
   .sync-dd{left:0;right:0;min-width:auto}
   .sync-dd button{padding:13px 16px;font-size:14px}
-  .mn:not(.is-admin) .mni{grid-template-columns:repeat(4,1fr)}
+  .mn:not(.is-admin) .mni{grid-template-columns:repeat(5,1fr)}
+  .lk-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -383,6 +385,7 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
       <button class="ds-btn" onclick="sT('guide',this)"><span class="ds-ico">📋</span> 업무 가이드</button>
       <button class="ds-btn" onclick="sT('calendar',this)"><span class="ds-ico">📅</span> 업무 월력</button>
       <button class="ds-btn" onclick="sT('notice',this)"><span class="ds-ico">📢</span> 공지사항</button>
+      <button class="ds-btn" onclick="sT('links',this)"><span class="ds-ico">🔗</span> 관련 사이트</button>
       <button class="ds-btn an" onclick="sT('admin',this)"><span class="ds-ico">⚙️</span> 관리자</button>
     </div>
     <div class="ds-user">
@@ -459,6 +462,27 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
         <div class="fc"><div class="fct" style="display:flex;justify-content:space-between;align-items:center"><span>📢 등록된 공지 <span id="nCnt" style="font-size:12px;color:var(--g400);font-weight:400"></span></span></div><div class="adm-list" id="nAdmList"><div class="ld">로딩 중...</div></div></div></div>
       <div class="ap" id="adm-chk"><div class="fc"><div class="fct">📊 오늘의 할일 체크 현황</div><div id="chkList"><div class="ld">로딩 중...</div></div></div></div>
     </div>
+    <!-- 관련 사이트 -->
+    <div class="tp" id="tab-links">
+      <div class="ph"><div class="pt">🔗 관련 사이트</div><div class="pd">N잡크루 및 관련 서비스 바로가기</div></div>
+      <div style="margin-bottom:24px">
+        <div style="font-size:11px;font-weight:700;color:var(--njob);letter-spacing:.5px;margin-bottom:12px;padding:0 2px;display:flex;align-items:center;gap:6px"><img src="assets/njobcrew-ci.png" alt="N잡크루" style="height:14px;object-fit:contain;background:#fff;border-radius:3px;padding:1px 4px"> N잡크루</div>
+        <div class="lk-grid">
+          <a href="https://njobcrew.admin.touchclass.com" target="_blank" rel="noopener" class="lk-card"><div class="tci i-blue">💼</div><div style="flex:1;min-width:0"><div class="lcn">관리자 페이지</div><div class="lcm">TouchClass 플랫폼 관리</div></div><span class="lca">↗</span></a>
+          <a href="https://www.samsungfirenjobcrew.com/" target="_blank" rel="noopener" class="lk-card"><div class="tci i-blue">📋</div><div style="flex:1;min-width:0"><div class="lcn">신청 페이지</div><div class="lcm">N잡크루 팀장 신청</div></div><span class="lca">↗</span></a>
+          <a href="https://about.samsungfirenjobcrew.com/" target="_blank" rel="noopener" class="lk-card"><div class="tci i-cyan">📝</div><div style="flex:1;min-width:0"><div class="lcn">홍보 블로그</div><div class="lcm">N잡크루 소개 & 홍보</div></div><span class="lca">↗</span></a>
+          <a href="https://www.youtube.com/@%EC%82%BC%EC%84%B1%ED%99%94%EC%9E%ACN%EC%9E%A1%ED%81%AC%EB%A3%A8" target="_blank" rel="noopener" class="lk-card"><div class="tci i-orange">▶️</div><div style="flex:1;min-width:0"><div class="lcn">유튜브</div><div class="lcm">삼성화재 N잡크루</div></div><span class="lca">↗</span></a>
+          <a href="https://www.instagram.com/sfmi.njobcrew_official/" target="_blank" rel="noopener" class="lk-card"><div class="tci i-pink">📸</div><div style="flex:1;min-width:0"><div class="lcn">인스타그램</div><div class="lcm">@sfmi.njobcrew_official</div></div><span class="lca">↗</span></a>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--g600);letter-spacing:.5px;margin-bottom:12px;padding:0 2px">RC 러닝 플랫폼</div>
+        <div class="lk-grid">
+          <a href="#" class="lk-card" style="opacity:.55" onclick="event.preventDefault();toast('⚠ Android 링크 미등록 — 관리자에게 문의')"><div class="tci i-green">🤖</div><div style="flex:1;min-width:0"><div class="lcn">MOVE 앱</div><div class="lcm">Android 다운로드</div></div><span class="lca">↗</span></a>
+          <a href="#" class="lk-card" style="opacity:.55" onclick="event.preventDefault();toast('⚠ iOS 링크 미등록 — 관리자에게 문의')"><div class="tci i-blue">🍎</div><div style="flex:1;min-width:0"><div class="lcn">MOVE 앱</div><div class="lcm">iOS 다운로드</div></div><span class="lca">↗</span></a>
+        </div>
+      </div>
+    </div>
   </main>
 </div>
 
@@ -468,6 +492,7 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
   <button class="mnb" onclick="sTM('guide',this)"><svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zM6 20V4h5v7h7v9H6z"/></svg><span class="ml">가이드</span></button>
   <button class="mnb" onclick="sTM('calendar',this)"><svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg><span class="ml">월력</span></button>
   <button class="mnb" onclick="sTM('notice',this)"><svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg><span class="ml">공지</span></button>
+  <button class="mnb" onclick="sTM('links',this)"><svg viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg><span class="ml">링크</span></button>
   <button class="mnb am" onclick="sTM('admin',this)"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.48.48 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 00-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1115.6 12 3.6 3.6 0 0112 15.6z"/></svg><span class="ml">관리</span></button>
 </div></div>
 
