@@ -373,7 +373,7 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
     <img src="assets/members-horizontal.png" alt="삼성화재 멤버스센터" style="height:32px;background:rgba(255,255,255,.95);padding:5px 10px;border-radius:7px;display:block">
     <span class="hb">BETA</span>
   </div>
-  <div class="hr"><span class="hu"><strong id="hname"></strong> 님</span><button class="ib" onclick="myPage()">내 정보</button><button class="ib" onclick="logout()">로그아웃</button></div>
+  <div class="hr"><span class="hu"><strong id="hname"></strong> 님</span><button class="ib" id="pushBtn" onclick="togglePush()" style="display:none">🔔 알림</button><button class="ib" onclick="myPage()">내 정보</button><button class="ib" onclick="logout()">로그아웃</button></div>
 </div></header>
 
 <div class="desk-wrap">
@@ -617,6 +617,7 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
 <script>
 const SU='https://vvgghtpntxffysxijkxk.supabase.co',SK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2Z2dodHBudHhmZnlzeGlqa3hrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMTMzMTksImV4cCI6MjA5MjU4OTMxOX0.zb449uHH6QteQphwi8Rf48ZzTJzfZuolhZS8PZ-_lO4';
 const db=supabase.createClient(SU,SK),NH='8072d5211bb5f9f9c2408abb8408015fdb7f42b892e5ea9e86f3d4a8faf79c10',ADS=['10000001','10000002','10000003','10000004','10000005'];
+const VAPID_PUB='BJnqBMBBKfDLjjcZA9tlUgpShqPhgnfWXyLKtiX68_TUbM30ESzhwA-7SIqQ7gMFwLonT_y7w8OJtg_8x4umMAw';
 let CU=null,cY=new Date().getFullYear(),cM=new Date().getMonth(),G=[],EV=[],NO=[],US=[];
 let curMC='all',curSC='all',sQ='',gSort='title';
 let uFilt={st:'all',rl:'all',dv:'all',q:''};
@@ -641,8 +642,40 @@ async function doLogin(){const id=$('l-id').value.trim(),pw=$('l-pw').value;$('l
 async function doFirst(){const nm=$('f-name').value.trim(),pw1=$('f-pw1').value,pw2=$('f-pw2').value,bd=$('f-bday').value.trim(),bt=$('f-btype').value;if(!nm){sE('f-err','이름을 입력해주세요.');return;}if(bd&&!/^\d{2}-\d{2}$/.test(bd)){sE('f-err','생일: MM-DD');return;}if(pw1==='n1234'){sE('f-err','초기PW 사용불가');return;}if(!pwV(pw1)){sE('f-err','영문+숫자 8자 이상');return;}if(pw1!==pw2){sE('f-err','PW 불일치');return;}const h=await sha(pw1);await db.from('members').update({name:nm,password_hash:h,is_first:false,status:'active',last_login:new Date().toISOString(),birthday:bd,birthday_type:bt}).eq('id',CU.id);Object.assign(CU,{name:nm,status:'active',is_first:false,password_hash:h,birthday:bd,birthday_type:bt});toast('설정 완료 ✅');enter();}
 async function doReset(){const id=$('r-id').value.trim();$('r-err').style.display='none';$('r-ok').style.display='none';if(!/^\d{8}$/.test(id)){sE('r-err','8자리 아이디를 입력하세요.');return;}const{data}=await db.from('members').select('id,name,pw_reset_request').eq('user_id',id).single();if(!data){sE('r-err','등록되지 않은 아이디입니다.');return;}if(data.pw_reset_request){sE('r-err','이미 초기화 요청이 접수되어 있습니다.');return;}await db.from('members').update({pw_reset_request:true,pw_reset_requested_at:new Date().toISOString()}).eq('user_id',id);$('r-ok').style.display='block';}
 function goHome(){document.querySelectorAll('.tp').forEach(p=>p.classList.remove('active'));$('tab-today').classList.add('active');document.querySelectorAll('.ds-btn').forEach(b=>b.classList.remove('active'));const db=document.querySelector('.ds-btn[onclick*="today"]');if(db)db.classList.add('active');document.querySelectorAll('.mnb').forEach(b=>b.classList.remove('active'));const mb=document.querySelector('.mnb[onclick*="today"]');if(mb)mb.classList.add('active');}
-function enter(){saveSession(CU.user_id);document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$('app').classList.add('active');$('hname').textContent=CU.name;$('ds-name').textContent=CU.name;$('ds-role').textContent=CU.role||CU.org_title||'';const isA=ADS.includes(CU.user_id)||CU.role==='admin';document.querySelectorAll('.an,.am').forEach(b=>b.style.display=isA?'':'none');$('mn').classList.toggle('is-admin',isA);$('chatbot').style.display='flex';updWM();init();}
-function logout(){clearSession();CU=null;chatInit=false;$('chatPanel').classList.remove('open');$('app').classList.remove('active');$('l-pw').value='';$('chatbot').style.display='none';updWM();ss('s-login');}
+function enter(){saveSession(CU.user_id);document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$('app').classList.add('active');$('hname').textContent=CU.name;$('ds-name').textContent=CU.name;$('ds-role').textContent=CU.role||CU.org_title||'';const isA=ADS.includes(CU.user_id)||CU.role==='admin';document.querySelectorAll('.an,.am').forEach(b=>b.style.display=isA?'':'none');$('mn').classList.toggle('is-admin',isA);$('chatbot').style.display='flex';updWM();init();initPush();}
+function logout(){clearSession();CU=null;chatInit=false;$('chatPanel').classList.remove('open');$('app').classList.remove('active');$('l-pw').value='';$('chatbot').style.display='none';$('pushBtn').style.display='none';updWM();ss('s-login');}
+
+// ── 웹 푸시 ──────────────────────────────────────────
+function urlB64(b){const p='='.repeat((4-b.length%4)%4),s=(b+p).replace(/-/g,'+').replace(/_/g,'/'),r=atob(s),o=new Uint8Array(r.length);for(let i=0;i<r.length;i++)o[i]=r.charCodeAt(i);return o;}
+async function initPush(){
+  if(!('serviceWorker' in navigator)||!('PushManager' in window))return;
+  try{
+    await navigator.serviceWorker.register('/sw.js');
+    const sw=await navigator.serviceWorker.ready;
+    const sub=await sw.pushManager.getSubscription();
+    const btn=$('pushBtn');
+    btn.style.display='';
+    btn.textContent=sub?'🔕 알림끄기':'🔔 알림';
+  }catch(e){}
+}
+async function togglePush(){
+  if(!('serviceWorker' in navigator))return;
+  try{
+    const sw=await navigator.serviceWorker.ready;
+    const sub=await sw.pushManager.getSubscription();
+    if(sub){
+      await sub.unsubscribe();
+      await db.from('push_subscriptions').delete().eq('user_id',CU.user_id);
+      $('pushBtn').textContent='🔔 알림';
+      toast('알림이 해제되었습니다.');
+    }else{
+      const ns=await sw.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlB64(VAPID_PUB)});
+      await db.from('push_subscriptions').upsert({user_id:CU.user_id,subscription:ns.toJSON(),active:true});
+      $('pushBtn').textContent='🔕 알림끄기';
+      toast('매일 오전 9시 알림이 설정되었습니다!');
+    }
+  }catch(e){toast('알림 설정 중 오류가 발생했습니다.');}
+}
 function myPage(){const org=[CU.org_division,CU.org_region,CU.org_sub_region,CU.org_center].filter(Boolean).join(' > ')||'-';$('myI').innerHTML=`ID: <strong>${CU.user_id}</strong><br>이름: <strong>${CU.name}</strong><br>직책: <strong>${CU.role||CU.org_title||'-'}</strong><br>소속: <strong>${org}</strong><br>생일: <strong>${CU.birthday||'-'} ${CU.birthday_type==='lunar'?'(음력)':'(양력)'}</strong>`;$('myNm').value=CU.name||'';$('myDv').value=CU.org_division||'';$('myRg').value=CU.org_region||'';$('mySu').value=CU.org_sub_region||'';$('myCt').value=CU.org_center||'';$('myRl').value=CU.role||CU.org_title||'';$('myBd').value=CU.birthday||'';$('myBt').value=CU.birthday_type||'solar';['mC','mN','mN2'].forEach(i=>$(i).value='');$('mE').style.display='none';$('myO').classList.add('open');}
 async function chPw(){const cur=$('mC').value,nw=$('mN').value,nw2=$('mN2').value,el=$('mE');el.style.display='none';if(await sha(cur)!==CU.password_hash){el.textContent='현재PW 불일치';el.style.display='block';return;}if(!pwV(nw)){el.textContent='영문+숫자 8자 이상';el.style.display='block';return;}if(nw!==nw2){el.textContent='불일치';el.style.display='block';return;}const h=await sha(nw);await db.from('members').update({password_hash:h}).eq('id',CU.id);CU.password_hash=h;$('myO').classList.remove('open');toast('PW 변경 ✅');}
 async function init(){await Promise.all([lG(),lE(),lN(),lU()]);rCal();rToday();}
