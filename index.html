@@ -288,6 +288,19 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
 .dex-luck-bar.on{background:var(--warn)}
 .dex-luck-lbl{font-size:11px;color:var(--g400);margin-left:4px}
 
+/* ═══ 권역 현황 ═══ */
+.rg-group{margin-bottom:20px}
+.rg-hd{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--gr-hero-deep);border-radius:var(--rs);color:#fff;margin-bottom:10px}
+.rg-hn{font-size:14px;font-weight:900}
+.rg-hs{font-size:11px;color:rgba(255,255,255,.65);margin-top:2px}
+.rg-prog{height:5px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;margin-top:8px}
+.rg-prog-bar{height:100%;background:#5DDCEC;border-radius:3px;transition:width .3s}
+.chk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px}
+.chk-st{display:inline-flex;align-items:center;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
+.chk-st.done{background:#E8F8F4;color:var(--ok)}
+.chk-st.part{background:#FFF3EA;color:#E67E22}
+.chk-st.none{background:var(--g100);color:var(--g400)}
+
 /* ═══ 모바일 ═══ */
 @media(max-width:900px){
   .desk-side{display:none}
@@ -310,7 +323,8 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
   .cal-sync-btn{width:100%;justify-content:center;padding:10px 16px;font-size:14px}
   .sync-dd{left:0;right:0;min-width:auto}
   .sync-dd button{padding:13px 16px;font-size:14px}
-  .mn:not(.is-admin) .mni{grid-template-columns:repeat(5,1fr)}
+  .mn:not(.is-admin):not(.is-team) .mni{grid-template-columns:repeat(5,1fr)}
+  .mn.is-admin .mni{grid-template-columns:repeat(7,1fr)}
   .lk-grid{grid-template-columns:1fr}
 }
 </style>
@@ -385,6 +399,7 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
       <button class="ds-btn" onclick="sT('guide',this)"><span class="ds-ico">📋</span> 업무 가이드</button>
       <button class="ds-btn" onclick="sT('calendar',this)"><span class="ds-ico">📅</span> 업무 월력</button>
       <button class="ds-btn" onclick="sT('notice',this)"><span class="ds-ico">📢</span> 공지사항</button>
+      <button class="ds-btn sz" onclick="sT('team',this)"><span class="ds-ico">📊</span> 권역 현황</button>
       <button class="ds-btn" onclick="sT('links',this)"><span class="ds-ico">🔗</span> 관련 사이트</button>
       <button class="ds-btn an" onclick="sT('admin',this)"><span class="ds-ico">⚙️</span> 관리자</button>
     </div>
@@ -498,6 +513,11 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
         </div>
       </div>
     </div>
+    <!-- 권역 현황 -->
+    <div class="tp" id="tab-team">
+      <div class="ph"><div class="pt">📊 권역 현황</div><div class="pd">오늘의 할일 진행 현황</div></div>
+      <div id="teamContent"><div class="ld">로딩 중...</div></div>
+    </div>
   </main>
 </div>
 
@@ -508,6 +528,7 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
   <button class="mnb" onclick="sTM('calendar',this)"><svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg><span class="ml">월력</span></button>
   <button class="mnb" onclick="sTM('notice',this)"><svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg><span class="ml">공지</span></button>
   <button class="mnb" onclick="sTM('links',this)"><svg viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg><span class="ml">링크</span></button>
+  <button class="mnb sz" onclick="sTM('team',this)"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg><span class="ml">권역현황</span></button>
   <button class="mnb am" onclick="sTM('admin',this)"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.48.48 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 00-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1115.6 12 3.6 3.6 0 0112 15.6z"/></svg><span class="ml">관리</span></button>
 </div></div>
 
@@ -642,7 +663,7 @@ async function doLogin(){const id=$('l-id').value.trim(),pw=$('l-pw').value;$('l
 async function doFirst(){const nm=$('f-name').value.trim(),pw1=$('f-pw1').value,pw2=$('f-pw2').value,bd=$('f-bday').value.trim(),bt=$('f-btype').value;if(!nm){sE('f-err','이름을 입력해주세요.');return;}if(bd&&!/^\d{2}-\d{2}$/.test(bd)){sE('f-err','생일: MM-DD');return;}if(pw1==='n1234'){sE('f-err','초기PW 사용불가');return;}if(!pwV(pw1)){sE('f-err','영문+숫자 8자 이상');return;}if(pw1!==pw2){sE('f-err','PW 불일치');return;}const h=await sha(pw1);await db.from('members').update({name:nm,password_hash:h,is_first:false,status:'active',last_login:new Date().toISOString(),birthday:bd,birthday_type:bt}).eq('id',CU.id);Object.assign(CU,{name:nm,status:'active',is_first:false,password_hash:h,birthday:bd,birthday_type:bt});toast('설정 완료 ✅');enter();}
 async function doReset(){const id=$('r-id').value.trim();$('r-err').style.display='none';$('r-ok').style.display='none';if(!/^\d{8}$/.test(id)){sE('r-err','8자리 아이디를 입력하세요.');return;}const{data}=await db.from('members').select('id,name,pw_reset_request').eq('user_id',id).single();if(!data){sE('r-err','등록되지 않은 아이디입니다.');return;}if(data.pw_reset_request){sE('r-err','이미 초기화 요청이 접수되어 있습니다.');return;}await db.from('members').update({pw_reset_request:true,pw_reset_requested_at:new Date().toISOString()}).eq('user_id',id);$('r-ok').style.display='block';}
 function goHome(){document.querySelectorAll('.tp').forEach(p=>p.classList.remove('active'));$('tab-today').classList.add('active');document.querySelectorAll('.ds-btn').forEach(b=>b.classList.remove('active'));const db=document.querySelector('.ds-btn[onclick*="today"]');if(db)db.classList.add('active');document.querySelectorAll('.mnb').forEach(b=>b.classList.remove('active'));const mb=document.querySelector('.mnb[onclick*="today"]');if(mb)mb.classList.add('active');}
-function enter(){saveSession(CU.user_id);document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$('app').classList.add('active');$('hname').textContent=CU.name;$('ds-name').textContent=CU.name;$('ds-role').textContent=CU.role||CU.org_title||'';const isA=ADS.includes(CU.user_id)||CU.role==='admin';document.querySelectorAll('.an,.am').forEach(b=>b.style.display=isA?'':'none');$('mn').classList.toggle('is-admin',isA);$('chatbot').style.display='flex';updWM();init();initPush();}
+function enter(){saveSession(CU.user_id);document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$('app').classList.add('active');$('hname').textContent=CU.name;$('ds-name').textContent=CU.name;$('ds-role').textContent=CU.role||CU.org_title||'';const isA=ADS.includes(CU.user_id)||CU.role==='admin';document.querySelectorAll('.an,.am').forEach(b=>b.style.display=isA?'':'none');$('mn').classList.toggle('is-admin',isA);const isCM=CU.role==='센터장'||isA;document.querySelectorAll('.sz').forEach(b=>b.style.display=isCM?'':'none');$('mn').classList.toggle('is-team',isCM);$('chatbot').style.display='flex';updWM();init();initPush();}
 function logout(){clearSession();CU=null;chatInit=false;$('chatPanel').classList.remove('open');$('app').classList.remove('active');$('l-pw').value='';$('chatbot').style.display='none';$('pushBtn').style.display='none';updWM();ss('s-login');}
 
 // ── 웹 푸시 ──────────────────────────────────────────
@@ -866,9 +887,53 @@ async function saveMyInfo(){const nm=$('myNm').value.trim(),dv=$('myDv').value.t
 // 체크 현황
 async function rChk(){const el=$('chkList');if(!el)return;el.innerHTML='<div class="ld">로딩 중...</div>';const today=new Date().toISOString().split('T')[0];const[{data:comps},{data:todayEvs}]=await Promise.all([db.from('task_completions').select('*').eq('date',today),db.from('events').select('*').eq('event_date',today)]);const totalActions=(todayEvs||[]).reduce((s,e)=>{const acts=Array.isArray(e.actions)?e.actions:JSON.parse(e.actions||'[]');return s+acts.length;},0);const members=US.filter(u=>u.role!=='admin'&&u.status==='active');if(!members.length){el.innerHTML='<div class="ld">활성 팀장 없음</div>';return;}let h='';members.forEach(u=>{const done=(comps||[]).filter(c=>c.user_id===u.user_id&&c.completed).length;const pct=totalActions>0?Math.round(done/totalActions*100):0;const org=[u.org_region,u.org_center].filter(Boolean).join(' > ');h+=`<div class="chk-card"><div class="chk-name">${u.name}</div><div class="chk-org">${org||'-'}</div><div class="chk-prog"><div class="chk-prog-bar" style="width:${pct}%"></div></div><div class="chk-stat">${done}/${totalActions} 완료 (${pct}%)</div></div>`;});el.innerHTML=h;}
 
+// 권역 현황
+async function rTeam(){
+  const el=$('teamContent');if(!el)return;
+  el.innerHTML='<div class="ld">로딩 중...</div>';
+  const today=new Date().toISOString().split('T')[0];
+  const isA=ADS.includes(CU.user_id)||CU.role==='admin';
+  const todayEvs=EV.filter(e=>e.event_date===today);
+  const totalActions=todayEvs.reduce((s,e)=>{const acts=Array.isArray(e.actions)?e.actions:JSON.parse(e.actions||'[]');return s+acts.length;},0);
+  const{data:comps}=await db.from('task_completions').select('*').eq('date',today);
+  const myRg=CU.org_region||'';
+  const targets=US.filter(u=>{
+    const rl=u.role||u.org_title||'';
+    if(u.status!=='active')return false;
+    if(ADS.includes(u.user_id)||rl==='admin')return false;
+    if(!isA&&u.org_region!==myRg)return false;
+    return['팀장','총무'].includes(rl);
+  });
+  if(!targets.length){el.innerHTML='<div class="te"><div class="tei">👥</div><div class="tet">확인 대상 팀원이 없습니다</div><div class="tes">소속 대권역의 총무 및 팀장 계정이 등록되어 있지 않습니다</div></div>';return;}
+  const rMap={};
+  targets.forEach(u=>{const rg=u.org_region||'미분류';if(!rMap[rg])rMap[rg]=[];rMap[rg].push(u);});
+  const allDone=targets.reduce((s,u)=>s+(comps||[]).filter(c=>c.user_id===u.user_id&&c.completed).length,0);
+  const allTotal=totalActions>0?targets.length*totalActions:0;
+  const allPct=allTotal>0?Math.round(allDone/allTotal*100):0;
+  const completedAll=totalActions>0?targets.filter(u=>(comps||[]).filter(c=>c.user_id===u.user_id&&c.completed).length>=totalActions).length:0;
+  let h=`<div class="tg" style="margin-bottom:20px"><div class="tdd" style="position:relative;z-index:2">📊 ${today} 기준 · 오늘 할일 ${totalActions}개</div><div class="thh" style="position:relative;z-index:2">${totalActions>0?`${completedAll}/${targets.length}명 완료 (${allPct}%)`:'오늘 등록된 할일이 없습니다'}</div>${totalActions>0?`<div style="margin-top:14px;height:8px;background:rgba(255,255,255,.2);border-radius:4px;overflow:hidden;position:relative;z-index:2"><div style="height:100%;background:#5DDCEC;border-radius:4px;width:${allPct}%;transition:width .3s"></div></div>`:''}</div>`;
+  Object.entries(rMap).sort(([a],[b])=>a.localeCompare(b,'ko')).forEach(([rg,mbs])=>{
+    const rgDone=mbs.reduce((s,u)=>s+(comps||[]).filter(c=>c.user_id===u.user_id&&c.completed).length,0);
+    const rgTotal=totalActions>0?mbs.length*totalActions:0;
+    const rgPct=rgTotal>0?Math.round(rgDone/rgTotal*100):0;
+    h+=`<div class="rg-group"><div class="rg-hd"><div><div class="rg-hn">📍 ${rg}</div><div class="rg-hs">${mbs.length}명 · ${isA?'권역별':myRg} 팀원 현황</div></div>${totalActions>0?`<div style="text-align:right"><div style="font-size:22px;font-weight:900;color:#fff">${rgPct}%</div><div style="font-size:10px;color:rgba(255,255,255,.6)">달성률</div></div>`:''}</div>${totalActions>0?`<div class="rg-prog"><div class="rg-prog-bar" style="width:${rgPct}%"></div></div>`:''}<div class="chk-grid" style="margin-top:10px">`;
+    mbs.sort((a,b)=>{const ra=a.role||a.org_title||'',rb=b.role||b.org_title||'';if(ra==='총무'&&rb!=='총무')return -1;if(rb==='총무'&&ra!=='총무')return 1;return a.name.localeCompare(b.name,'ko');}).forEach(u=>{
+      const rl=u.role||u.org_title||'';
+      const done=(comps||[]).filter(c=>c.user_id===u.user_id&&c.completed).length;
+      const pct=totalActions>0?Math.round(done/totalActions*100):0;
+      let stCls='none',stTx='할일 없음';
+      if(totalActions>0){stCls=pct>=100?'done':pct>0?'part':'none';stTx=pct>=100?'✅ 완료':pct>0?'⏳ 진행중':'⭕ 미시작';}
+      h+=`<div class="chk-card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><div class="chk-name">${u.name} <span style="font-size:11px;color:var(--g400);font-weight:400">${rl}</span></div><span class="chk-st ${stCls}">${stTx}</span></div><div class="chk-org">${[u.org_sub_region,u.org_center].filter(Boolean).join(' · ')||'-'}</div>${totalActions>0?`<div class="chk-prog" style="margin-top:6px"><div class="chk-prog-bar" style="width:${pct}%"></div></div><div class="chk-stat">${done}/${totalActions} (${pct}%)</div>`:''}</div>`;
+    });
+    h+='</div></div>';
+  });
+  h+=`<div style="text-align:right;margin-top:4px"><button class="sbtn sm" onclick="rTeam()">🔄 새로고침</button></div>`;
+  el.innerHTML=h;
+}
+
 // TABS
-function sT(n,btn){document.querySelectorAll('.tp').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.ds-btn').forEach(b=>b.classList.remove('active'));$('tab-'+n).classList.add('active');btn?.classList.add('active');if(n==='calendar'){rCal();rEv();}}
-function sTM(n,btn){document.querySelectorAll('.tp').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.mnb').forEach(b=>b.classList.remove('active'));$('tab-'+n).classList.add('active');btn.classList.add('active');if(n==='calendar'){rCal();rEv();}}
+function sT(n,btn){document.querySelectorAll('.tp').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.ds-btn').forEach(b=>b.classList.remove('active'));$('tab-'+n).classList.add('active');btn?.classList.add('active');if(n==='calendar'){rCal();rEv();}else if(n==='team')rTeam();}
+function sTM(n,btn){document.querySelectorAll('.tp').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.mnb').forEach(b=>b.classList.remove('active'));$('tab-'+n).classList.add('active');btn.classList.add('active');if(n==='calendar'){rCal();rEv();}else if(n==='team')rTeam();}
 function sA(n,btn){document.querySelectorAll('.ap').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.atbn').forEach(b=>b.classList.remove('active'));$('adm-'+n).classList.add('active');btn.classList.add('active');if(n==='gr')rGL_adm();else if(n==='ev')rEL_adm();else if(n==='no')rNL_adm();else if(n==='chk')rChk();}
 
 // CHATBOT
