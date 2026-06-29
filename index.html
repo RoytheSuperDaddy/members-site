@@ -6,8 +6,8 @@
 <title>삼성화재 멤버스팀장 전용 허브</title>
 <link rel="icon" href="assets/members-symbol.png">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
 @font-face{font-family:'SamsungGL';src:url('fonts/SamsungGothicLong-Regular.ttf') format('truetype');font-weight:400}
@@ -332,7 +332,7 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
 }
 
 /* ═══ 입과 안내문 ═══ */
-.wg-layout{display:grid;grid-template-columns:256px 1fr;gap:24px;align-items:start}
+.wg-layout{display:grid;grid-template-columns:280px 1fr;gap:24px;align-items:start}
 .wg-panel{background:var(--w);border-radius:var(--r);border:1.5px solid var(--g100);overflow:hidden;position:sticky;top:76px;box-shadow:var(--sh)}
 .wg-panel-head{background:linear-gradient(135deg,#001558 0%,#003CDC 100%);padding:18px 20px}
 .wg-panel-htitle{font-size:14px;font-weight:900;color:#fff;letter-spacing:-.2px}
@@ -340,88 +340,101 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
 .wg-panel-body{padding:20px}
 .wg-field{margin-bottom:14px}
 .wg-field label{font-size:11px;font-weight:700;color:var(--g400);letter-spacing:.5px;display:block;margin-bottom:5px}
-.wg-field input{width:100%;padding:10px 13px;border:1.5px solid var(--g100);border-radius:9px;font-size:14px;font-family:var(--f);outline:none;color:var(--g900);background:var(--g50);transition:border-color .15s,background .15s,box-shadow .15s}
-.wg-field input:focus{border-color:var(--njob);background:#fff;box-shadow:0 0 0 3px rgba(0,60,220,.08)}
-.wg-field input::placeholder{color:var(--g200)}
+.wg-field input,.wg-field select,.wg-field textarea{width:100%;padding:10px 13px;border:1.5px solid var(--g100);border-radius:9px;font-size:14px;font-family:var(--f);outline:none;color:var(--g900);background:var(--g50);transition:border-color .15s,box-shadow .15s;box-sizing:border-box}
+.wg-field textarea{min-height:64px;resize:vertical}
+.wg-field input:focus,.wg-field select:focus,.wg-field textarea:focus{border-color:var(--njob);background:#fff;box-shadow:0 0 0 3px rgba(0,60,220,.08)}
+.wg-field input::placeholder,.wg-field textarea::placeholder{color:var(--g200)}
+.wg-field input[type="file"]{padding:8px 10px;font-size:12px}
+.wg-row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .wg-divider{height:1px;background:var(--g100);margin:16px 0}
-.wg-dl-btn{width:100%;padding:13px;background:linear-gradient(135deg,#001558,#003CDC);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:var(--f);letter-spacing:.1px;transition:opacity .15s,transform .1s}
+.wg-sec-label{font-size:11px;font-weight:700;color:var(--g400);margin-bottom:12px;letter-spacing:.3px}
+.wg-dl-btn{width:100%;padding:13px;background:linear-gradient(135deg,#001558,#003CDC);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:var(--f);transition:opacity .15s,transform .1s}
 .wg-dl-btn:hover{opacity:.88;transform:translateY(-1px)}
-.wg-dl-btn:active{transform:translateY(0)}
 .wg-dl-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
 .wg-hint{font-size:11px;color:var(--g400);text-align:center;margin-top:8px}
 .wg-preview-label{font-size:11px;font-weight:700;color:var(--g400);letter-spacing:.5px;margin-bottom:10px}
-.wg-scroll{overflow:auto;border-radius:16px;background:linear-gradient(135deg,#D8DCE8 0%,#C8CDDE 100%);padding:20px;box-shadow:inset 0 2px 12px rgba(0,0,0,.1)}
-.wg-scale-wrap{transform-origin:top left;display:inline-block;border-radius:6px;box-shadow:0 12px 48px rgba(5,15,60,.22),0 4px 16px rgba(5,15,60,.12)}
-
-/* ── 문서 본체 ── */
-#wg-doc{width:680px;background:#fff;font-family:'Noto Sans KR',sans-serif;color:#1A2238;border-radius:6px;overflow:hidden}
-
-/* 헤더 */
-.wg-doc-head{background:linear-gradient(140deg,#020A1A 0%,#051D60 42%,#0935B8 100%);padding:32px 32px 26px;position:relative;overflow:hidden}
-.wg-doc-head::before{content:'';position:absolute;top:-100px;right:-80px;width:260px;height:260px;background:radial-gradient(circle,rgba(91,194,231,.22) 0%,transparent 65%);border-radius:50%}
-.wg-doc-head::after{content:'';position:absolute;bottom:-50px;left:40px;width:180px;height:180px;background:radial-gradient(circle,rgba(255,122,89,.15) 0%,transparent 65%);border-radius:50%}
-.wg-doc-headwrap{position:relative;z-index:1}
-.wg-doc-eyebrow{font-size:10px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
-.wg-doc-title{font-size:27px;font-weight:900;color:#fff;line-height:1.2;letter-spacing:-.4px}
-.wg-doc-name{color:#5BC2E7}
-.wg-doc-sub{font-size:12.5px;color:rgba(255,255,255,.5);margin-top:10px;line-height:1.65}
-.wg-doc-mentor{margin-top:18px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:13px 16px;display:flex;align-items:center;gap:13px}
-.wg-doc-mentor-av{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.wg-doc-mentor-name{font-size:14px;font-weight:900;color:#fff;margin-bottom:3px}
-.wg-doc-mentor-sub{font-size:11.5px;color:rgba(255,255,255,.55)}
-
-/* 스텝 공통 */
-.wg-doc-step{display:flex;border-bottom:1px solid #ECF0FA}
-.wg-doc-step:last-of-type{border-bottom:none}
-.wg-doc-step-l{width:196px;flex-shrink:0;padding:22px 20px 20px;background:linear-gradient(160deg,#F5F7FF 0%,#EEF2FC 100%);border-right:1px solid #ECF0FA;display:flex;flex-direction:column;gap:10px}
-.wg-doc-snum{display:flex;align-items:center;gap:8px}
-.wg-doc-snum-circle{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#001558,#003CDC);color:#fff;font-size:14px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 3px 10px rgba(0,60,220,.35)}
-.wg-doc-snum-txt{font-size:9.5px;font-weight:700;color:#8A92A3;letter-spacing:.8px;text-transform:uppercase}
-.wg-doc-step-icon{font-size:24px}
-.wg-doc-step-title{font-size:14px;font-weight:900;color:#0A1433;line-height:1.4}
-.wg-doc-step-r{flex:1;padding:22px 24px}
-.wg-doc-desc{font-size:12.5px;color:#46526E;line-height:1.75;margin-bottom:14px}
-
-/* Step 1: QR */
-.wg-qr-wrap{display:flex;gap:14px}
-.wg-qr-item{border:1px solid #DDE4F5;border-radius:10px;overflow:hidden;display:flex;flex-direction:column;align-items:center}
-.wg-qr-platform{padding:5px 10px;font-size:10px;font-weight:700;color:#fff;text-align:center;width:100%}
-.wg-qr-platform.android{background:#28A745}
-.wg-qr-platform.ios{background:#444}
-.wg-qr-box{width:92px;height:92px;background:#fff;display:flex;align-items:center;justify-content:center;padding:4px}
-.wg-qr-url{padding:4px 6px;font-size:8.5px;color:#8A92A3;text-align:center;word-break:break-all;background:#F6F8FC;border-top:1px solid #ECF0FA;width:92px}
-
-/* Step 2: 로그인 박스 */
-.wg-id-box{background:linear-gradient(135deg,#040D24,#081C52);border-radius:12px;padding:16px 20px;display:inline-block;box-shadow:0 6px 24px rgba(2,8,30,.4)}
-.wg-id-row{display:flex;align-items:center;gap:0;margin-bottom:10px}
-.wg-id-row:last-child{margin-bottom:0}
-.wg-id-lbl{font-size:11px;font-weight:700;color:rgba(255,255,255,.38);min-width:96px}
-.wg-id-val{font-size:17px;font-weight:900;color:#5BC2E7;letter-spacing:.5px}
-.wg-id-sep{height:1px;background:rgba(255,255,255,.08);margin:10px 0}
-.wg-id-pw{font-size:17px;font-weight:900;color:#FF8C6B;letter-spacing:1px}
-
-/* Step 3: 프로그레스 */
-.wg-prog{display:flex;align-items:center;gap:8px;margin-bottom:7px}
-.wg-prog-lbl{font-size:11px;color:#5A6478;width:84px;flex-shrink:0}
-.wg-prog-bg{flex:1;height:6px;background:#ECF0FA;border-radius:3px;overflow:hidden}
-.wg-prog-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#003CDC,#5BC2E7)}
-.wg-prog-pct{font-size:11px;font-weight:700;color:#003CDC;min-width:28px;text-align:right}
-.wg-badge{border-radius:10px;padding:8px 12px;text-align:center;line-height:1.5;flex-shrink:0;font-size:11px;font-weight:900}
-.wg-badge-blue{background:linear-gradient(135deg,#E4ECFF,#D0DCFF);color:#003CDC;border:1px solid #BDD0FF}
-.wg-badge-purple{background:linear-gradient(135deg,#EDE6FF,#E0D4FF);color:#5B21B6;border:1px solid #CFC0FF}
-
-/* Step 4: 모의고사 */
-.wg-exam-row{display:flex;gap:8px;align-items:flex-start}
-.wg-exam-card{border:1px solid #DDE4F5;border-radius:10px;padding:12px 8px;text-align:center;flex:1;background:linear-gradient(160deg,#FAFBFF,#F5F7FE)}
-.wg-exam-ttl{font-size:10px;font-weight:700;color:#5A6478;margin-bottom:10px}
-.wg-exam-btn-fake{display:block;padding:6px 0;background:linear-gradient(135deg,#001558,#003CDC);color:#fff;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:8px;box-shadow:0 2px 6px rgba(0,60,220,.3)}
-.wg-exam-ok{color:#00A878;font-size:10px;font-weight:700}
-
-/* 푸터 */
-.wg-doc-footer{background:linear-gradient(135deg,#EBF2FF,#F2F6FF);padding:16px 28px;display:flex;align-items:center;gap:12px;border-top:1px solid #DDE4F5}
-.wg-doc-footer-ico{font-size:18px;flex-shrink:0}
-.wg-doc-footer-txt{font-size:11.5px;color:#2A3560;line-height:1.65}
-
+.wg-scroll{overflow:auto;border-radius:16px;background:linear-gradient(135deg,#D0D5E8,#BCC3D8);padding:20px;box-shadow:inset 0 2px 12px rgba(0,0,0,.12)}
+.wg-scale-wrap{transform-origin:top left;display:inline-block;border-radius:6px;box-shadow:0 16px 60px rgba(5,15,60,.28),0 4px 20px rgba(5,15,60,.14)}
+/* ── 포스터 1080×1528 ── */
+#wg-doc{width:1080px;height:1528px;position:relative;overflow:hidden;background:radial-gradient(circle at 93% 2%,rgba(91,194,231,.20) 0 130px,transparent 131px),radial-gradient(circle at 7% 95%,rgba(0,60,220,.08) 0 180px,transparent 181px),linear-gradient(180deg,#FFFFFF 0%,#F7FAFF 100%);letter-spacing:-.035em;font-family:'Noto Sans KR',sans-serif;word-break:keep-all}
+#wg-doc::before{content:"";position:absolute;inset:0;background-image:linear-gradient(90deg,rgba(0,60,220,.035) 1px,transparent 1px),linear-gradient(180deg,rgba(0,60,220,.035) 1px,transparent 1px);background-size:48px 48px;-webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.65) 0,transparent 42%);mask-image:linear-gradient(180deg,rgba(0,0,0,.65) 0,transparent 42%);pointer-events:none}
+#wg-doc .brand-row{position:absolute;left:46px;right:46px;top:28px;display:flex;align-items:center;justify-content:space-between;z-index:5}
+#wg-doc .brand-mark img{max-height:32px;max-width:220px;object-fit:contain;display:block;background:rgba(255,255,255,.9);padding:3px 8px;border-radius:5px}
+#wg-doc .hero{position:relative;height:348px;padding:76px 46px 0 46px;z-index:1}
+#wg-doc .hero-title{width:650px;font-weight:900;font-size:56px;line-height:1.14;color:#0B2B5C;letter-spacing:-.07em}
+#wg-doc .hero-title b{color:#003CDC}
+#wg-doc .hero-sub{margin-top:16px;font-size:19px;line-height:1.5;color:#2F3C4F;font-weight:700}
+#wg-doc .mentor-card{margin-top:20px;width:620px;display:grid;grid-template-columns:72px 1fr;gap:18px;align-items:center;padding:14px 22px;background:linear-gradient(135deg,#003CDC 0%,#06296B 100%);color:#fff;border-radius:16px;box-shadow:0 20px 40px rgba(0,60,220,.20)}
+#wg-doc .mav{width:62px;height:62px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#EEF6FF;box-shadow:inset 0 0 0 2px rgba(255,255,255,.6)}
+#wg-doc .mav img{width:100%;height:100%;object-fit:cover;display:block}
+#wg-doc .mentor-main{font-size:20px;font-weight:900;line-height:1.3}
+#wg-doc .mentor-msg{margin-top:7px;font-size:18px;font-weight:600;opacity:.9}
+#wg-doc .phone-scene{position:absolute;right:54px;top:58px;width:346px;height:270px}
+#wg-doc .mv-phone{position:absolute;right:110px;top:0;width:154px;height:260px;border-radius:28px;background:#0A1024;box-shadow:0 22px 40px rgba(10,16,36,.22);padding:9px;transform:rotate(-3deg)}
+#wg-doc .mv-screen{width:100%;height:100%;border-radius:22px;background:linear-gradient(145deg,rgba(255,255,255,.12),transparent 38%),linear-gradient(180deg,#003CDC 0%,#001B63 100%);color:#fff;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;position:relative}
+#wg-doc .mv-screen::after{content:"";position:absolute;inset:-50px -20px auto auto;width:120px;height:120px;border-radius:50%;background:rgba(91,194,231,.32)}
+#wg-doc .mv-logo{font-weight:900;font-size:34px;letter-spacing:.12em;z-index:1}
+#wg-doc .mv-logo small{display:block;margin-top:6px;font-size:8px;letter-spacing:.06em;opacity:.9}
+#wg-doc .pp{position:absolute;right:0;bottom:0;width:170px;height:210px}
+#wg-doc .pp-head{position:absolute;left:44px;top:10px;width:74px;height:82px;background:#FFD5B6;border:3px solid #13233B;border-radius:46% 46% 44% 44%}
+#wg-doc .pp-hair{position:absolute;left:35px;top:0;width:90px;height:55px;background:#22212A;border-radius:48px 48px 24px 24px}
+#wg-doc .pp-eye{position:absolute;top:43px;width:5px;height:9px;background:#13233B;border-radius:5px}
+#wg-doc .pp-eye.l{left:63px}
+#wg-doc .pp-eye.r{left:91px}
+#wg-doc .pp-smile{position:absolute;left:72px;top:63px;width:20px;height:10px;border-bottom:3px solid #13233B;border-radius:0 0 20px 20px}
+#wg-doc .pp-body{position:absolute;left:22px;bottom:0;width:116px;height:134px;background:#0B67D8;border:3px solid #13233B;border-radius:34px 34px 18px 18px}
+#wg-doc .pp-arm{position:absolute;background:#0B67D8;border:3px solid #13233B;border-radius:20px}
+#wg-doc .pp-arm.l{left:4px;top:91px;width:58px;height:26px;transform:rotate(-42deg)}
+#wg-doc .pp-fist{position:absolute;left:0;top:72px;width:34px;height:34px;background:#FFD5B6;border:3px solid #13233B;border-radius:50%}
+#wg-doc .pp-badge{position:absolute;left:67px;bottom:34px;width:34px;height:26px;background:#fff;border:2px solid #13233B;border-radius:4px}
+#wg-doc .hand-note{position:absolute;right:0;top:28px;color:#2A5EA5;font-size:16px;line-height:1.4;font-weight:900;transform:rotate(-4deg)}
+#wg-doc .q-tag{position:absolute;top:326px;right:48px;padding:9px 14px;border-radius:99px;background:#E9F6FF;color:#0062C8;font-weight:900;font-size:16px;border:1px solid #C8E9FF}
+#wg-doc .steps{position:relative;z-index:2;padding:0 34px;display:grid;gap:16px}
+#wg-doc .step{display:grid;grid-template-columns:178px 1fr;min-height:246px;background:rgba(255,255,255,.94);border:2px solid #D8E4F5;border-radius:18px;overflow:hidden;box-shadow:0 16px 36px rgba(15,30,60,.075)}
+#wg-doc .step-side{padding:20px 22px;color:#fff;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+#wg-doc .step-side::after{content:"";position:absolute;width:120px;height:120px;border-radius:50%;right:-44px;bottom:-44px;background:rgba(255,255,255,.14)}
+#wg-doc .s1 .step-side{background:linear-gradient(180deg,#004DE8,#0067CC)}
+#wg-doc .s2 .step-side{background:linear-gradient(180deg,#0058C7,#0088BE)}
+#wg-doc .s3 .step-side{background:linear-gradient(180deg,#008D8A,#00A37E)}
+#wg-doc .s4 .step-side{background:linear-gradient(180deg,#6B54D7,#7B60E8)}
+#wg-doc .snum{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff;color:#003CDC;font-size:28px;font-weight:900}
+#wg-doc .stitle{margin-top:18px;font-size:26px;line-height:1.24;font-weight:900;letter-spacing:-.06em}
+#wg-doc .sico{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.96);color:#003CDC;display:flex;align-items:center;justify-content:center;font-size:34px;box-shadow:0 8px 20px rgba(0,0,0,.08);z-index:1}
+#wg-doc .step-body{position:relative;padding:30px 30px 24px 34px;display:grid;grid-template-columns:1fr 410px;gap:24px;align-items:center}
+#wg-doc .scopy{font-size:20px;line-height:1.6;color:#28384D;font-weight:700}
+#wg-doc .scopy strong{color:#0B2B5C;font-weight:900}
+#wg-doc .mnote{display:inline-flex;align-items:center;gap:10px;margin-top:16px;padding:13px 16px;background:#F0F8FF;border-radius:14px;color:#0B5CB8;font-weight:900;font-size:17px}
+#wg-doc .mnote.grn{background:#EFFAF5;color:#00835B}
+#wg-doc .mnote.pur{background:#F3F0FF;color:#6543C9}
+#wg-doc .qr-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+#wg-doc .qr-card{border-radius:16px;background:#F7FAFF;border:1px solid #D8E4F5;padding:14px;text-align:center;min-height:178px}
+#wg-doc .sbadge{display:inline-flex;align-items:center;justify-content:center;min-width:140px;height:34px;border-radius:8px;background:#0A0A0A;color:#fff;font-size:14px;font-weight:900;margin-bottom:10px;letter-spacing:-.02em}
+#wg-doc .qr-card img{width:98px;height:98px;display:block;margin:0 auto 7px;image-rendering:pixelated}
+#wg-doc .qr-url{font-size:13px;color:#46617E;font-weight:800;word-break:break-all;line-height:1.2}
+#wg-doc .lgn-panel{display:grid;grid-template-columns:1fr 80px 1fr;align-items:center;gap:14px}
+#wg-doc .lgn-box,#wg-doc .pw-box{background:#F8FBFF;border:1px solid #D8E4F5;border-radius:18px;padding:18px;min-height:158px}
+#wg-doc .lgn-logo{text-align:center;font-size:26px;font-weight:900;color:#0B2B5C;letter-spacing:.1em;margin-bottom:12px}
+#wg-doc .iln{height:38px;border:1px solid #D6E0EE;background:#fff;border-radius:7px;margin-top:9px;display:flex;align-items:center;padding:0 12px;color:#2E496B;font-size:14px;font-weight:900}
+#wg-doc .lgn-btn{height:36px;margin-top:10px;border-radius:7px;background:#003CDC;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900}
+#wg-doc .arrow{font-size:52px;color:#5BC2E7;text-align:center;font-weight:900}
+#wg-doc .chk-shield{width:54px;height:54px;margin-left:auto;background:#00A37E;border-radius:16px 16px 26px 26px;color:#fff;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900}
+#wg-doc .prog-panel{position:relative;padding-right:90px}
+#wg-doc .prog-line{display:grid;grid-template-columns:150px 1fr 56px;align-items:center;gap:14px;margin:17px 0}
+#wg-doc .lsn{font-size:16px;color:#4A5A70;font-weight:700}
+#wg-doc .prbar{height:8px;background:#E4EAF4;border-radius:99px;overflow:hidden}
+#wg-doc .prbar span{display:block;height:100%;background:linear-gradient(90deg,#008D8A,#5BC2E7);border-radius:99px}
+#wg-doc .prpct{color:#008D8A;font-weight:900;font-size:18px}
+#wg-doc .ccallout{position:absolute;right:0;top:50%;transform:translateY(-50%);width:92px;height:92px;border-radius:50%;border:5px solid #00A37E;background:#fff;color:#00835B;display:flex;align-items:center;justify-content:center;text-align:center;font-size:18px;font-weight:900;line-height:1.25}
+#wg-doc .exam-panel{display:grid;grid-template-columns:repeat(3,1fr) 86px;gap:12px;align-items:center}
+#wg-doc .exam-card{min-height:132px;border:1px solid #D8E4F5;border-radius:15px;background:#fff;padding:16px 12px;text-align:center;box-shadow:0 10px 20px rgba(15,30,60,.05)}
+#wg-doc .exam-title{font-size:16px;font-weight:900;color:#51627A;margin-bottom:16px}
+#wg-doc .exam-btn{background:#003CDC;color:#fff;border-radius:7px;height:36px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px}
+#wg-doc .edone{margin-top:12px;color:#00835B;font-size:15px;font-weight:900}
+#wg-doc .ecallout{background:#F3F0FF;color:#6041BE;border-radius:18px;padding:18px 12px;text-align:center;font-size:20px;line-height:1.25;font-weight:900}
+#wg-doc .p-footer{position:absolute;left:34px;right:34px;bottom:28px;display:grid;grid-template-columns:1fr 300px;gap:22px;align-items:center}
+#wg-doc .fbox{display:flex;align-items:center;gap:14px;min-height:72px;background:#F4F8FF;border:1px solid #CFE0F6;border-radius:16px;padding:14px 20px;font-size:18px;line-height:1.4;font-weight:800;color:#2F3C4F}
+#wg-doc .ficon{font-size:32px;color:#003CDC}
+#wg-doc .cheer{color:#2A5EA5;font-size:26px;line-height:1.45;font-weight:900;transform:rotate(-3deg);text-align:center}
 @media(max-width:900px){.wg-layout{grid-template-columns:1fr}.wg-panel{position:static}}
 </style>
 </head>
@@ -619,7 +632,6 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
     <div class="tp" id="tab-welcome">
       <div class="ph"><div class="pt" style="display:flex;align-items:center;gap:10px"><svg viewBox="0 0 24 24" width="22" height="22" fill="var(--njob)" style="flex-shrink:0"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>입과 안내문</div><div class="pd">신규 N잡크루 배정자에게 전달할 안내문을 제작하고 이미지로 저장하세요</div></div>
       <div class="wg-layout">
-        <!-- 입력 폼 -->
         <div class="wg-panel">
           <div class="wg-panel-head">
             <div class="wg-panel-htitle">배정자 정보 입력</div>
@@ -633,137 +645,131 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
                 <span onclick="localStorage.setItem('wg_intro','1');this.closest('#wg-notice').style.display='none'" style="cursor:pointer;font-size:14px;opacity:.5;flex-shrink:0;margin-left:4px">✕</span>
               </div>
             </div>
-            <div class="wg-field">
-              <label>크루 이름</label>
-              <input id="wg-name" type="text" placeholder="배정자 이름 입력" oninput="updWG()">
+            <div class="wg-row2">
+              <div class="wg-field"><label>배정자 이름</label><input id="wg-cname" type="text" placeholder="이름" oninput="updWG()"></div>
+              <div class="wg-field"><label>호칭</label><select id="wg-csuffix" onchange="updWG()"><option value="님">님</option><option value="씨">씨</option></select></div>
             </div>
             <div class="wg-divider"></div>
-            <div style="font-size:11px;font-weight:700;color:var(--g400);margin-bottom:12px;letter-spacing:.3px">전담 멘토</div>
-            <div class="wg-field">
-              <label>이름 (직함 포함)</label>
-              <input id="wg-mentor" type="text" placeholder="이름 직함" oninput="updWG()">
+            <div class="wg-sec-label">전담 멘토</div>
+            <div class="wg-row2">
+              <div class="wg-field"><label>이름</label><input id="wg-mname" type="text" placeholder="이름" oninput="updWG()"></div>
+              <div class="wg-field"><label>직함</label><input id="wg-mtitle" type="text" placeholder="팀장" oninput="updWG()"></div>
             </div>
-            <div class="wg-field">
-              <label>연락처</label>
-              <input id="wg-phone" type="text" placeholder="010-0000-0000" oninput="updWG()">
-            </div>
+            <div class="wg-field"><label>연락처</label><input id="wg-mphone" type="text" placeholder="010-0000-0000" oninput="updWG()"></div>
+            <div class="wg-field"><label>멘토 사진 (선택)</label><input id="wg-avatar" type="file" accept="image/*"></div>
             <div class="wg-divider"></div>
-            <div style="font-size:11px;font-weight:700;color:var(--g400);margin-bottom:12px;letter-spacing:.3px">M.O.V.E 접속 정보</div>
-            <div class="wg-field">
-              <label>로그인 ID</label>
-              <input id="wg-id" type="text" placeholder="nj000000" oninput="updWG()">
+            <div class="wg-sec-label">M.O.V.E 접속 정보</div>
+            <div class="wg-row2">
+              <div class="wg-field"><label>로그인 ID</label><input id="wg-mid" type="text" placeholder="nj000000" oninput="updWG()"></div>
+              <div class="wg-field"><label>임시 비밀번호</label><input id="wg-mpw" type="text" value="n1234" oninput="updWG()"></div>
             </div>
-            <div class="wg-field">
-              <label>임시 비밀번호</label>
-              <input id="wg-pw" type="text" value="n1234" oninput="updWG()">
-            </div>
+            <div class="wg-field"><label>하단 응원 문구</label><textarea id="wg-cheer" oninput="updWG()">끝까지 함께 하겠습니다!
+화이팅!</textarea></div>
             <button class="wg-dl-btn" id="wg-dl-btn" onclick="dlWelcome()">📥 이미지 다운로드</button>
-            <div class="wg-hint">고해상도 PNG로 저장됩니다</div>
+            <div class="wg-hint">1080×1528px 고해상도 PNG로 저장됩니다</div>
           </div>
         </div>
-        <!-- 미리보기 -->
         <div>
           <div class="wg-preview-label">미리보기</div>
           <div class="wg-scroll" id="wg-scroll">
             <div class="wg-scale-wrap" id="wg-scale-wrap">
-              <div id="wg-doc">
-                <!-- 헤더 -->
-                <div class="wg-doc-head">
-                  <div class="wg-doc-headwrap">
-                    <div class="wg-doc-eyebrow">N잡크루 멤버스센터</div>
-                    <div class="wg-doc-title"><span class="wg-doc-name" id="wg-h-name">크루님,</span><br>입과를 환영합니다! 🎉</div>
-                    <div class="wg-doc-sub">정식 후보자 등록이 완료되어, 아래와 같이 입과 안내드립니다.</div>
-                    <div class="wg-doc-mentor">
-                      <div class="wg-doc-mentor-av">👩‍💼</div>
-                      <div>
-                        <div class="wg-doc-mentor-name">전담 멘토 <span id="wg-h-mentor">멘토 이름</span> &nbsp;|&nbsp; <span id="wg-h-phone">010-0000-0000</span></div>
-                        <div class="wg-doc-mentor-sub">다시 인사 드리게 되어 반갑습니다. 😊</div>
+              <article id="wg-doc">
+                <div class="brand-row">
+                  <div class="brand-mark"><img src="assets/members-horizontal.png" alt="삼성화재 멤버스센터"></div>
+                  <div class="brand-mark"><img src="assets/njobcrew-ci.png" alt="N잡크루"></div>
+                </div>
+                <section class="hero">
+                  <div class="hero-title"><span id="wg-v-name">크루</span><span id="wg-v-suffix">님</span>,<br><b>입과를 환영합니다!</b> 🎉</div>
+                  <div class="hero-sub">정식 후보자 등록이 완료되어, 아래와 같이 입과 안내드립니다.</div>
+                  <div class="mentor-card">
+                    <div class="mav"><img id="wg-avatar-img" alt="멘토"></div>
+                    <div>
+                      <div class="mentor-main">전담 멘토&nbsp;<span id="wg-v-mname">멘토 이름</span> <span id="wg-v-mtitle">팀장</span>&nbsp;ㅣ&nbsp;<span id="wg-v-mphone">010-0000-0000</span></div>
+                      <div class="mentor-msg">다시 인사 드리게 되어 반갑습니다. 😊</div>
+                    </div>
+                  </div>
+                  <div class="phone-scene">
+                    <div class="mv-phone"><div class="mv-screen"><div class="mv-logo">M.O.V.E<small>More. Or Value. Everything.</small></div></div></div>
+                    <div class="pp" aria-hidden="true">
+                      <div class="pp-hair"></div><div class="pp-head"></div>
+                      <div class="pp-eye l"></div><div class="pp-eye r"></div><div class="pp-smile"></div>
+                      <div class="pp-arm l"></div><div class="pp-fist"></div>
+                      <div class="pp-body"></div><div class="pp-badge"></div>
+                    </div>
+                    <div class="hand-note">함께 배우고<br>성장하며<br>목표를 이루어요!</div>
+                  </div>
+                </section>
+                <div class="q-tag">설계사 자격시험 준비 과정</div>
+                <section class="steps">
+                  <div class="step s1">
+                    <div class="step-side"><div><div class="snum">1</div><div class="stitle">M.O.V.E<br>어플리케이션<br>설치</div></div><div class="sico">⬇</div></div>
+                    <div class="step-body">
+                      <div class="scopy">N잡크루 이러닝 과정 수강을 위해<br>교육플랫폼 <strong>&lt;M.O.V.E&gt; 어플리케이션</strong>을<br>다운로드 받고 설치해주세요.</div>
+                      <div class="qr-grid">
+                        <div class="qr-card"><div class="sbadge">▶ Google Play</div><img id="wg-qr-a" alt="Android QR"><div class="qr-url">bit.ly/47YT7H6</div></div>
+                        <div class="qr-card"><div class="sbadge">🍎 App Store</div><img id="wg-qr-i" alt="iOS QR"><div class="qr-url">apple.co/4iigX5I</div></div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <!-- Step 1 -->
-                <div class="wg-doc-step">
-                  <div class="wg-doc-step-l">
-                    <div class="wg-doc-snum"><div class="wg-doc-snum-circle">1</div><span class="wg-doc-snum-txt">STEP</span></div>
-                    <div class="wg-doc-step-icon">📱</div>
-                    <div class="wg-doc-step-title">M.O.V.E<br>어플리케이션<br>설치</div>
-                  </div>
-                  <div class="wg-doc-step-r">
-                    <div class="wg-doc-desc">N잡크루 이러닝 과정 수강을 위해 교육플랫폼 &lt;M.O.V.E&gt; 어플리케이션을 다운로드 받고 설치해주세요.</div>
-                    <div class="wg-qr-wrap">
-                      <div class="wg-qr-item">
-                        <div class="wg-qr-platform android">안드로이드(갤럭시)</div>
-                        <div class="wg-qr-box" id="qr-android"></div>
-                        <div class="wg-qr-url">https://bit.ly/47YT7H6</div>
+                  <div class="step s2">
+                    <div class="step-side"><div><div class="snum">2</div><div class="stitle">로그인</div></div><div class="sico">🔒</div></div>
+                    <div class="step-body">
+                      <div class="scopy">설치하신 <strong>&lt;M.O.V.E&gt;</strong>에 접속 후 아래 ID로 로그인하세요.<br>최초 접속 시 비밀번호 변경은 필수입니다.
+                        <div class="mnote">ID&nbsp;<strong id="wg-v-mid">nj______</strong>&nbsp;ㅣ&nbsp;임시 비밀번호&nbsp;<strong id="wg-v-pw">n1234</strong></div>
                       </div>
-                      <div class="wg-qr-item">
-                        <div class="wg-qr-platform ios">iOS(아이폰)</div>
-                        <div class="wg-qr-box" id="qr-ios"></div>
-                        <div class="wg-qr-url">https://apple.co/4iigX5I</div>
+                      <div class="lgn-panel">
+                        <div class="lgn-box">
+                          <div class="lgn-logo">M.O.V.E</div>
+                          <div class="iln">ID&nbsp;&nbsp;<span id="wg-v-mid2">nj______</span></div>
+                          <div class="iln">비밀번호&nbsp;&nbsp;••••••</div>
+                          <div class="lgn-btn">로그인</div>
+                        </div>
+                        <div class="arrow">→</div>
+                        <div class="pw-box">
+                          <div class="chk-shield">✓</div>
+                          <div class="iln">현재 비밀번호</div>
+                          <div class="iln">새 비밀번호</div>
+                          <div class="iln">비밀번호 확인</div>
+                          <div class="lgn-btn">변경 완료</div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <!-- Step 2 -->
-                <div class="wg-doc-step">
-                  <div class="wg-doc-step-l">
-                    <div class="wg-doc-snum"><div class="wg-doc-snum-circle">2</div><span class="wg-doc-snum-txt">STEP</span></div>
-                    <div class="wg-doc-step-icon">🔒</div>
-                    <div class="wg-doc-step-title">로그인</div>
-                  </div>
-                  <div class="wg-doc-step-r">
-                    <div class="wg-doc-desc">설치하신 &lt;M.O.V.E&gt;에 접속 후 아래 ID로 로그인하세요.<br>최초 접속 시 비밀번호 변경은 필수입니다.</div>
-                    <div class="wg-id-box">
-                      <div class="wg-id-row"><span class="wg-id-lbl">ID</span><span class="wg-id-val" id="wg-login-id">nj______</span></div>
-                      <div class="wg-id-sep"></div>
-                      <div class="wg-id-row"><span class="wg-id-lbl">임시 비밀번호</span><span class="wg-id-pw" id="wg-login-pw">n1234</span></div>
-                    </div>
-                  </div>
-                </div>
-                <!-- Step 3 -->
-                <div class="wg-doc-step">
-                  <div class="wg-doc-step-l">
-                    <div class="wg-doc-snum"><div class="wg-doc-snum-circle">3</div><span class="wg-doc-snum-txt">STEP</span></div>
-                    <div class="wg-doc-step-icon">▶️</div>
-                    <div class="wg-doc-step-title">동영상 강의<br>수강</div>
-                  </div>
-                  <div class="wg-doc-step-r">
-                    <div class="wg-doc-desc">&lt;M.O.V.E&gt; "학습하기" 탭에서 시험공부를 위한 동영상 강의를 수강하실 수 있습니다.</div>
-                    <div style="display:flex;gap:16px;align-items:flex-start">
-                      <div style="flex:1">
-                        <div class="wg-prog"><span class="wg-prog-lbl">01. 보험의 이해</span><div class="wg-prog-bg"><div class="wg-prog-fill" style="width:80%"></div></div><span class="wg-prog-pct">80%</span></div>
-                        <div class="wg-prog"><span class="wg-prog-lbl">02. 보험계약의 성립</span><div class="wg-prog-bg"><div class="wg-prog-fill" style="width:85%"></div></div><span class="wg-prog-pct">85%</span></div>
-                        <div class="wg-prog"><span class="wg-prog-lbl">03. 보험금 지급</span><div class="wg-prog-bg"><div class="wg-prog-fill" style="width:90%"></div></div><span class="wg-prog-pct">90%</span></div>
-                        <div style="font-size:10px;color:#8A92A3;margin-top:6px">총 17개 강의 모두 필수 수강</div>
+                  <div class="step s3">
+                    <div class="step-side"><div><div class="snum">3</div><div class="stitle">동영상 강의<br>수강</div></div><div class="sico">▶</div></div>
+                    <div class="step-body">
+                      <div class="scopy"><strong>&lt;M.O.V.E&gt;</strong> &quot;학습하기&quot; 탭에서<br>시험 공부를 위한 동영상 강의를 수강하세요.
+                        <div class="mnote grn">총 17개 강의 모두 필수 수강</div>
                       </div>
-                      <div class="wg-badge wg-badge-blue">80% 이상<br>수강 시<br>학습 완료!</div>
+                      <div class="prog-panel">
+                        <div class="prog-line"><div class="lsn">01. 보험의 이해</div><div class="prbar"><span style="width:80%"></span></div><div class="prpct">80%</div></div>
+                        <div class="prog-line"><div class="lsn">02. 보험계약의 성립</div><div class="prbar"><span style="width:85%"></span></div><div class="prpct">85%</div></div>
+                        <div class="prog-line"><div class="lsn">03. 보험금 지급</div><div class="prbar"><span style="width:90%"></span></div><div class="prpct">90%</div></div>
+                        <div class="prog-line"><div class="lsn">17. 보장성 보험의 설계</div><div class="prbar"><span style="width:80%"></span></div><div class="prpct">80%</div></div>
+                        <div class="ccallout">80% 이상<br>수강 시<br>완료!</div>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <!-- Step 4 -->
-                <div class="wg-doc-step">
-                  <div class="wg-doc-step-l">
-                    <div class="wg-doc-snum"><div class="wg-doc-snum-circle">4</div><span class="wg-doc-snum-txt">STEP</span></div>
-                    <div class="wg-doc-step-icon">📋</div>
-                    <div class="wg-doc-step-title">모의고사<br>응시</div>
-                  </div>
-                  <div class="wg-doc-step-r">
-                    <div class="wg-doc-desc">&lt;M.O.V.E&gt; "모의시험 풀어보기"에서 모의고사에 응시할 수 있습니다.<br>설계사 자격시험 신청을 위해 3개 이상 응시가 필수입니다.</div>
-                    <div class="wg-exam-row">
-                      <div class="wg-exam-card"><div class="wg-exam-ttl">모의고사 01</div><span class="wg-exam-btn-fake">응시하기</span><div class="wg-exam-ok">✅ 응시완료</div></div>
-                      <div class="wg-exam-card"><div class="wg-exam-ttl">모의고사 02</div><span class="wg-exam-btn-fake">응시하기</span><div class="wg-exam-ok">✅ 응시완료</div></div>
-                      <div class="wg-exam-card"><div class="wg-exam-ttl">모의고사 03</div><span class="wg-exam-btn-fake">응시하기</span><div class="wg-exam-ok">✅ 응시완료</div></div>
-                      <div class="wg-badge wg-badge-purple" style="align-self:center">3개 이상<br>응시 필수!</div>
+                  <div class="step s4">
+                    <div class="step-side"><div><div class="snum">4</div><div class="stitle">모의고사<br>응시</div></div><div class="sico">📋</div></div>
+                    <div class="step-body">
+                      <div class="scopy"><strong>&lt;M.O.V.E&gt;</strong> &quot;모의시험 풀어보기&quot;에서<br>모의고사에 응시할 수 있습니다.
+                        <div class="mnote pur">실제 시험 신청을 위해 3개 이상 모의고사 응시가 필수입니다.</div>
+                      </div>
+                      <div class="exam-panel">
+                        <div class="exam-card"><div class="exam-title">모의고사 01</div><div class="exam-btn">응시하기</div><div class="edone">✅ 응시완료</div></div>
+                        <div class="exam-card"><div class="exam-title">모의고사 02</div><div class="exam-btn">응시하기</div><div class="edone">✅ 응시완료</div></div>
+                        <div class="exam-card"><div class="exam-title">모의고사 03</div><div class="exam-btn">응시하기</div><div class="edone">✅ 응시완료</div></div>
+                        <div class="ecallout">3개 이상<br>응시 필수!</div>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <!-- 푸터 -->
-                <div class="wg-doc-footer">
-                  <div class="wg-doc-footer-ico">📢</div>
-                  <div class="wg-doc-footer-txt">이상의 이러닝 과정을 거치시면 설계사 자격 시험에 응시할 수 있으며,<br>관련 안내는 추후 상세히 말씀드리겠습니다.</div>
-                </div>
-              </div>
+                </section>
+                <footer class="p-footer">
+                  <div class="fbox"><div class="ficon">📢</div><div>이상의 이러닝 과정을 거치시면 설계사 자격 시험에 응시할 수 있으며, 관련 안내는 추후 상세히 말씀드리겠습니다.</div></div>
+                  <div class="cheer" id="wg-v-cheer">끝까지 함께 하겠습니다!<br>화이팅!</div>
+                </footer>
+              </article>
             </div>
           </div>
         </div>
@@ -1189,60 +1195,65 @@ function sTM(n,btn){document.querySelectorAll('.tp').forEach(p=>p.classList.remo
 function sA(n,btn){document.querySelectorAll('.ap').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.atbn').forEach(b=>b.classList.remove('active'));$('adm-'+n).classList.add('active');btn.classList.add('active');if(n==='gr')rGL_adm();else if(n==='ev')rEL_adm();else if(n==='no')rNL_adm();else if(n==='chk')rChk();}
 
 // ─── 입과 안내문 ───────────────────────────────────────────
-let wgQrDone=false;
+const wgDefAvatar=`data:image/svg+xml;charset=UTF-8,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><rect width="120" height="120" fill="#EEF6FF"/><circle cx="60" cy="46" r="29" fill="#FFD1AF" stroke="#16213A" stroke-width="5"/><path d="M31 45c3-23 18-35 34-35s26 11 29 35c-12-9-24-11-35-11s-20 3-28 11z" fill="#202235"/><circle cx="48" cy="49" r="4" fill="#16213A"/><circle cx="72" cy="49" r="4" fill="#16213A"/><path d="M50 64c7 7 14 7 21 0" fill="none" stroke="#16213A" stroke-width="4" stroke-linecap="round"/><path d="M20 112c4-24 20-38 40-38s36 14 40 38" fill="#0B67D8" stroke="#16213A" stroke-width="5"/></svg>')}`;
+let wgInited=false;
 function initWG(){
-  if(!wgQrDone&&CU){
-    // 내 계정으로 멘토 자동 세팅
-    $('wg-mentor').value=CU.name+' '+(CU.role||CU.org_title||'팀장');
-    // 연락처: localStorage 우선, 없으면 CU.phone
-    const savedPh=localStorage.getItem('wg_phone')||(CU.phone||'');
-    if(savedPh)$('wg-phone').value=savedPh;
-    // 최초 방문 안내 배너
-    if(!localStorage.getItem('wg_intro')){
-      setTimeout(()=>{const n=$('wg-notice');if(n)n.style.display='block';},200);
+  if(!wgInited){
+    wgInited=true;
+    $('wg-avatar-img').src=wgDefAvatar;
+    if(CU){
+      $('wg-mname').value=CU.name||'';
+      $('wg-mtitle').value=CU.role||CU.org_title||'팀장';
+      const savedPh=localStorage.getItem('wg_phone')||(CU.phone||'');
+      if(savedPh)$('wg-mphone').value=savedPh;
+      if(!localStorage.getItem('wg_intro'))setTimeout(()=>{const n=$('wg-notice');if(n)n.style.display='block';},250);
     }
+    $('wg-avatar').addEventListener('change',e=>{
+      const f=e.target.files[0];if(!f)return;
+      const fr=new FileReader();fr.onload=()=>{$('wg-avatar-img').src=fr.result;};fr.readAsDataURL(f);
+    });
+    makeWgQr('wg-qr-a','https://bit.ly/47YT7H6');
+    makeWgQr('wg-qr-i','https://apple.co/4iigX5I');
   }
-  scaleWG();
-  updWG();
-  if(wgQrDone)return;
-  wgQrDone=true;
-  try{
-    if(typeof QRCode!=='undefined'){
-      new QRCode($('qr-android'),{text:'https://bit.ly/47YT7H6',width:86,height:86,colorDark:'#0A1433',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
-      new QRCode($('qr-ios'),{text:'https://apple.co/4iigX5I',width:86,height:86,colorDark:'#0A1433',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
-    }
-  }catch(e){}
+  scaleWG();updWG();
 }
 function scaleWG(){
   const wrap=$('wg-scale-wrap'),scroll=$('wg-scroll');
   if(!wrap||!scroll)return;
-  const avail=scroll.clientWidth-32;
-  const sc=Math.min(1,avail/680);
+  const avail=scroll.clientWidth-40;
+  const sc=Math.min(1,avail/1080);
   wrap.style.transform=`scale(${sc})`;
-  wrap.style.width=680+'px';
-  scroll.style.minHeight=Math.ceil(1000*sc+40)+'px';
+  wrap.style.width='1080px';
+  scroll.style.height=Math.ceil(1528*sc+40)+'px';
 }
 function updWG(){
-  const nm=$('wg-name').value.trim();
-  $('wg-h-name').textContent=nm?nm+' 크루님,':'크루님,';
-  $('wg-h-mentor').textContent=$('wg-mentor').value.trim()||'멘토 이름';
-  const ph=$('wg-phone').value.trim();
-  $('wg-h-phone').textContent=ph||'010-0000-0000';
+  const nm=$('wg-cname').value.trim();
+  $('wg-v-name').textContent=nm||'크루';
+  $('wg-v-suffix').textContent=$('wg-csuffix').value||'님';
+  $('wg-v-mname').textContent=$('wg-mname').value.trim()||'멘토 이름';
+  $('wg-v-mtitle').textContent=$('wg-mtitle').value.trim()||'팀장';
+  const ph=$('wg-mphone').value.trim();
+  $('wg-v-mphone').textContent=ph||'010-0000-0000';
   if(ph)localStorage.setItem('wg_phone',ph);
-  $('wg-login-id').textContent=$('wg-id').value.trim()||'nj______';
-  $('wg-login-pw').textContent=$('wg-pw').value.trim()||'n1234';
+  const mid=$('wg-mid').value.trim();
+  $('wg-v-mid').textContent=mid||'nj______';
+  $('wg-v-mid2').textContent=mid||'nj______';
+  $('wg-v-pw').textContent=$('wg-mpw').value.trim()||'n1234';
+  $('wg-v-cheer').innerHTML=($('wg-cheer').value||'끝까지 함께 하겠습니다!\n화이팅!').replace(/\n/g,'<br>');
+}
+async function makeWgQr(imgId,url){
+  if(!url||typeof QRCode==='undefined')return;
+  try{const q=await QRCode.toDataURL(url,{width:220,margin:1,errorCorrectionLevel:'H',color:{dark:'#091731',light:'#ffffff'}});$(imgId).src=q;}catch(e){}
 }
 async function dlWelcome(){
-  if(typeof html2canvas==='undefined'){toast('라이브러리 로딩 중... 잠시 후 다시 시도하세요.');return;}
+  if(typeof htmlToImage==='undefined'){toast('라이브러리 로딩 중... 잠시 후 다시 시도하세요.');return;}
   const btn=$('wg-dl-btn');btn.disabled=true;btn.textContent='생성 중...';
   try{
-    const el=$('wg-doc');
-    const canvas=await html2canvas(el,{scale:2,useCORS:true,backgroundColor:'#ffffff',logging:false,allowTaint:false});
-    const a=document.createElement('a');
-    const nm=($('wg-name').value.trim()||'크루님');
-    a.download=`입과안내문_${nm}.png`;
-    a.href=canvas.toDataURL('image/png');
-    a.click();
+    await document.fonts.ready;updWG();
+    const node=$('wg-doc');
+    const nm=$('wg-cname').value.trim()||'크루';
+    const dataUrl=await htmlToImage.toPng(node,{width:1080,height:1528,pixelRatio:2,cacheBust:true,backgroundColor:'#FFFFFF',style:{transform:'none',transformOrigin:'top left'}});
+    const a=document.createElement('a');a.download=`N잡크루_입과안내_${nm}.png`;a.href=dataUrl;a.click();
     toast('📥 이미지 다운로드 완료!');
   }catch(e){toast('다운로드 실패. 다시 시도해주세요.');}
   finally{btn.disabled=false;btn.textContent='📥 이미지 다운로드';}
