@@ -497,7 +497,7 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
       <button class="ds-btn" onclick="sT('notice',this)"><span class="ds-ico">📢</span> 공지사항</button>
       <button class="ds-btn sz" onclick="sT('team',this)"><span class="ds-ico">📊</span> 권역 현황</button>
       <button class="ds-btn" onclick="sT('links',this)"><span class="ds-ico">🔗</span> 관련 사이트</button>
-      <button class="ds-btn" onclick="sT('welcome',this)"><span class="ds-ico">🪪</span> 입과 안내문 <span style="font-size:9px;font-weight:800;background:var(--njob-bg);color:var(--njob);padding:2px 6px;border-radius:4px;margin-left:auto;flex-shrink:0">N잡</span></button>
+      <button class="ds-btn" onclick="sT('welcome',this)"><span class="ds-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="vertical-align:middle"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg></span> 입과 안내문</button>
       <button class="ds-btn an" onclick="sT('admin',this)"><span class="ds-ico">⚙️</span> 관리자</button>
     </div>
     <div class="ds-user">
@@ -617,7 +617,7 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
     </div>
     <!-- 입과 안내문 -->
     <div class="tp" id="tab-welcome">
-      <div class="ph"><div class="pt">🪪 입과 안내문</div><div class="pd">신규 N잡크루 배정자에게 전달할 안내문을 제작하고 이미지로 저장하세요</div></div>
+      <div class="ph"><div class="pt" style="display:flex;align-items:center;gap:10px"><svg viewBox="0 0 24 24" width="22" height="22" fill="var(--njob)" style="flex-shrink:0"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>입과 안내문</div><div class="pd">신규 N잡크루 배정자에게 전달할 안내문을 제작하고 이미지로 저장하세요</div></div>
       <div class="wg-layout">
         <!-- 입력 폼 -->
         <div class="wg-panel">
@@ -626,25 +626,32 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
             <div class="wg-panel-hsub">입력하는 즉시 미리보기에 반영됩니다</div>
           </div>
           <div class="wg-panel-body">
+            <div id="wg-notice" style="display:none;background:#E6EDFF;border:1px solid #BDD0FF;border-radius:9px;padding:11px 13px;margin-bottom:16px;font-size:12px;color:#003CDC;line-height:1.6">
+              <div style="display:flex;gap:8px;align-items:flex-start">
+                <span style="flex-shrink:0">💡</span>
+                <span style="flex:1">전담 멘토 이름·직함을 내 계정으로 자동 설정했어요.<br>연락처도 입력해 두시면 다음부터 자동으로 불러옵니다.</span>
+                <span onclick="localStorage.setItem('wg_intro','1');this.closest('#wg-notice').style.display='none'" style="cursor:pointer;font-size:14px;opacity:.5;flex-shrink:0;margin-left:4px">✕</span>
+              </div>
+            </div>
             <div class="wg-field">
               <label>크루 이름</label>
-              <input id="wg-name" type="text" placeholder="예: 김삼성" value="김삼성" oninput="updWG()">
+              <input id="wg-name" type="text" placeholder="배정자 이름 입력" oninput="updWG()">
             </div>
             <div class="wg-divider"></div>
             <div style="font-size:11px;font-weight:700;color:var(--g400);margin-bottom:12px;letter-spacing:.3px">전담 멘토</div>
             <div class="wg-field">
               <label>이름 (직함 포함)</label>
-              <input id="wg-mentor" type="text" placeholder="예: 이화재 팀장" value="이화재 팀장" oninput="updWG()">
+              <input id="wg-mentor" type="text" placeholder="이름 직함" oninput="updWG()">
             </div>
             <div class="wg-field">
               <label>연락처</label>
-              <input id="wg-phone" type="text" placeholder="예: 010-1234-5678" value="010-1234-5678" oninput="updWG()">
+              <input id="wg-phone" type="text" placeholder="010-0000-0000" oninput="updWG()">
             </div>
             <div class="wg-divider"></div>
             <div style="font-size:11px;font-weight:700;color:var(--g400);margin-bottom:12px;letter-spacing:.3px">M.O.V.E 접속 정보</div>
             <div class="wg-field">
               <label>로그인 ID</label>
-              <input id="wg-id" type="text" placeholder="예: nj12345678" value="nj12345678" oninput="updWG()">
+              <input id="wg-id" type="text" placeholder="nj000000" oninput="updWG()">
             </div>
             <div class="wg-field">
               <label>임시 비밀번호</label>
@@ -664,7 +671,7 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
                 <div class="wg-doc-head">
                   <div class="wg-doc-headwrap">
                     <div class="wg-doc-eyebrow">N잡크루 멤버스센터</div>
-                    <div class="wg-doc-title"><span class="wg-doc-name" id="wg-h-name">크루님</span>,<br>입과를 환영합니다! 🎉</div>
+                    <div class="wg-doc-title"><span class="wg-doc-name" id="wg-h-name">크루님,</span><br>입과를 환영합니다! 🎉</div>
                     <div class="wg-doc-sub">정식 후보자 등록이 완료되어, 아래와 같이 입과 안내드립니다.</div>
                     <div class="wg-doc-mentor">
                       <div class="wg-doc-mentor-av">👩‍💼</div>
@@ -772,7 +779,7 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
   <button class="mnb" onclick="sTM('calendar',this)"><svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg><span class="ml">월력</span></button>
   <button class="mnb" onclick="sTM('notice',this)"><svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg><span class="ml">공지</span></button>
   <button class="mnb" onclick="sTM('links',this)"><svg viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg><span class="ml">링크</span></button>
-  <button class="mnb" onclick="sTM('welcome',this)"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-5 2h5v2h-5V6zm0 3h5v2h-5V9zm0 3h5v2h-5v-2zM4 6h9v8H4V6zm0 10h16v2H4v-2z"/></svg><span class="ml">안내문</span></button>
+  <button class="mnb" onclick="sTM('welcome',this)"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg><span class="ml">안내문</span></button>
   <button class="mnb sz" onclick="sTM('team',this)"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg><span class="ml">권역현황</span></button>
   <button class="mnb am" onclick="sTM('admin',this)"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.48.48 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 00-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1115.6 12 3.6 3.6 0 0112 15.6z"/></svg><span class="ml">관리</span></button>
 </div></div>
@@ -1184,6 +1191,17 @@ function sA(n,btn){document.querySelectorAll('.ap').forEach(p=>p.classList.remov
 // ─── 입과 안내문 ───────────────────────────────────────────
 let wgQrDone=false;
 function initWG(){
+  if(!wgQrDone&&CU){
+    // 내 계정으로 멘토 자동 세팅
+    $('wg-mentor').value=CU.name+' '+(CU.role||CU.org_title||'팀장');
+    // 연락처: localStorage 우선, 없으면 CU.phone
+    const savedPh=localStorage.getItem('wg_phone')||(CU.phone||'');
+    if(savedPh)$('wg-phone').value=savedPh;
+    // 최초 방문 안내 배너
+    if(!localStorage.getItem('wg_intro')){
+      setTimeout(()=>{const n=$('wg-notice');if(n)n.style.display='block';},200);
+    }
+  }
   scaleWG();
   updWG();
   if(wgQrDone)return;
@@ -1205,9 +1223,12 @@ function scaleWG(){
   scroll.style.minHeight=Math.ceil(1000*sc+40)+'px';
 }
 function updWG(){
-  $('wg-h-name').textContent=$('wg-name').value.trim()||'크루님';
+  const nm=$('wg-name').value.trim();
+  $('wg-h-name').textContent=nm?nm+' 크루님,':'크루님,';
   $('wg-h-mentor').textContent=$('wg-mentor').value.trim()||'멘토 이름';
-  $('wg-h-phone').textContent=$('wg-phone').value.trim()||'010-0000-0000';
+  const ph=$('wg-phone').value.trim();
+  $('wg-h-phone').textContent=ph||'010-0000-0000';
+  if(ph)localStorage.setItem('wg_phone',ph);
   $('wg-login-id').textContent=$('wg-id').value.trim()||'nj______';
   $('wg-login-pw').textContent=$('wg-pw').value.trim()||'n1234';
 }
