@@ -1056,7 +1056,7 @@ const WG_F={
   mid:     {x:339,y:787, w:175,h:32, fs:21,c:'#003CDC'},  // 로그인 ID
   mpw:     {x:339,y:830, w:175,h:32, fs:21,c:'#003CDC'}   // 임시 비밀번호
 };
-const WG_AV={x:48,y:249,size:84};  // 프로필 사진 원형 (size=지름)
+const WG_AV={x:53,y:278,size:84};  // 프로필 사진 원형 — 좌측상단 기준 (size=지름)
 
 let wgMaster=null,wgAvatarSrc=null,wgAvatarType='none',wgFont="'Noto Sans KR',sans-serif",wgInited=false,wgDrawTid=0;
 let wgCalOn=false,wgCalCnt=0;
@@ -1181,9 +1181,9 @@ function drawWG(){
       ctx.save();
       ctx.font=`700 ${f.fs}px ${wgFont}`;
       ctx.fillStyle=f.c;
-      ctx.textAlign='center';
-      ctx.textBaseline='middle';
-      ctx.fillText(v,f.x+f.w/2,f.y+f.h/2,f.w);
+      ctx.textAlign='left';
+      ctx.textBaseline='top';
+      ctx.fillText(v,f.x,f.y,f.w);
       ctx.restore();
     });
     const finish=()=>{preview.src=canvas.toDataURL('image/png');};
