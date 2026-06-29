@@ -349,16 +349,14 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
 .wg-dl-btn:hover{opacity:.88;transform:translateY(-1px)}
 .wg-dl-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
 .wg-hint{font-size:11px;color:var(--g400);text-align:center;margin-top:8px}
-.wg-av-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
-.wg-av-btn{border:2px solid var(--g100);border-radius:10px;background:var(--g50);padding:10px 6px 8px;cursor:pointer;text-align:center;font-size:11px;color:var(--g600);font-family:var(--f);transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:5px;line-height:1.2}
-.wg-av-btn:hover{border-color:var(--njob);background:#EEF3FF;color:var(--njob)}
-.wg-av-btn.sel{border-color:var(--njob);background:#E6EDFF;color:var(--njob);font-weight:700}
-.wg-av-circle{width:38px;height:38px;border-radius:50%;overflow:hidden;background:var(--g100);display:flex;align-items:center;justify-content:center;font-size:18px}
-.wg-av-circle img{width:100%;height:100%;object-fit:cover}
+.wg-av-2btn{display:flex;gap:8px;margin-bottom:8px}
+.wg-av-2btn button{flex:1;padding:10px 8px;border:1.5px solid var(--g100);border-radius:9px;background:var(--g50);font-size:12px;font-family:var(--f);cursor:pointer;font-weight:600;color:var(--g600);transition:all .15s}
+.wg-av-2btn button:hover{border-color:var(--njob);background:#EEF3FF;color:var(--njob)}
+.wg-av-2btn button.sel{border-color:var(--njob);background:#E6EDFF;color:var(--njob);font-weight:700}
 .wg-av-popup{display:none;position:fixed;inset:0;z-index:9999;background:rgba(10,20,51,.65);align-items:center;justify-content:center}
 .wg-av-popup.on{display:flex}
 .wg-preview-label{font-size:11px;font-weight:700;color:var(--g400);letter-spacing:.5px;margin-bottom:10px}
-.wg-preview-wrap{border-radius:16px;background:linear-gradient(135deg,#D0D5E8,#BCC3D8);padding:20px;box-shadow:inset 0 2px 12px rgba(0,0,0,.12);min-height:200px;display:flex;align-items:center;justify-content:center}
+.wg-preview-wrap{border-radius:16px;background:linear-gradient(135deg,#D0D5E8,#BCC3D8);padding:20px;box-shadow:inset 0 2px 12px rgba(0,0,0,.12);min-height:200px;display:flex;align-items:center;justify-content:center;position:relative}
 .wg-preview-wrap img{width:100%;height:auto;display:block;border-radius:8px;box-shadow:0 8px 40px rgba(5,15,60,.26)}
 .wg-preview-ph{text-align:center;padding:40px 20px;color:var(--g600);font-size:13px;line-height:1.7}
 @media(max-width:900px){.wg-layout{grid-template-columns:1fr}.wg-panel{position:static}}
@@ -576,22 +574,14 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
             <div class="wg-sec-label">전담 멘토</div>
             <div class="wg-field"><label>이름</label><input id="wg-mname" type="text" placeholder="이름" oninput="drawWG()"></div>
             <div class="wg-field"><label>연락처</label><input id="wg-mphone" type="text" placeholder="010-0000-0000" oninput="drawWG()"></div>
-            <div style="margin-bottom:5px"><label style="font-size:11px;font-weight:700;color:var(--g400);letter-spacing:.5px">프로필 사진</label></div>
-            <div class="wg-av-grid">
-              <button class="wg-av-btn sel" id="wg-av-btn-none" onclick="setWgAv('none')">
-                <div class="wg-av-circle">🖼</div><span>프레임 기본</span>
-              </button>
-              <button class="wg-av-btn" id="wg-av-btn-male" onclick="setWgAv('male')">
-                <div class="wg-av-circle"><img id="wg-av-male-img" alt="남성"></div><span>남성</span>
-              </button>
-              <button class="wg-av-btn" id="wg-av-btn-female" onclick="setWgAv('female')">
-                <div class="wg-av-circle"><img id="wg-av-female-img" alt="여성"></div><span>여성</span>
-              </button>
-              <button class="wg-av-btn" id="wg-av-btn-custom" onclick="$('wg-avatar').click()">
-                <div class="wg-av-circle">📷</div><span>직접 올리기</span>
-              </button>
+            <div class="wg-field" style="margin-bottom:10px">
+              <label>프로필 사진 (선택)</label>
+              <div class="wg-av-2btn">
+                <button class="sel" id="wg-av-btn-none" onclick="setWgAv('none')">🖼 프레임 기본</button>
+                <button id="wg-av-btn-custom" onclick="$('wg-avatar').click()">📷 직접 올리기</button>
+              </div>
+              <input id="wg-avatar" type="file" accept=".jpg,.jpeg,.png,.webp" style="display:none">
             </div>
-            <input id="wg-avatar" type="file" accept=".jpg,.jpeg,.png,.webp" style="display:none">
             <div class="wg-divider"></div>
             <div class="wg-sec-label">M.O.V.E 접속 정보</div>
             <div class="wg-row2">
@@ -603,10 +593,19 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
           </div>
         </div>
         <div>
-          <div class="wg-preview-label">미리보기</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <div class="wg-preview-label">미리보기</div>
+            <button id="wg-cal-btn" onclick="toggleWgCal()" style="font-size:11px;color:var(--g400);background:none;border:1px solid var(--g100);border-radius:6px;padding:4px 10px;cursor:pointer;font-family:var(--f);transition:all .15s">📐 좌표 측정</button>
+          </div>
           <div class="wg-preview-wrap" id="wg-preview-wrap">
             <div class="wg-preview-ph" id="wg-preview-ph">마스터 프레임 로딩 중...</div>
-            <img id="wg-preview-img" style="display:none;width:100%;height:auto;border-radius:8px" alt="미리보기">
+            <img id="wg-preview-img" style="display:none;width:100%;height:auto;border-radius:8px" alt="미리보기"
+                 onmousemove="wgCalMove(event)" onclick="wgCalClick(event)">
+          </div>
+          <div id="wg-cal-info" style="display:none;margin-top:8px;padding:10px 12px;background:var(--g50);border:1px solid var(--g100);border-radius:10px;font-size:11px;font-family:monospace;line-height:1.9">
+            <span style="font-weight:700;color:var(--g600)">실시간:</span> <span id="wg-cal-cur" style="color:var(--g900)">이미지 위에 마우스를 올리세요</span><br>
+            <span style="font-weight:700;color:var(--g600)">클릭 기록:</span><br>
+            <span id="wg-cal-log" style="color:var(--ok)"></span>
           </div>
         </div>
       </div>
@@ -1048,21 +1047,19 @@ function sA(n,btn){document.querySelectorAll('.ap').forEach(p=>p.classList.remov
 
 // ─── 입과 안내문 (Canvas 합성) ───────────────────────────────────────────
 const WG_W=1055,WG_H=1491;
-// ▼ 마스터 프레임 기준 픽셀 좌표 — 미세 조정 필요 시 이 값만 수정
+// ▼ 마스터 프레임 기준 픽셀 좌표 (레퍼런스 이미지 실측 기반)
+// ▼ 미세 조정 필요 시 이 값만 수정 — 📐 좌표 측정 버튼으로 확인 가능
 const WG_F={
-  crewName:{x:50, y:58, w:178,h:60,fs:40,c:'#071B4D'},
-  mname:   {x:192,y:275,w:155,h:32,fs:23,c:'#FFFFFF'},
-  mphone:  {x:408,y:275,w:228,h:32,fs:21,c:'#FFFFFF'},
-  mid:     {x:272,y:781,w:192,h:36,fs:21,c:'#003CDC'},
-  mpw:     {x:272,y:829,w:192,h:36,fs:21,c:'#003CDC'}
+  crewName:{x:55, y:57, w:175,h:58, fs:40,c:'#071B4D'},  // 이름 흰 박스
+  mname:   {x:178,y:261,w:150,h:28, fs:23,c:'#FFFFFF'},  // 멘토 이름
+  mphone:  {x:384,y:261,w:225,h:28, fs:21,c:'#FFFFFF'},  // 멘토 전화
+  mid:     {x:240,y:704,w:175,h:32, fs:21,c:'#003CDC'},  // 로그인 ID
+  mpw:     {x:240,y:752,w:175,h:32, fs:21,c:'#003CDC'}   // 임시 비밀번호
 };
-const WG_AV={x:47,y:254,size:84};
-
-// 기본 아바타 SVG
-const WG_AV_M=`data:image/svg+xml;charset=utf-8,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#E8EEFF"/><path d="M29 36 Q30 12 50 11 Q70 12 71 36 Q64 18 50 18 Q36 18 29 36Z" fill="#2C1E0F"/><circle cx="50" cy="41" r="22" fill="#FDDBB4"/><ellipse cx="41" cy="40" rx="2.8" ry="3.5" fill="#1A0D00"/><ellipse cx="59" cy="40" rx="2.8" ry="3.5" fill="#1A0D00"/><path d="M42 52 Q50 58 58 52" fill="none" stroke="#C27A55" stroke-width="2" stroke-linecap="round"/><path d="M17 100 Q22 72 36 65 Q43 70 50 70 Q57 70 64 65 Q78 72 83 100Z" fill="#0D47A1"/></svg>')}`;
-const WG_AV_F=`data:image/svg+xml;charset=utf-8,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#FFF0F8"/><ellipse cx="50" cy="47" rx="23" ry="29" fill="#3D1A5E"/><circle cx="50" cy="41" r="22" fill="#FDDBB4"/><path d="M27 30 Q29 10 50 9 Q71 10 73 30 Q65 14 50 14 Q35 14 27 30Z" fill="#3D1A5E"/><ellipse cx="41" cy="40" rx="2.8" ry="3.5" fill="#1A0D00"/><ellipse cx="59" cy="40" rx="2.8" ry="3.5" fill="#1A0D00"/><ellipse cx="39" cy="48" rx="5" ry="2.5" fill="#FFB4C0" opacity="0.6"/><ellipse cx="61" cy="48" rx="5" ry="2.5" fill="#FFB4C0" opacity="0.6"/><path d="M42 52 Q50 58 58 52" fill="none" stroke="#C27A55" stroke-width="2" stroke-linecap="round"/><path d="M17 100 Q22 72 36 65 Q43 70 50 70 Q57 70 64 65 Q78 72 83 100Z" fill="#7B1FA2"/></svg>')}`;
+const WG_AV={x:48,y:249,size:84};  // 프로필 사진 원형 (size=지름)
 
 let wgMaster=null,wgAvatarSrc=null,wgAvatarType='none',wgFont="'Noto Sans KR',sans-serif",wgInited=false,wgDrawTid=0;
+let wgCalOn=false,wgCalCnt=0;
 
 function initWG(){
   if(!wgInited){
@@ -1073,10 +1070,6 @@ function initWG(){
       if(savedPh)$('wg-mphone').value=savedPh;
       if(!localStorage.getItem('wg_intro'))setTimeout(()=>{const n=$('wg-notice');if(n)n.style.display='block';},250);
     }
-    // 기본 아바타 미리보기 세팅
-    $('wg-av-male-img').src=WG_AV_M;
-    $('wg-av-female-img').src=WG_AV_F;
-
     $('wg-avatar').addEventListener('change',e=>{
       const f=e.target.files[0];if(!f)return;
       // 확장자 검증
@@ -1127,18 +1120,43 @@ function initWG(){
   }
 }
 function setWgAvSel(type){
-  ['none','male','female','custom'].forEach(t=>{
+  ['none','custom'].forEach(t=>{
     const b=$('wg-av-btn-'+t);if(b)b.classList.toggle('sel',t===type);
   });
 }
 function setWgAv(type){
   wgAvatarType=type;
   setWgAvSel(type);
-  if(type==='none'){wgAvatarSrc=null;}
-  else if(type==='male'){wgAvatarSrc=WG_AV_M;}
-  else if(type==='female'){wgAvatarSrc=WG_AV_F;}
+  if(type==='none'){wgAvatarSrc=null;drawWG();}
   // 'custom'은 파일 선택 후 addEventListener에서 처리
-  if(type!=='custom')drawWG();
+}
+function toggleWgCal(){
+  wgCalOn=!wgCalOn;wgCalCnt=0;
+  const btn=$('wg-cal-btn'),info=$('wg-cal-info'),img=$('wg-preview-img');
+  btn.style.background=wgCalOn?'#E6EDFF':'';
+  btn.style.color=wgCalOn?'var(--njob)':'var(--g400)';
+  btn.style.borderColor=wgCalOn?'var(--njob)':'var(--g100)';
+  info.style.display=wgCalOn?'block':'none';
+  img.style.cursor=wgCalOn?'crosshair':'default';
+  if(!wgCalOn){$('wg-cal-log').innerHTML='';$('wg-cal-cur').textContent='이미지 위에 마우스를 올리세요';}
+  else{$('wg-cal-log').innerHTML='<span style="opacity:.5">(클릭하면 좌표 기록)</span>';}
+}
+function wgCalXY(e){
+  const img=$('wg-preview-img');
+  return{x:Math.round(e.offsetX/img.offsetWidth*WG_W),y:Math.round(e.offsetY/img.offsetHeight*WG_H)};
+}
+function wgCalMove(e){
+  if(!wgCalOn)return;
+  const{x,y}=wgCalXY(e);$('wg-cal-cur').textContent=`x:${x}, y:${y}`;
+}
+function wgCalClick(e){
+  if(!wgCalOn)return;
+  const{x,y}=wgCalXY(e);wgCalCnt++;
+  const log=$('wg-cal-log');
+  if(wgCalCnt===1)log.innerHTML='';
+  const d=document.createElement('span');d.style.display='block';
+  d.textContent=`#${wgCalCnt} → x:${x}, y:${y}`;
+  log.appendChild(d);console.log(`📐 WG #${wgCalCnt}: x:${x}, y:${y}`);
 }
 function wgAutoPhone(v){const d=v.replace(/\D/g,'');return d.length===11?d.replace(/(\d{3})(\d{4})(\d{4})/,'$1-$2-$3'):v;}
 function drawWG(){
