@@ -497,7 +497,7 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
       <button class="ds-btn" onclick="sT('notice',this)"><span class="ds-ico">📢</span> 공지사항</button>
       <button class="ds-btn sz" onclick="sT('team',this)"><span class="ds-ico">📊</span> 권역 현황</button>
       <button class="ds-btn" onclick="sT('links',this)"><span class="ds-ico">🔗</span> 관련 사이트</button>
-      <button class="ds-btn" onclick="sT('welcome',this)"><span class="ds-ico">🪪</span> 입과 안내문</button>
+      <button class="ds-btn" onclick="sT('welcome',this)"><span class="ds-ico">🪪</span> 입과 안내문 <span style="font-size:9px;font-weight:800;background:var(--njob-bg);color:var(--njob);padding:2px 6px;border-radius:4px;margin-left:auto;flex-shrink:0">N잡</span></button>
       <button class="ds-btn an" onclick="sT('admin',this)"><span class="ds-ico">⚙️</span> 관리자</button>
     </div>
     <div class="ds-user">
@@ -628,23 +628,23 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
           <div class="wg-panel-body">
             <div class="wg-field">
               <label>크루 이름</label>
-              <input id="wg-name" type="text" placeholder="예: 전성훈" oninput="updWG()">
+              <input id="wg-name" type="text" placeholder="예: 김삼성" value="김삼성" oninput="updWG()">
             </div>
             <div class="wg-divider"></div>
             <div style="font-size:11px;font-weight:700;color:var(--g400);margin-bottom:12px;letter-spacing:.3px">전담 멘토</div>
             <div class="wg-field">
               <label>이름 (직함 포함)</label>
-              <input id="wg-mentor" type="text" placeholder="예: 이연주 팀장" oninput="updWG()">
+              <input id="wg-mentor" type="text" placeholder="예: 이화재 팀장" value="이화재 팀장" oninput="updWG()">
             </div>
             <div class="wg-field">
               <label>연락처</label>
-              <input id="wg-phone" type="text" placeholder="예: 010-7252-0256" oninput="updWG()">
+              <input id="wg-phone" type="text" placeholder="예: 010-1234-5678" value="010-1234-5678" oninput="updWG()">
             </div>
             <div class="wg-divider"></div>
             <div style="font-size:11px;font-weight:700;color:var(--g400);margin-bottom:12px;letter-spacing:.3px">M.O.V.E 접속 정보</div>
             <div class="wg-field">
               <label>로그인 ID</label>
-              <input id="wg-id" type="text" placeholder="예: nj020110" oninput="updWG()">
+              <input id="wg-id" type="text" placeholder="예: nj12345678" value="nj12345678" oninput="updWG()">
             </div>
             <div class="wg-field">
               <label>임시 비밀번호</label>
@@ -1185,6 +1185,7 @@ function sA(n,btn){document.querySelectorAll('.ap').forEach(p=>p.classList.remov
 let wgQrDone=false;
 function initWG(){
   scaleWG();
+  updWG();
   if(wgQrDone)return;
   wgQrDone=true;
   try{
