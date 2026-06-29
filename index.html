@@ -349,6 +349,14 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
 .wg-dl-btn:hover{opacity:.88;transform:translateY(-1px)}
 .wg-dl-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
 .wg-hint{font-size:11px;color:var(--g400);text-align:center;margin-top:8px}
+.wg-av-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.wg-av-btn{border:2px solid var(--g100);border-radius:10px;background:var(--g50);padding:10px 6px 8px;cursor:pointer;text-align:center;font-size:11px;color:var(--g600);font-family:var(--f);transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:5px;line-height:1.2}
+.wg-av-btn:hover{border-color:var(--njob);background:#EEF3FF;color:var(--njob)}
+.wg-av-btn.sel{border-color:var(--njob);background:#E6EDFF;color:var(--njob);font-weight:700}
+.wg-av-circle{width:38px;height:38px;border-radius:50%;overflow:hidden;background:var(--g100);display:flex;align-items:center;justify-content:center;font-size:18px}
+.wg-av-circle img{width:100%;height:100%;object-fit:cover}
+.wg-av-popup{display:none;position:fixed;inset:0;z-index:9999;background:rgba(10,20,51,.65);align-items:center;justify-content:center}
+.wg-av-popup.on{display:flex}
 .wg-preview-label{font-size:11px;font-weight:700;color:var(--g400);letter-spacing:.5px;margin-bottom:10px}
 .wg-preview-wrap{border-radius:16px;background:linear-gradient(135deg,#D0D5E8,#BCC3D8);padding:20px;box-shadow:inset 0 2px 12px rgba(0,0,0,.12);min-height:200px;display:flex;align-items:center;justify-content:center}
 .wg-preview-wrap img{width:100%;height:auto;display:block;border-radius:8px;box-shadow:0 8px 40px rgba(5,15,60,.26)}
@@ -568,7 +576,22 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
             <div class="wg-sec-label">전담 멘토</div>
             <div class="wg-field"><label>이름</label><input id="wg-mname" type="text" placeholder="이름" oninput="drawWG()"></div>
             <div class="wg-field"><label>연락처</label><input id="wg-mphone" type="text" placeholder="010-0000-0000" oninput="drawWG()"></div>
-            <div class="wg-field"><label>프로필 사진 (선택 · 프레임 기본값 대체)</label><input id="wg-avatar" type="file" accept="image/*"></div>
+            <div style="margin-bottom:5px"><label style="font-size:11px;font-weight:700;color:var(--g400);letter-spacing:.5px">프로필 사진</label></div>
+            <div class="wg-av-grid">
+              <button class="wg-av-btn sel" id="wg-av-btn-none" onclick="setWgAv('none')">
+                <div class="wg-av-circle">🖼</div><span>프레임 기본</span>
+              </button>
+              <button class="wg-av-btn" id="wg-av-btn-male" onclick="setWgAv('male')">
+                <div class="wg-av-circle"><img id="wg-av-male-img" alt="남성"></div><span>남성</span>
+              </button>
+              <button class="wg-av-btn" id="wg-av-btn-female" onclick="setWgAv('female')">
+                <div class="wg-av-circle"><img id="wg-av-female-img" alt="여성"></div><span>여성</span>
+              </button>
+              <button class="wg-av-btn" id="wg-av-btn-custom" onclick="$('wg-avatar').click()">
+                <div class="wg-av-circle">📷</div><span>직접 올리기</span>
+              </button>
+            </div>
+            <input id="wg-avatar" type="file" accept=".jpg,.jpeg,.png,.webp" style="display:none">
             <div class="wg-divider"></div>
             <div class="wg-sec-label">M.O.V.E 접속 정보</div>
             <div class="wg-row2">
@@ -590,6 +613,21 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
       <canvas id="wg-canvas" style="display:none" width="1055" height="1491"></canvas>
     </div>
   </main>
+</div>
+
+<!-- 아바타 파일 오류 팝업 -->
+<div class="wg-av-popup" id="wg-av-popup">
+  <div style="background:#fff;border-radius:18px;padding:28px 24px;max-width:320px;width:90%;box-shadow:0 24px 60px rgba(0,0,0,.28)">
+    <div style="font-size:16px;font-weight:900;color:var(--g900);margin-bottom:10px">파일을 확인해주세요</div>
+    <div id="wg-av-popup-msg" style="font-size:13px;font-weight:700;color:var(--err);margin-bottom:16px;line-height:1.6"></div>
+    <div style="font-size:12px;color:var(--g600);line-height:2;background:var(--g50);border-radius:10px;padding:12px 14px;margin-bottom:20px">
+      <b>지원 형식</b>&emsp;JPG · PNG · WEBP<br>
+      <b>최대 용량</b>&emsp;5 MB<br>
+      <b>권장 크기</b>&emsp;400 × 400px 이상<br>
+      <b>권장 비율</b>&emsp;1:1 정사각형 (자동 크롭됨)
+    </div>
+    <button onclick="$('wg-av-popup').classList.remove('on')" style="width:100%;padding:13px;background:var(--njob);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--f)">확인</button>
+  </div>
 </div>
 
 <!-- 모바일 하단 네비 (SVG 아이콘 - 검은점 해결) -->
@@ -1010,16 +1048,21 @@ function sA(n,btn){document.querySelectorAll('.ap').forEach(p=>p.classList.remov
 
 // ─── 입과 안내문 (Canvas 합성) ───────────────────────────────────────────
 const WG_W=1055,WG_H=1491;
-// 마스터 프레임 기준 좌표 (핸드오프 문서 v1 기준)
+// ▼ 마스터 프레임 기준 픽셀 좌표 — 미세 조정 필요 시 이 값만 수정
 const WG_F={
-  crewName:{x:38, y:72, w:180,h:60,fs:42,c:'#071B4D'},
-  mname:   {x:210,y:291,w:120,h:32,fs:24,c:'#FFFFFF'},
-  mphone:  {x:430,y:291,w:210,h:32,fs:24,c:'#FFFFFF'},
-  mid:     {x:333,y:785,w:160,h:34,fs:23,c:'#071B4D'},
-  mpw:     {x:333,y:831,w:160,h:34,fs:23,c:'#003CDC'}
+  crewName:{x:50, y:58, w:178,h:60,fs:40,c:'#071B4D'},
+  mname:   {x:192,y:275,w:155,h:32,fs:23,c:'#FFFFFF'},
+  mphone:  {x:408,y:275,w:228,h:32,fs:21,c:'#FFFFFF'},
+  mid:     {x:272,y:781,w:192,h:36,fs:21,c:'#003CDC'},
+  mpw:     {x:272,y:829,w:192,h:36,fs:21,c:'#003CDC'}
 };
-const WG_AV={x:55,y:278,size:75};
-let wgMaster=null,wgAvatarSrc=null,wgFont="'Noto Sans KR',sans-serif",wgInited=false,wgDrawTid=0;
+const WG_AV={x:47,y:254,size:84};
+
+// 기본 아바타 SVG
+const WG_AV_M=`data:image/svg+xml;charset=utf-8,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#E8EEFF"/><path d="M29 36 Q30 12 50 11 Q70 12 71 36 Q64 18 50 18 Q36 18 29 36Z" fill="#2C1E0F"/><circle cx="50" cy="41" r="22" fill="#FDDBB4"/><ellipse cx="41" cy="40" rx="2.8" ry="3.5" fill="#1A0D00"/><ellipse cx="59" cy="40" rx="2.8" ry="3.5" fill="#1A0D00"/><path d="M42 52 Q50 58 58 52" fill="none" stroke="#C27A55" stroke-width="2" stroke-linecap="round"/><path d="M17 100 Q22 72 36 65 Q43 70 50 70 Q57 70 64 65 Q78 72 83 100Z" fill="#0D47A1"/></svg>')}`;
+const WG_AV_F=`data:image/svg+xml;charset=utf-8,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#FFF0F8"/><ellipse cx="50" cy="47" rx="23" ry="29" fill="#3D1A5E"/><circle cx="50" cy="41" r="22" fill="#FDDBB4"/><path d="M27 30 Q29 10 50 9 Q71 10 73 30 Q65 14 50 14 Q35 14 27 30Z" fill="#3D1A5E"/><ellipse cx="41" cy="40" rx="2.8" ry="3.5" fill="#1A0D00"/><ellipse cx="59" cy="40" rx="2.8" ry="3.5" fill="#1A0D00"/><ellipse cx="39" cy="48" rx="5" ry="2.5" fill="#FFB4C0" opacity="0.6"/><ellipse cx="61" cy="48" rx="5" ry="2.5" fill="#FFB4C0" opacity="0.6"/><path d="M42 52 Q50 58 58 52" fill="none" stroke="#C27A55" stroke-width="2" stroke-linecap="round"/><path d="M17 100 Q22 72 36 65 Q43 70 50 70 Q57 70 64 65 Q78 72 83 100Z" fill="#7B1FA2"/></svg>')}`;
+
+let wgMaster=null,wgAvatarSrc=null,wgAvatarType='none',wgFont="'Noto Sans KR',sans-serif",wgInited=false,wgDrawTid=0;
 
 function initWG(){
   if(!wgInited){
@@ -1030,10 +1073,38 @@ function initWG(){
       if(savedPh)$('wg-mphone').value=savedPh;
       if(!localStorage.getItem('wg_intro'))setTimeout(()=>{const n=$('wg-notice');if(n)n.style.display='block';},250);
     }
+    // 기본 아바타 미리보기 세팅
+    $('wg-av-male-img').src=WG_AV_M;
+    $('wg-av-female-img').src=WG_AV_F;
+
     $('wg-avatar').addEventListener('change',e=>{
       const f=e.target.files[0];if(!f)return;
+      // 확장자 검증
+      const allowed=['image/jpeg','image/png','image/webp'];
+      const errs=[];
+      if(!allowed.includes(f.type))errs.push(`지원하지 않는 형식입니다 (${f.name.split('.').pop().toUpperCase()})`);
+      if(f.size>5*1024*1024)errs.push(`파일 크기가 너무 큽니다 (${(f.size/1024/1024).toFixed(1)}MB · 최대 5MB)`);
+      if(errs.length){
+        $('wg-av-popup-msg').innerHTML=errs.join('<br>');
+        $('wg-av-popup').classList.add('on');
+        e.target.value='';return;
+      }
+      // 크기 경고 (비차단)
       const fr=new FileReader();
-      fr.onload=()=>{wgAvatarSrc=fr.result;drawWG();};
+      fr.onload=()=>{
+        const img=new Image();
+        img.onload=()=>{
+          if(img.width<200||img.height<200){
+            $('wg-av-popup-msg').innerHTML=`이미지 해상도가 낮습니다 (${img.width}×${img.height}px)<br>400×400px 이상을 권장합니다`;
+            $('wg-av-popup').classList.add('on');
+          }
+          wgAvatarSrc=fr.result;
+          wgAvatarType='custom';
+          setWgAvSel('custom');
+          drawWG();
+        };
+        img.src=fr.result;
+      };
       fr.readAsDataURL(f);
     });
     // SamsungGL 폰트 로드 (있으면 사용)
@@ -1054,6 +1125,20 @@ function initWG(){
     };
     wgMaster.src='assets/njobcrew_onboarding_master_frame_v1.png';
   }
+}
+function setWgAvSel(type){
+  ['none','male','female','custom'].forEach(t=>{
+    const b=$('wg-av-btn-'+t);if(b)b.classList.toggle('sel',t===type);
+  });
+}
+function setWgAv(type){
+  wgAvatarType=type;
+  setWgAvSel(type);
+  if(type==='none'){wgAvatarSrc=null;}
+  else if(type==='male'){wgAvatarSrc=WG_AV_M;}
+  else if(type==='female'){wgAvatarSrc=WG_AV_F;}
+  // 'custom'은 파일 선택 후 addEventListener에서 처리
+  if(type!=='custom')drawWG();
 }
 function wgAutoPhone(v){const d=v.replace(/\D/g,'');return d.length===11?d.replace(/(\d{3})(\d{4})(\d{4})/,'$1-$2-$3'):v;}
 function drawWG(){
