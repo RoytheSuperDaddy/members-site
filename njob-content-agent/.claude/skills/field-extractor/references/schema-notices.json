@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "notices",
+  "type": "object",
+  "required": ["title", "body"],
+  "additionalProperties": false,
+  "properties": {
+    "icon": {
+      "type": ["string", "null"],
+      "description": "이모지 아이콘 (default: 📢)"
+    },
+    "icon_class": {
+      "type": ["string", "null"],
+      "enum": ["i-blue", "i-orange", "i-green", "i-purple", "i-pink", null],
+      "description": "아이콘 배경 색상 클래스"
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 200,
+      "description": "공지 제목"
+    },
+    "author": {
+      "type": ["string", "null"],
+      "description": "작성자 (default: 멤버스 운영팀)"
+    },
+    "body": {
+      "type": "string",
+      "description": "공지 본문 (markdown 허용)"
+    }
+  }
+}

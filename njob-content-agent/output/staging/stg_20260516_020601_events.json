@@ -1,0 +1,19 @@
+{
+  "id": "stg_20260516_020601_events",
+  "type": "events",
+  "status": "inserted",
+  "raw_asset_summary": "6월 20일 N잡크루 자격시험, 마감일 등록해줘",
+  "extracted_data": {
+    "event_date": "2026-06-20",
+    "title": "N잡크루 자격시험",
+    "description": "",
+    "tag": "t-ddl",
+    "tag_text": "마감",
+    "category": "exam",
+    "actions": null
+  },
+  "uncertain_fields": ["description", "actions"],
+  "edit_count": 0,
+  "created_at": "2026-05-16T02:06:01+09:00",
+  "inserted_id": 10
+}

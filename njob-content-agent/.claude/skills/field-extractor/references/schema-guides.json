@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "guides",
+  "type": "object",
+  "required": ["main_category", "category", "title", "description", "steps"],
+  "additionalProperties": false,
+  "properties": {
+    "main_category": {
+      "type": "string",
+      "enum": ["njob", "rebuild", "faq"],
+      "description": "메인 카테고리"
+    },
+    "category": {
+      "type": "string",
+      "description": "서브카테고리명"
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 200,
+      "description": "가이드 제목"
+    },
+    "description": {
+      "type": "string",
+      "description": "가이드 요약 (1-2줄)"
+    },
+    "badge": {
+      "type": ["string", "null"],
+      "description": "뱃지 코드 (default: b-new)"
+    },
+    "badge_text": {
+      "type": ["string", "null"],
+      "description": "뱃지 텍스트 (default: NEW)"
+    },
+    "steps": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "단계별 절차 배열"
+    },
+    "note": {
+      "type": ["string", "null"],
+      "description": "핵심 포인트"
+    },
+    "copyable_text": {
+      "type": ["string", "null"],
+      "description": "복붙용 카톡 문구"
+    }
+  }
+}
