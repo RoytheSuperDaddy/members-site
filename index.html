@@ -752,7 +752,7 @@ let CU=null,cY=new Date().getFullYear(),cM=new Date().getMonth(),G=[],EV=[],NO=[
 let curMC='all',curSC='all',sQ='',gSort='title';
 let uFilt={st:'all',rl:'all',dv:'all',q:''};
 let gEImgUrls=[],nEImgUrls=[];
-const HOLIDAYS={'2026-01-01':'신정','2026-02-16':'설연휴','2026-02-17':'설날','2026-02-18':'설연휴','2026-03-01':'삼일절','2026-05-05':'어린이날','2026-05-22':'부처님오신날','2026-06-03':'지방선거','2026-06-06':'현충일','2026-08-15':'광복절','2026-09-24':'추석연휴','2026-09-25':'추석','2026-09-26':'추석연휴','2026-10-03':'개천절','2026-10-09':'한글날','2026-12-25':'성탄절'};
+const HOLIDAYS={'2026-01-01':'신정','2026-02-16':'설연휴','2026-02-17':'설날','2026-02-18':'설연휴','2026-03-01':'삼일절','2026-05-05':'어린이날','2026-05-22':'부처님오신날','2026-06-03':'지방선거','2026-06-06':'현충일','2026-07-17':'제헌절','2026-08-15':'광복절','2026-08-17':'대체공휴일','2026-09-24':'추석연휴','2026-09-25':'추석','2026-09-26':'추석연휴','2026-10-03':'개천절','2026-10-05':'대체공휴일','2026-10-09':'한글날','2026-12-25':'성탄절'};
 const $=id=>document.getElementById(id);
 async function sha(m){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(m));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
 function ss(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id)?.classList.add('active');}
