@@ -772,7 +772,7 @@ async function doLogin(){const id=$('l-id').value.trim(),pw=$('l-pw').value;$('l
 async function doFirst(){const nm=$('f-name').value.trim(),pw1=$('f-pw1').value,pw2=$('f-pw2').value,bd=$('f-bday').value.trim(),bt=$('f-btype').value;if(!nm){sE('f-err','이름을 입력해주세요.');return;}if(bd&&!/^\d{2}-\d{2}$/.test(bd)){sE('f-err','생일: MM-DD');return;}if(pw1==='n1234'){sE('f-err','초기PW 사용불가');return;}if(!pwV(pw1)){sE('f-err','영문+숫자 8자 이상');return;}if(pw1!==pw2){sE('f-err','PW 불일치');return;}const h=await sha(pw1);await db.from('members').update({name:nm,password_hash:h,is_first:false,status:'active',last_login:new Date().toISOString(),birthday:bd,birthday_type:bt}).eq('id',CU.id);Object.assign(CU,{name:nm,status:'active',is_first:false,password_hash:h,birthday:bd,birthday_type:bt});toast('설정 완료 ✅');enter();}
 async function doReset(){const id=$('r-id').value.trim();$('r-err').style.display='none';$('r-ok').style.display='none';if(!/^\d{8}$/.test(id)){sE('r-err','8자리 아이디를 입력하세요.');return;}const{data}=await db.from('members').select('id,name,pw_reset_request').eq('user_id',id).single();if(!data){sE('r-err','등록되지 않은 아이디입니다.');return;}if(data.pw_reset_request){sE('r-err','이미 초기화 요청이 접수되어 있습니다.');return;}await db.from('members').update({pw_reset_request:true,pw_reset_requested_at:new Date().toISOString()}).eq('user_id',id);$('r-ok').style.display='block';}
 function goHome(){document.querySelectorAll('.tp').forEach(p=>p.classList.remove('active'));$('tab-today').classList.add('active');document.querySelectorAll('.ds-btn').forEach(b=>b.classList.remove('active'));const db=document.querySelector('.ds-btn[onclick*="today"]');if(db)db.classList.add('active');document.querySelectorAll('.mnb').forEach(b=>b.classList.remove('active'));const mb=document.querySelector('.mnb[onclick*="today"]');if(mb)mb.classList.add('active');}
-function enter(){saveSession(CU.user_id);document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$('app').classList.add('active');$('hname').textContent=CU.name;$('ds-name').textContent=CU.name;$('ds-role').textContent=CU.role||CU.org_title||'';const isA=ADS.includes(CU.user_id)||CU.role==='admin';document.querySelectorAll('.an,.am').forEach(b=>b.style.display=isA?'':'none');$('mn').classList.toggle('is-admin',isA);const isCM=CU.role==='센터장'||isA;document.querySelectorAll('.sz').forEach(b=>b.style.display=isCM?'':'none');$('mn').classList.toggle('is-team',isCM);$('chatbot').style.display='flex';updWM();init();initPush();}
+function enter(){saveSession(CU.user_id);document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$('app').classList.add('active');$('hname').textContent=CU.name;$('ds-name').textContent=CU.name;$('ds-role').textContent=CU.role||CU.org_title||'';const isA=ADS.includes(CU.user_id)||CU.role==='admin';document.querySelectorAll('.an,.am').forEach(b=>b.style.display=isA?'':'none');$('mn').classList.toggle('is-admin',isA);const isCM=CU.role==='센터장'||CU.role==='총무'||isA;document.querySelectorAll('.sz').forEach(b=>b.style.display=isCM?'':'none');$('mn').classList.toggle('is-team',isCM);$('chatbot').style.display='flex';updWM();init();initPush();}
 function logout(){clearSession();CU=null;chatInit=false;$('chatPanel').classList.remove('open');$('app').classList.remove('active');$('l-pw').value='';$('chatbot').style.display='none';$('pushBtn').style.display='none';updWM();ss('s-login');}
 
 // ── 웹 푸시 ──────────────────────────────────────────
@@ -1005,17 +1005,20 @@ async function rTeam(){
   const todayEvs=EV.filter(e=>e.event_date===today);
   const totalActions=todayEvs.reduce((s,e)=>{const acts=Array.isArray(e.actions)?e.actions:JSON.parse(e.actions||'[]');return s+acts.length;},0);
   const{data:comps}=await db.from('task_completions').select('*').eq('date',today);
+  const isSu=!isA&&CU.role==='총무';
   const myRg=CU.org_region||'';
+  const mySu=CU.org_sub_region||'';
+  const scopeLabel=isSu?'소권역':'대권역';
   const targets=US.filter(u=>{
     const rl=u.role||u.org_title||'';
     if(u.status!=='active')return false;
     if(ADS.includes(u.user_id)||rl==='admin')return false;
-    if(!isA&&u.org_region!==myRg)return false;
+    if(!isA){if(isSu){if(u.org_sub_region!==mySu)return false;}else if(u.org_region!==myRg)return false;}
     return['팀장','총무'].includes(rl);
   });
-  if(!targets.length){el.innerHTML='<div class="te"><div class="tei">👥</div><div class="tet">확인 대상 팀원이 없습니다</div><div class="tes">소속 대권역의 총무 및 팀장 계정이 등록되어 있지 않습니다</div></div>';return;}
+  if(!targets.length){el.innerHTML='<div class="te"><div class="tei">👥</div><div class="tet">확인 대상 팀원이 없습니다</div><div class="tes">소속 '+scopeLabel+'의 총무 및 팀장 계정이 등록되어 있지 않습니다</div></div>';return;}
   const rMap={};
-  targets.forEach(u=>{const rg=u.org_region||'미분류';if(!rMap[rg])rMap[rg]=[];rMap[rg].push(u);});
+  targets.forEach(u=>{const rg=(isSu?u.org_sub_region:u.org_region)||'미분류';if(!rMap[rg])rMap[rg]=[];rMap[rg].push(u);});
   const allDone=targets.reduce((s,u)=>s+(comps||[]).filter(c=>c.user_id===u.user_id&&c.completed).length,0);
   const allTotal=totalActions>0?targets.length*totalActions:0;
   const allPct=allTotal>0?Math.round(allDone/allTotal*100):0;
@@ -1025,7 +1028,7 @@ async function rTeam(){
     const rgDone=mbs.reduce((s,u)=>s+(comps||[]).filter(c=>c.user_id===u.user_id&&c.completed).length,0);
     const rgTotal=totalActions>0?mbs.length*totalActions:0;
     const rgPct=rgTotal>0?Math.round(rgDone/rgTotal*100):0;
-    h+=`<div class="rg-group"><div class="rg-hd"><div><div class="rg-hn">📍 ${rg}</div><div class="rg-hs">${mbs.length}명 · ${isA?'권역별':myRg} 팀원 현황</div></div>${totalActions>0?`<div style="text-align:right"><div style="font-size:22px;font-weight:900;color:#fff">${rgPct}%</div><div style="font-size:10px;color:rgba(255,255,255,.6)">달성률</div></div>`:''}</div>${totalActions>0?`<div class="rg-prog"><div class="rg-prog-bar" style="width:${rgPct}%"></div></div>`:''}<div class="chk-grid" style="margin-top:10px">`;
+    h+=`<div class="rg-group"><div class="rg-hd"><div><div class="rg-hn">📍 ${rg}</div><div class="rg-hs">${mbs.length}명 · ${isA?'권역별':(isSu?mySu:myRg)} 팀원 현황</div></div>${totalActions>0?`<div style="text-align:right"><div style="font-size:22px;font-weight:900;color:#fff">${rgPct}%</div><div style="font-size:10px;color:rgba(255,255,255,.6)">달성률</div></div>`:''}</div>${totalActions>0?`<div class="rg-prog"><div class="rg-prog-bar" style="width:${rgPct}%"></div></div>`:''}<div class="chk-grid" style="margin-top:10px">`;
     mbs.sort((a,b)=>{const ra=a.role||a.org_title||'',rb=b.role||b.org_title||'';if(ra==='총무'&&rb!=='총무')return -1;if(rb==='총무'&&ra!=='총무')return 1;return a.name.localeCompare(b.name,'ko');}).forEach(u=>{
       const rl=u.role||u.org_title||'';
       const done=(comps||[]).filter(c=>c.user_id===u.user_id&&c.completed).length;
