@@ -707,6 +707,7 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
 
 <!-- 일정 상세 모달 -->
 <div class="mo" id="evDetO" onclick="if(event.target===this)this.classList.remove('open')"><div class="md"><div class="mh"><div class="mt" id="evDetMt"></div><button class="mx" onclick="$('evDetO').classList.remove('open')">✕</button></div><div class="mb" id="evDetMb"></div></div></div>
+<div class="mo" id="mDetO" onclick="if(event.target===this)this.classList.remove('open')"><div class="md"><div class="mh"><div class="mt" id="mDetMt"></div><button class="mx" onclick="$('mDetO').classList.remove('open')">✕</button></div><div class="mb" id="mDetMb"></div></div></div>
 
 <!-- 가이드 수정 모달 -->
 <div class="mo" id="gEditO" onclick="if(event.target===this)this.classList.remove('open')"><div class="md" style="max-width:600px"><div class="mh"><div class="mt" id="gEditMt">가이드 수정</div><button class="mx" onclick="$('gEditO').classList.remove('open')">✕</button></div><div class="mb">
@@ -1035,12 +1036,40 @@ async function rTeam(){
       const pct=totalActions>0?Math.round(done/totalActions*100):0;
       let stCls='none',stTx='할일 없음';
       if(totalActions>0){stCls=pct>=100?'done':pct>0?'part':'none';stTx=pct>=100?'✅ 완료':pct>0?'⏳ 진행중':'⭕ 미시작';}
-      h+=`<div class="chk-card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><div class="chk-name">${u.name} <span style="font-size:11px;color:var(--g400);font-weight:400">${rl}</span></div><span class="chk-st ${stCls}">${stTx}</span></div><div class="chk-org">${[u.org_sub_region,u.org_center].filter(Boolean).join(' · ')||'-'}</div>${totalActions>0?`<div class="chk-prog" style="margin-top:6px"><div class="chk-prog-bar" style="width:${pct}%"></div></div><div class="chk-stat">${done}/${totalActions} (${pct}%)</div>`:''}</div>`;
+      h+=`<div class="chk-card" style="cursor:pointer" onclick="openMemberDet('${u.user_id}')" title="클릭하여 상세 업무 현황 보기"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><div class="chk-name">${u.name} <span style="font-size:11px;color:var(--g400);font-weight:400">${rl}</span> <span style="font-size:11px;color:var(--brand,#2563eb);font-weight:700">상세 ›</span></div><span class="chk-st ${stCls}">${stTx}</span></div><div class="chk-org">${[u.org_sub_region,u.org_center].filter(Boolean).join(' · ')||'-'}</div>${totalActions>0?`<div class="chk-prog" style="margin-top:6px"><div class="chk-prog-bar" style="width:${pct}%"></div></div><div class="chk-stat">${done}/${totalActions} (${pct}%)</div>`:''}</div>`;
     });
     h+='</div></div>';
   });
   h+=`<div style="text-align:right;margin-top:4px"><button class="sbtn sm" onclick="rTeam()">🔄 새로고침</button></div>`;
   el.innerHTML=h;
+}
+async function openMemberDet(uid){
+  const u=US.find(x=>x.user_id===uid);if(!u)return;
+  const rl=u.role||u.org_title||'';
+  $('mDetMt').textContent=`${u.name} 님 업무 현황`;
+  $('mDetMb').innerHTML='<div class="ld">로딩 중...</div>';
+  $('mDetO').classList.add('open');
+  const today=new Date().toISOString().split('T')[0];
+  const todayEvs=EV.filter(e=>e.event_date===today);
+  const{data:comps}=await db.from('task_completions').select('*').eq('date',today).eq('user_id',uid);
+  const doneSet=new Set((comps||[]).filter(c=>c.completed).map(c=>c.event_id+'-'+c.action_index));
+  let detail='',totalA=0,doneA=0;
+  todayEvs.forEach(ev=>{
+    const acts=Array.isArray(ev.actions)?ev.actions:JSON.parse(ev.actions||'[]');
+    if(!acts.length)return;
+    detail+=`<div class="msc">${ev.title}</div>`;
+    acts.forEach((a,i)=>{
+      totalA++;
+      const isD=doneSet.has(ev.id+'-'+i);
+      if(isD)doneA++;
+      detail+=`<div class="msp" style="align-items:center"><div class="msn" style="background:${isD?'#16a34a':'#dc2626'};color:#fff">${isD?'✓':'✕'}</div><div class="mst" style="${isD?'':'color:var(--g400)'}">${a} <span style="font-size:11px;font-weight:800;color:${isD?'#16a34a':'#dc2626'}">${isD?'· 완료':'· 미완료'}</span></div></div>`;
+    });
+  });
+  const pct=totalA>0?Math.round(doneA/totalA*100):0;
+  let h=`<div class="msc">소속</div><div class="mtx">${[u.org_region,u.org_sub_region,u.org_center].filter(Boolean).join(' > ')||'-'}${rl?` · <b>${rl}</b>`:''}</div>`;
+  if(!totalA){h+='<div class="te" style="padding:24px 0"><div class="tei">🗓️</div><div class="tet">오늘 등록된 업무가 없습니다</div></div>';}
+  else{h+=`<div class="msc">진행률</div><div class="mtx"><b style="color:${pct>=100?'#16a34a':pct>0?'#d97706':'#dc2626'}">${doneA}/${totalA}</b> 완료 (${pct}%)</div>${detail}`;}
+  $('mDetMb').innerHTML=h;
 }
 
 // TABS
