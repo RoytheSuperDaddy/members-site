@@ -330,6 +330,10 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
 }
 
 /* ═══ 입과 안내문 ═══ */
+.wg-mode-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.wg-mode-btn{padding:10px 18px;border:1.5px solid var(--g100);border-radius:10px;background:var(--w);font-size:13px;font-weight:700;color:var(--g600);cursor:pointer;font-family:var(--f);transition:all .15s}
+.wg-mode-btn:hover{border-color:var(--njob);color:var(--njob)}
+.wg-mode-btn.active{background:linear-gradient(135deg,#001558,#003CDC);border-color:transparent;color:#fff}
 .wg-layout{display:grid;grid-template-columns:280px 1fr;gap:24px;align-items:start}
 .wg-panel{background:var(--w);border-radius:var(--r);border:1.5px solid var(--g100);overflow:hidden;position:sticky;top:76px;box-shadow:var(--sh)}
 .wg-panel-head{background:linear-gradient(135deg,#001558 0%,#003CDC 100%);padding:18px 20px}
@@ -556,9 +560,14 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
     </div>
     <!-- 입과 안내문 -->
     <div class="tp" id="tab-welcome">
-      <div class="ph"><div class="pt" style="display:flex;align-items:center;gap:10px"><svg viewBox="0 0 24 24" width="22" height="22" fill="var(--njob)" style="flex-shrink:0"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>입과 안내문</div><div class="pd">마스터 프레임 위에 배정자 정보만 합성해 PNG를 생성합니다</div></div>
+      <div class="ph"><div class="pt" style="display:flex;align-items:center;gap:10px"><svg viewBox="0 0 24 24" width="22" height="22" fill="var(--njob)" style="flex-shrink:0"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>안내문 생성</div><div class="pd">유형을 선택하면 마스터 프레임 위에 정보만 합성해 PNG를 생성합니다</div></div>
+      <div class="wg-mode-tabs">
+        <button class="wg-mode-btn active" onclick="wgMode('welcome',this)">📋 입과 안내문</button>
+        <button class="wg-mode-btn" onclick="wgMode('counsel',this)">📞 상담신청 안내문</button>
+      </div>
       <div class="wg-layout">
-        <div class="wg-panel">
+        <div class="wg-col">
+        <div class="wg-panel" id="wg-welcome-block">
           <div class="wg-panel-head">
             <div class="wg-panel-htitle">배정자 정보 입력</div>
             <div class="wg-panel-hsub">입력하는 즉시 미리보기에 반영됩니다</div>
@@ -593,6 +602,33 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
             <button class="wg-dl-btn" id="wg-dl-btn" onclick="dlWelcome()">📥 이미지 다운로드</button>
             <div class="wg-hint">1055×1491px · 마스터 프레임 PNG 합성 방식</div>
           </div>
+        </div>
+        <!-- 상담신청 안내문 입력 -->
+        <div class="wg-panel" id="wg-counsel-block" style="display:none">
+          <div class="wg-panel-head">
+            <div class="wg-panel-htitle">상담 신청자 정보 입력</div>
+            <div class="wg-panel-hsub">입력하는 즉시 미리보기에 반영됩니다</div>
+          </div>
+          <div class="wg-panel-body">
+            <div class="wg-field"><label>배정자(크루) 이름</label><input id="cg-cname" type="text" placeholder="크루 이름" oninput="drawCG()"></div>
+            <div class="wg-divider"></div>
+            <div class="wg-sec-label">담당 팀장</div>
+            <div class="wg-field" style="margin-bottom:10px">
+              <label>팀장 성별 (템플릿 선택)</label>
+              <div class="wg-av-2btn">
+                <button class="sel" id="cg-gender-female" onclick="setCgGender('female')">👩 여성 팀장</button>
+                <button id="cg-gender-male" onclick="setCgGender('male')">👨 남성 팀장</button>
+              </div>
+            </div>
+            <div class="wg-field"><label>팀장 이름</label><input id="cg-mname" type="text" placeholder="이름" oninput="drawCG()"></div>
+            <div class="wg-field"><label>연락처</label><input id="cg-mphone" type="text" placeholder="010-0000-0000" oninput="drawCG()"></div>
+            <div class="wg-divider"></div>
+            <div class="wg-sec-label">상담 신청 정보</div>
+            <div class="wg-field"><label>유입 일시</label><input id="cg-inflow" type="text" placeholder="예: 2026-07-09 14:30" oninput="drawCG()"></div>
+            <button class="wg-dl-btn" onclick="dlCounsel()">📥 이미지 다운로드</button>
+            <div class="wg-hint">1055×1491px · 성별별 마스터 프레임 PNG 합성 방식</div>
+          </div>
+        </div>
         </div>
         <div>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
@@ -1016,30 +1052,33 @@ async function rUsage(){
   const logs=al.data||[],comps=tc.data||[];
   const members=US.filter(u=>{const rl=u.role||u.org_title||'';return !(ADS.includes(u.user_id)||rl==='admin');});
   const dstr=iso=>kDate(new Date(iso));
-  const logins=logs.filter(l=>l.action==='login'),wgs=logs.filter(l=>l.action==='welcome_guide');
-  const byUser={};members.forEach(u=>byUser[u.user_id]={loginDays:new Set(),lastLogin:null,wg:0,checks:0});
+  const logins=logs.filter(l=>l.action==='login'),wgs=logs.filter(l=>l.action==='welcome_guide'),cgs=logs.filter(l=>l.action==='counsel_guide');
+  const byUser={};members.forEach(u=>byUser[u.user_id]={loginDays:new Set(),lastLogin:null,wgW:0,wgC:0,checks:0});
   logins.forEach(l=>{const b=byUser[l.user_id];if(!b)return;b.loginDays.add(dstr(l.created_at));if(!b.lastLogin||l.created_at>b.lastLogin)b.lastLogin=l.created_at;});
-  wgs.forEach(l=>{const b=byUser[l.user_id];if(b)b.wg++;});
+  wgs.forEach(l=>{const b=byUser[l.user_id];if(b)b.wgW++;});
+  cgs.forEach(l=>{const b=byUser[l.user_id];if(b)b.wgC++;});
   comps.filter(c=>c.completed).forEach(c=>{const b=byUser[c.user_id];if(b)b.checks++;});
   const totalLogins=logins.length;
   const activeUsers=new Set(logins.map(l=>l.user_id).filter(id=>byUser[id])).size;
   const noAccess=members.filter(u=>byUser[u.user_id].loginDays.size===0).length;
-  const totalChecks=comps.filter(c=>c.completed).length,totalWg=wgs.length;
+  const totalChecks=comps.filter(c=>c.completed).length,totalWgW=wgs.length,totalWgC=cgs.length;
   const days=[];for(let i=0;i<usDays;i++)days.push(new Date(fromU.getTime()+i*86400000).toISOString().split('T')[0]);
-  const wgByDay={};days.forEach(d=>wgByDay[d]=0);wgs.forEach(l=>{const d=dstr(l.created_at);if(d in wgByDay)wgByDay[d]++;});
-  const maxWg=Math.max(1,...Object.values(wgByDay));
-  let h=`<div class="sr" style="margin-bottom:14px"><div class="sb"><div class="sl">총 접속</div><div class="sv">${totalLogins}</div></div><div class="sb"><div class="sl">접속 인원</div><div class="sv">${activeUsers}</div></div><div class="sb"><div class="sl">미접속</div><div class="sv" style="color:${noAccess>0?'var(--err)':'inherit'}">${noAccess}</div></div><div class="sb"><div class="sl">할일 완료</div><div class="sv">${totalChecks}</div></div><div class="sb"><div class="sl">안내문 생성</div><div class="sv">${totalWg}</div></div></div>`;
-  h+=`<div class="fc" style="margin-bottom:14px"><div class="fct">📄 일자별 입과 안내문 생성 (${from} ~ ${to})</div>`;
-  if(totalWg===0)h+='<div class="ld">생성 내역 없음</div>';
-  else{h+='<div style="display:flex;align-items:flex-end;gap:4px;height:96px;padding:6px 2px;overflow-x:auto">';days.forEach(d=>{const v=wgByDay[d],hp=Math.round(v/maxWg*70)+4;h+=`<div style="flex:1;min-width:16px;display:flex;flex-direction:column;align-items:center;gap:3px" title="${d}: ${v}건"><div style="font-size:10px;font-weight:700;color:var(--g600);height:12px">${v||''}</div><div style="width:100%;height:${hp}px;background:var(--gr-hero);border-radius:4px 4px 0 0"></div><div style="font-size:9px;color:var(--g400)">${d.slice(5)}</div></div>`;});h+='</div>';}
+  const wByDay={},cByDay={};days.forEach(d=>{wByDay[d]=0;cByDay[d]=0;});
+  wgs.forEach(l=>{const d=dstr(l.created_at);if(d in wByDay)wByDay[d]++;});
+  cgs.forEach(l=>{const d=dstr(l.created_at);if(d in cByDay)cByDay[d]++;});
+  const maxDay=Math.max(1,...days.map(d=>wByDay[d]+cByDay[d]));
+  let h=`<div class="sr" style="margin-bottom:14px"><div class="sb"><div class="sl">총 접속</div><div class="sv">${totalLogins}</div></div><div class="sb"><div class="sl">접속 인원</div><div class="sv">${activeUsers}</div></div><div class="sb"><div class="sl">미접속</div><div class="sv" style="color:${noAccess>0?'var(--err)':'inherit'}">${noAccess}</div></div><div class="sb"><div class="sl">할일 완료</div><div class="sv">${totalChecks}</div></div><div class="sb"><div class="sl">입과 안내</div><div class="sv" style="color:var(--njob)">${totalWgW}</div></div><div class="sb"><div class="sl">상담 신청</div><div class="sv" style="color:var(--coral)">${totalWgC}</div></div></div>`;
+  h+=`<div class="fc" style="margin-bottom:14px"><div class="fct" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px"><span>📄 일자별 안내문 생성 (${from} ~ ${to})</span><span style="font-size:11px;font-weight:400"><span style="color:var(--njob)">■</span> 입과 &nbsp; <span style="color:var(--coral)">■</span> 상담신청</span></div>`;
+  if(totalWgW+totalWgC===0)h+='<div class="ld">생성 내역 없음</div>';
+  else{h+='<div style="display:flex;align-items:flex-end;gap:4px;height:110px;padding:6px 2px;overflow-x:auto">';days.forEach(d=>{const w=wByDay[d],c=cByDay[d],tot=w+c,hp=Math.round(tot/maxDay*72)+(tot?4:0);const wh=tot?Math.round(hp*w/tot):0,ch=hp-wh;h+=`<div style="flex:1;min-width:16px;display:flex;flex-direction:column;align-items:center;gap:3px" title="${d} · 입과 ${w} / 상담 ${c}"><div style="font-size:10px;font-weight:700;color:var(--g600);height:12px">${tot||''}</div><div style="width:100%;height:${hp}px;display:flex;flex-direction:column;justify-content:flex-end;border-radius:4px 4px 0 0;overflow:hidden">${c?`<div style="height:${ch}px;background:var(--coral)"></div>`:''}${w?`<div style="height:${wh}px;background:var(--njob)"></div>`:''}</div><div style="font-size:9px;color:var(--g400)">${d.slice(5)}</div></div>`;});h+='</div>';}
   h+='</div>';
-  usRows=members.map(u=>{const b=byUser[u.user_id];const none=b.loginDays.size===0;return{name:u.name,org:[u.org_region,u.org_center].filter(Boolean).join(' > ')||'-',rl:u.role||u.org_title||'',lastTs:b.lastLogin?Date.parse(b.lastLogin):0,lastLabel:none?'미접속':kDate(new Date(b.lastLogin)),days:b.loginDays.size,checks:b.checks,wg:b.wg,none};});
+  usRows=members.map(u=>{const b=byUser[u.user_id];const none=b.loginDays.size===0;return{name:u.name,org:[u.org_region,u.org_center].filter(Boolean).join(' > ')||'-',rl:u.role||u.org_title||'',lastTs:b.lastLogin?Date.parse(b.lastLogin):0,lastLabel:none?'미접속':kDate(new Date(b.lastLogin)),days:b.loginDays.size,checks:b.checks,wgW:b.wgW,wgC:b.wgC,none};});
   h+=`<div class="fc"><div class="fct" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><span>👥 사용자별 활용 현황 <span style="font-size:11px;color:var(--g400);font-weight:400">컬럼 클릭 = 정렬</span></span><input type="text" class="fi" id="usSrch" style="width:180px;padding:7px 10px;font-size:13px" placeholder="이름·소속·직책 검색" oninput="usFilter(this.value)"></div><div id="usTableWrap"></div></div>`;
   el.innerHTML=h;
   if($('usSrch'))$('usSrch').value=usQuery;
   renderUsTable();
 }
-const US_COLS=[{k:'name',t:'이름',num:false},{k:'org',t:'소속',num:false},{k:'lastTs',t:'최근접속',num:true},{k:'days',t:'접속일',num:true},{k:'checks',t:'할일완료',num:true},{k:'wg',t:'안내문',num:true}];
+const US_COLS=[{k:'name',t:'이름',num:false},{k:'org',t:'소속',num:false},{k:'lastTs',t:'최근접속',num:true},{k:'days',t:'접속일',num:true},{k:'checks',t:'할일완료',num:true},{k:'wgW',t:'입과',num:true},{k:'wgC',t:'상담',num:true}];
 let usRows=[],usSort={key:'days',dir:'asc'},usQuery='';
 function usFilter(v){usQuery=v;renderUsTable();}
 function usSortBy(k){if(usSort.key===k)usSort.dir=usSort.dir==='asc'?'desc':'asc';else{const c=US_COLS.find(x=>x.k===k);usSort={key:k,dir:c&&c.num?'desc':'asc'};}renderUsTable();}
@@ -1051,8 +1090,8 @@ function renderUsTable(){
   rows=rows.slice().sort((a,b)=>col.num?(a[key]-b[key])*sg:String(a[key]).localeCompare(String(b[key]),'ko')*sg);
   const th=US_COLS.map(c=>{const act=c.k===key,ar=act?(dir==='asc'?' ▲':' ▼'):'';return `<th style="cursor:pointer;white-space:nowrap;${act?'color:var(--p)':''}" onclick="usSortBy('${c.k}')">${c.t}${ar}</th>`;}).join('');
   let body='';
-  rows.forEach(r=>{body+=`<tr${r.none?' style="background:#FFF0F0"':''}><td>${r.name} <span style="font-size:10px;color:var(--g400)">${r.rl}</span></td><td style="font-size:12px;color:var(--g600)">${r.org}</td><td style="${r.none?'color:var(--err);font-weight:700':''}">${r.lastLabel}</td><td style="text-align:center">${r.days}</td><td style="text-align:center">${r.checks}</td><td style="text-align:center">${r.wg}</td></tr>`;});
-  if(!rows.length)body='<tr><td colspan="6" style="text-align:center;color:var(--g400);padding:16px">검색 결과 없음</td></tr>';
+  rows.forEach(r=>{body+=`<tr${r.none?' style="background:#FFF0F0"':''}><td>${r.name} <span style="font-size:10px;color:var(--g400)">${r.rl}</span></td><td style="font-size:12px;color:var(--g600)">${r.org}</td><td style="${r.none?'color:var(--err);font-weight:700':''}">${r.lastLabel}</td><td style="text-align:center">${r.days}</td><td style="text-align:center">${r.checks}</td><td style="text-align:center;color:var(--njob);font-weight:700">${r.wgW}</td><td style="text-align:center;color:var(--coral);font-weight:700">${r.wgC}</td></tr>`;});
+  if(!rows.length)body='<tr><td colspan="7" style="text-align:center;color:var(--g400);padding:16px">검색 결과 없음</td></tr>';
   wrap.innerHTML=`<div class="tw"><table><thead><tr>${th}</tr></thead><tbody>${body}</tbody></table></div>`;
 }
 
@@ -1164,8 +1203,11 @@ function initWG(){
       $('wg-mname').value=CU.name||'';
       const savedPh=localStorage.getItem('wg_phone')||(CU.phone||'');
       if(savedPh)$('wg-mphone').value=savedPh;
+      if($('cg-mname'))$('cg-mname').value=CU.name||'';
+      if(savedPh&&$('cg-mphone'))$('cg-mphone').value=savedPh;
       if(!localStorage.getItem('wg_intro'))setTimeout(()=>{const n=$('wg-notice');if(n)n.style.display='block';},250);
     }
+    setCgGenderUI(cgGender);
     $('wg-avatar').addEventListener('change',e=>{
       const f=e.target.files[0];if(!f)return;
       // 확장자 검증
@@ -1312,6 +1354,75 @@ function dlWelcome(){
     toast('📥 이미지 다운로드 완료!');
     if(CU){try{db.from('activity_logs').insert({user_id:CU.user_id,action:'welcome_guide',meta:{cname:nm}}).then(({error})=>{if(error)console.warn('activity_logs welcome:',error.message);});}catch(e){}}
   },100);
+}
+
+// ─── 상담신청 안내문 (Canvas 합성, 입과 안내문과 동일 방식) ──────────────
+// ▼ 마스터 프레임 기준 픽셀 좌표 — 미세 조정은 이 값만 수정, 📐 좌표 측정 버튼으로 확인
+const CG_F={
+  crewName:   {x:278,y:206,w:250,fs:38,c:'#0A1433',align:'right'},  // 상단 "___ 크루님 안녕하세요"
+  leaderName1:{x:300,y:290,w:170,fs:30,c:'#0A1433',align:'left'},   // "담당멘토 ___ 팀장"
+  inflow:     {x:480,y:616,w:520,fs:29,c:'#1A2238',align:'left'},   // 상담 신청 일시
+  leaderName2:{x:480,y:732,w:520,fs:29,c:'#1A2238',align:'left'},   // 전담 멘토
+  phone:      {x:480,y:848,w:520,fs:29,c:'#1A2238',align:'left'}    // 연락처
+};
+let WGMODE='welcome',cgMaster=null,cgMasterGender=null,cgGender=localStorage.getItem('cg_gender')||'female';
+function setCgGenderUI(g){['female','male'].forEach(x=>{const b=$('cg-gender-'+x);if(b)b.classList.toggle('sel',x===g);});}
+function setCgGender(g){cgGender=g;localStorage.setItem('cg_gender',g);setCgGenderUI(g);loadCgMaster(()=>drawCG());}
+function loadCgMaster(cb){
+  const src=cgGender==='male'?'assets/counsel_frame_male_v1.png':'assets/counsel_frame_female_v1.png';
+  if(cgMaster&&cgMasterGender===cgGender&&cgMaster.complete&&cgMaster.naturalWidth){cb&&cb();return;}
+  $('wg-preview-ph').style.display='block';$('wg-preview-ph').textContent='마스터 프레임 로딩 중...';$('wg-preview-img').style.display='none';
+  cgMaster=new Image();
+  cgMaster.onload=()=>{cgMasterGender=cgGender;$('wg-preview-ph').style.display='none';$('wg-preview-img').style.display='block';cb&&cb();};
+  cgMaster.onerror=()=>{$('wg-preview-ph').innerHTML='⚠️ 상담신청 템플릿을 찾을 수 없습니다.<br><span style="font-size:11px;color:var(--g400)">'+src+' 파일을 추가한 후 커밋하세요.</span>';};
+  cgMaster.src=src;
+}
+function drawCG(){
+  clearTimeout(wgDrawTid);
+  wgDrawTid=setTimeout(()=>{
+    const canvas=$('wg-canvas'),preview=$('wg-preview-img');
+    if(!canvas||!cgMaster||!cgMaster.complete||!cgMaster.naturalWidth)return;
+    canvas.width=WG_W;canvas.height=WG_H;
+    const ctx=canvas.getContext('2d');
+    ctx.drawImage(cgMaster,0,0,WG_W,WG_H);
+    const nm=$('cg-mname').value.trim(),ph=wgAutoPhone($('cg-mphone').value.trim());
+    if(ph)localStorage.setItem('wg_phone',ph);
+    const vals={crewName:$('cg-cname').value.trim(),leaderName1:nm,inflow:$('cg-inflow').value.trim(),leaderName2:nm,phone:ph};
+    Object.entries(vals).forEach(([k,v])=>{
+      if(!v||!CG_F[k])return;
+      const f=CG_F[k];
+      ctx.save();
+      ctx.font=`700 ${f.fs}px ${wgFont}`;
+      ctx.fillStyle=f.c;
+      ctx.textAlign=f.align||'left';
+      ctx.textBaseline='top';
+      ctx.fillText(v,f.x,f.y,f.w);
+      ctx.restore();
+    });
+    preview.src=canvas.toDataURL('image/png');
+  },60);
+}
+function dlCounsel(){
+  if(!cgMaster||!cgMaster.complete||!cgMaster.naturalWidth){toast('먼저 미리보기를 생성해주세요.');return;}
+  drawCG();
+  setTimeout(()=>{
+    const nm=$('cg-cname').value.trim()||'크루';
+    const a=document.createElement('a');
+    a.download=`N잡크루_상담신청안내_${nm}.png`;
+    a.href=$('wg-canvas').toDataURL('image/png');
+    a.click();
+    toast('📥 이미지 다운로드 완료!');
+    if(CU){try{db.from('activity_logs').insert({user_id:CU.user_id,action:'counsel_guide',meta:{cname:nm}}).then(({error})=>{if(error)console.warn('activity_logs counsel:',error.message);});}catch(e){}}
+  },100);
+}
+function wgMode(m,btn){
+  WGMODE=m;
+  document.querySelectorAll('.wg-mode-btn').forEach(b=>b.classList.remove('active'));
+  btn&&btn.classList.add('active');
+  $('wg-welcome-block').style.display=m==='welcome'?'':'none';
+  $('wg-counsel-block').style.display=m==='counsel'?'':'none';
+  if(m==='counsel'){loadCgMaster(()=>drawCG());}
+  else{if(wgMaster&&wgMaster.complete&&wgMaster.naturalWidth){$('wg-preview-ph').style.display='none';$('wg-preview-img').style.display='block';}drawWG();}
 }
 
 // CHATBOT
