@@ -1033,11 +1033,27 @@ async function rUsage(){
   if(totalWg===0)h+='<div class="ld">생성 내역 없음</div>';
   else{h+='<div style="display:flex;align-items:flex-end;gap:4px;height:96px;padding:6px 2px;overflow-x:auto">';days.forEach(d=>{const v=wgByDay[d],hp=Math.round(v/maxWg*70)+4;h+=`<div style="flex:1;min-width:16px;display:flex;flex-direction:column;align-items:center;gap:3px" title="${d}: ${v}건"><div style="font-size:10px;font-weight:700;color:var(--g600);height:12px">${v||''}</div><div style="width:100%;height:${hp}px;background:var(--gr-hero);border-radius:4px 4px 0 0"></div><div style="font-size:9px;color:var(--g400)">${d.slice(5)}</div></div>`;});h+='</div>';}
   h+='</div>';
-  const rows=members.map(u=>({u,...byUser[u.user_id]})).sort((a,b)=>a.loginDays.size-b.loginDays.size||a.checks-b.checks);
-  h+=`<div class="fc"><div class="fct">👥 사용자별 활용 현황 <span style="font-size:11px;color:var(--g400);font-weight:400">(활용 낮은 순)</span></div><div class="tw"><table><thead><tr><th>이름</th><th>소속</th><th>최근접속</th><th>접속일</th><th>할일완료</th><th>안내문</th></tr></thead><tbody>`;
-  rows.forEach(r=>{const org=[r.u.org_region,r.u.org_center].filter(Boolean).join(' > ')||'-';const rl=r.u.role||r.u.org_title||'';const none=r.loginDays.size===0;const last=none?'미접속':kDate(new Date(r.lastLogin));h+=`<tr${none?' style="background:#FFF0F0"':''}><td>${r.u.name} <span style="font-size:10px;color:var(--g400)">${rl}</span></td><td style="font-size:12px;color:var(--g600)">${org}</td><td style="${none?'color:var(--err);font-weight:700':''}">${last}</td><td style="text-align:center">${r.loginDays.size}</td><td style="text-align:center">${r.checks}</td><td style="text-align:center">${r.wg}</td></tr>`;});
-  h+='</tbody></table></div></div>';
+  usRows=members.map(u=>{const b=byUser[u.user_id];const none=b.loginDays.size===0;return{name:u.name,org:[u.org_region,u.org_center].filter(Boolean).join(' > ')||'-',rl:u.role||u.org_title||'',lastTs:b.lastLogin?Date.parse(b.lastLogin):0,lastLabel:none?'미접속':kDate(new Date(b.lastLogin)),days:b.loginDays.size,checks:b.checks,wg:b.wg,none};});
+  h+=`<div class="fc"><div class="fct" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><span>👥 사용자별 활용 현황 <span style="font-size:11px;color:var(--g400);font-weight:400">컬럼 클릭 = 정렬</span></span><input type="text" class="fi" id="usSrch" style="width:180px;padding:7px 10px;font-size:13px" placeholder="이름·소속·직책 검색" oninput="usFilter(this.value)"></div><div id="usTableWrap"></div></div>`;
   el.innerHTML=h;
+  if($('usSrch'))$('usSrch').value=usQuery;
+  renderUsTable();
+}
+const US_COLS=[{k:'name',t:'이름',num:false},{k:'org',t:'소속',num:false},{k:'lastTs',t:'최근접속',num:true},{k:'days',t:'접속일',num:true},{k:'checks',t:'할일완료',num:true},{k:'wg',t:'안내문',num:true}];
+let usRows=[],usSort={key:'days',dir:'asc'},usQuery='';
+function usFilter(v){usQuery=v;renderUsTable();}
+function usSortBy(k){if(usSort.key===k)usSort.dir=usSort.dir==='asc'?'desc':'asc';else{const c=US_COLS.find(x=>x.k===k);usSort={key:k,dir:c&&c.num?'desc':'asc'};}renderUsTable();}
+function renderUsTable(){
+  const wrap=$('usTableWrap');if(!wrap)return;
+  const q=usQuery.trim().toLowerCase();
+  let rows=usRows.filter(r=>!q||(r.name+' '+r.org+' '+r.rl).toLowerCase().includes(q));
+  const{key,dir}=usSort,sg=dir==='asc'?1:-1,col=US_COLS.find(c=>c.k===key)||US_COLS[3];
+  rows=rows.slice().sort((a,b)=>col.num?(a[key]-b[key])*sg:String(a[key]).localeCompare(String(b[key]),'ko')*sg);
+  const th=US_COLS.map(c=>{const act=c.k===key,ar=act?(dir==='asc'?' ▲':' ▼'):'';return `<th style="cursor:pointer;white-space:nowrap;${act?'color:var(--p)':''}" onclick="usSortBy('${c.k}')">${c.t}${ar}</th>`;}).join('');
+  let body='';
+  rows.forEach(r=>{body+=`<tr${r.none?' style="background:#FFF0F0"':''}><td>${r.name} <span style="font-size:10px;color:var(--g400)">${r.rl}</span></td><td style="font-size:12px;color:var(--g600)">${r.org}</td><td style="${r.none?'color:var(--err);font-weight:700':''}">${r.lastLabel}</td><td style="text-align:center">${r.days}</td><td style="text-align:center">${r.checks}</td><td style="text-align:center">${r.wg}</td></tr>`;});
+  if(!rows.length)body='<tr><td colspan="6" style="text-align:center;color:var(--g400);padding:16px">검색 결과 없음</td></tr>';
+  wrap.innerHTML=`<div class="tw"><table><thead><tr>${th}</tr></thead><tbody>${body}</tbody></table></div>`;
 }
 
 // 권역 현황
