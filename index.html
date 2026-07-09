@@ -495,6 +495,7 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
         <button class="atbn" onclick="sA('ev',this)">📅 일정</button>
         <button class="atbn" onclick="sA('no',this)">📢 공지</button>
         <button class="atbn" onclick="sA('chk',this)">📊 체크현황</button>
+        <button class="atbn" onclick="sA('use',this)">📈 이용통계</button>
       </div>
       <div class="ap active" id="adm-acc">
         <div class="sr"><div class="sb"><div class="sl">전체</div><div class="sv" id="xT">-</div></div><div class="sb"><div class="sl">활성</div><div class="sv" id="xA">-</div></div><div class="sb"><div class="sl">대기</div><div class="sv" id="xI">-</div></div></div>
@@ -511,6 +512,7 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
       <div class="ap" id="adm-no"><div class="fc"><div class="fct">📢 공지 등록</div><div class="frow"><label class="fl">제목</label><input type="text" class="fi" id="nTi"></div><div class="frow"><label class="fl">내용</label><textarea class="fta" id="nB" style="min-height:100px"></textarea></div><div class="frow"><label class="fl">이미지 업로드</label><div class="upload-area"><button type="button" class="upload-btn" onclick="$('nImg').click()">📷 이미지 선택</button><span class="upload-name" id="nImgNm">선택 없음</span><input type="file" id="nImg" accept="image/*" style="display:none" onchange="$('nImgNm').textContent=this.files[0]?.name||'선택 없음'"></div></div><div class="frow"><label class="fl">첨부파일</label><div class="upload-area"><button type="button" class="upload-btn" onclick="$('nAtt').click()">📎 파일 선택</button><span class="upload-name" id="nAttNm">선택 없음</span><input type="file" id="nAtt" multiple style="display:none" onchange="$('nAttNm').textContent=[...this.files].map(f=>f.name).join(', ')||'선택 없음'"></div></div><button class="sbtn" onclick="regN()">등록</button></div>
         <div class="fc"><div class="fct" style="display:flex;justify-content:space-between;align-items:center"><span>📢 등록된 공지 <span id="nCnt" style="font-size:12px;color:var(--g400);font-weight:400"></span></span></div><div class="adm-list" id="nAdmList"><div class="ld">로딩 중...</div></div></div></div>
       <div class="ap" id="adm-chk"><div class="fc"><div class="fct">📊 오늘의 할일 체크 현황</div><div id="chkList"><div class="ld">로딩 중...</div></div></div></div>
+      <div class="ap" id="adm-use"><div class="fc"><div class="fct" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><span>📈 이용 통계 <span style="font-size:11px;color:var(--g400);font-weight:400">사용자별 접속·할일·안내문 활용 현황</span></span><div style="display:flex;gap:6px" id="usRange"><button class="fchip" data-d="1" onclick="usR(1,this)">오늘</button><button class="fchip active" data-d="7" onclick="usR(7,this)">최근 7일</button><button class="fchip" data-d="30" onclick="usR(30,this)">최근 30일</button></div></div><div id="usBody"><div class="ld">로딩 중...</div></div></div></div>
     </div>
     <!-- 관련 사이트 -->
     <div class="tp" id="tab-links">
@@ -549,7 +551,7 @@ header{background:var(--gr-hero-deep);position:sticky;top:0;z-index:100;box-shad
     </div>
     <!-- 권역 현황 -->
     <div class="tp" id="tab-team">
-      <div class="ph"><div class="pt">📊 권역 현황</div><div class="pd">오늘의 할일 진행 현황</div></div>
+      <div class="ph" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px"><div><div class="pt">📊 권역 현황</div><div class="pd">할일 진행 현황 · 날짜별 이력 조회</div></div><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><button class="sbtn sm" onclick="shiftTeamDate(-1)" title="이전 날">◀</button><input type="date" id="teamDate" class="fi" style="width:150px;padding:7px 10px;font-size:13px" onchange="rTeam(this.value)"><button class="sbtn sm" onclick="shiftTeamDate(1)" title="다음 날">▶</button><button class="sbtn sm" onclick="teamToday()">오늘</button></div></div>
       <div id="teamContent"><div class="ld">로딩 중...</div></div>
     </div>
     <!-- 입과 안내문 -->
@@ -756,6 +758,9 @@ let gEImgUrls=[],nEImgUrls=[];
 const HOLIDAYS={'2026-01-01':'신정','2026-02-16':'설연휴','2026-02-17':'설날','2026-02-18':'설연휴','2026-03-01':'삼일절','2026-05-05':'어린이날','2026-05-22':'부처님오신날','2026-06-03':'지방선거','2026-06-06':'현충일','2026-07-17':'제헌절','2026-08-15':'광복절','2026-08-17':'대체공휴일','2026-09-24':'추석연휴','2026-09-25':'추석','2026-09-26':'추석연휴','2026-10-03':'개천절','2026-10-05':'대체공휴일','2026-10-09':'한글날','2026-12-25':'성탄절'};
 const $=id=>document.getElementById(id);
 async function sha(m){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(m));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
+// KST(UTC+9) 기준 날짜 문자열 — toISOString()은 UTC라 KST 09시에야 롤오버되는 문제 방지 (00시 반영)
+function kDate(d){return new Date(d.getTime()+9*3600*1000).toISOString().split('T')[0];}
+function kToday(){return kDate(new Date());}
 function ss(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id)?.classList.add('active');}
 function sE(id,m){const e=$(id);e.textContent=m;e.style.display='block';}
 function toast(m){const t=$('toast');t.textContent=m;t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(-50%) translateY(80px)';},2400);}
@@ -773,7 +778,7 @@ async function doLogin(){const id=$('l-id').value.trim(),pw=$('l-pw').value;$('l
 async function doFirst(){const nm=$('f-name').value.trim(),pw1=$('f-pw1').value,pw2=$('f-pw2').value,bd=$('f-bday').value.trim(),bt=$('f-btype').value;if(!nm){sE('f-err','이름을 입력해주세요.');return;}if(bd&&!/^\d{2}-\d{2}$/.test(bd)){sE('f-err','생일: MM-DD');return;}if(pw1==='n1234'){sE('f-err','초기PW 사용불가');return;}if(!pwV(pw1)){sE('f-err','영문+숫자 8자 이상');return;}if(pw1!==pw2){sE('f-err','PW 불일치');return;}const h=await sha(pw1);await db.from('members').update({name:nm,password_hash:h,is_first:false,status:'active',last_login:new Date().toISOString(),birthday:bd,birthday_type:bt}).eq('id',CU.id);Object.assign(CU,{name:nm,status:'active',is_first:false,password_hash:h,birthday:bd,birthday_type:bt});toast('설정 완료 ✅');enter();}
 async function doReset(){const id=$('r-id').value.trim();$('r-err').style.display='none';$('r-ok').style.display='none';if(!/^\d{8}$/.test(id)){sE('r-err','8자리 아이디를 입력하세요.');return;}const{data}=await db.from('members').select('id,name,pw_reset_request').eq('user_id',id).single();if(!data){sE('r-err','등록되지 않은 아이디입니다.');return;}if(data.pw_reset_request){sE('r-err','이미 초기화 요청이 접수되어 있습니다.');return;}await db.from('members').update({pw_reset_request:true,pw_reset_requested_at:new Date().toISOString()}).eq('user_id',id);$('r-ok').style.display='block';}
 function goHome(){document.querySelectorAll('.tp').forEach(p=>p.classList.remove('active'));$('tab-today').classList.add('active');document.querySelectorAll('.ds-btn').forEach(b=>b.classList.remove('active'));const db=document.querySelector('.ds-btn[onclick*="today"]');if(db)db.classList.add('active');document.querySelectorAll('.mnb').forEach(b=>b.classList.remove('active'));const mb=document.querySelector('.mnb[onclick*="today"]');if(mb)mb.classList.add('active');}
-function enter(){saveSession(CU.user_id);document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$('app').classList.add('active');$('hname').textContent=CU.name;$('ds-name').textContent=CU.name;$('ds-role').textContent=CU.role||CU.org_title||'';const isA=ADS.includes(CU.user_id)||CU.role==='admin';document.querySelectorAll('.an,.am').forEach(b=>b.style.display=isA?'':'none');$('mn').classList.toggle('is-admin',isA);const isCM=CU.role==='센터장'||CU.role==='총무'||isA;document.querySelectorAll('.sz').forEach(b=>b.style.display=isCM?'':'none');$('mn').classList.toggle('is-team',isCM);$('chatbot').style.display='flex';updWM();init();initPush();}
+function enter(){saveSession(CU.user_id);document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$('app').classList.add('active');$('hname').textContent=CU.name;$('ds-name').textContent=CU.name;$('ds-role').textContent=CU.role||CU.org_title||'';const isA=ADS.includes(CU.user_id)||CU.role==='admin';document.querySelectorAll('.an,.am').forEach(b=>b.style.display=isA?'':'none');$('mn').classList.toggle('is-admin',isA);const isCM=CU.role==='센터장'||CU.role==='총무'||isA;document.querySelectorAll('.sz').forEach(b=>b.style.display=isCM?'':'none');$('mn').classList.toggle('is-team',isCM);$('chatbot').style.display='flex';updWM();try{db.from('activity_logs').insert({user_id:CU.user_id,action:'login',meta:{name:CU.name||''}}).then(({error})=>{if(error)console.warn('activity_logs login:',error.message);});}catch(e){}init();initPush();}
 function logout(){clearSession();CU=null;chatInit=false;$('chatPanel').classList.remove('open');$('app').classList.remove('active');$('l-pw').value='';$('chatbot').style.display='none';$('pushBtn').style.display='none';updWM();ss('s-login');}
 
 // ── 웹 푸시 ──────────────────────────────────────────
@@ -812,15 +817,15 @@ async function chPw(){const cur=$('mC').value,nw=$('mN').value,nw2=$('mN2').valu
 async function init(){await Promise.all([lG(),lE(),lN(),lU()]);rCal();rToday();}
 
 // TODAY
-function rToday(){const now=new Date(),days=['일','월','화','수','목','금','토'];$('td-d').textContent=`${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일 (${days[now.getDay()]})`;const today=now.toISOString().split('T')[0],mm=String(now.getMonth()+1).padStart(2,'0'),dd=String(now.getDate()).padStart(2,'0'),todayMD=mm+'-'+dd;const bdP=US.filter(u=>u.birthday===todayMD&&u.role!=='admin');if(bdP.length===1)$('td-h').textContent=`오늘은 ${bdP[0].name} 님의 생일! 🎂 축하 메시지를 전해보세요`;else if(bdP.length>1)$('td-h').textContent=`오늘 생일자 ${bdP.length}명 🎂 모두 축하해드리세요`;else $('td-h').textContent=`${CU.name} 님, 오늘의 업무를 확인하세요`;const todayEv=EV.filter(e=>e.event_date===today);const cI={exam:'📝',report:'📊',reward:'🏆',education:'📚',meeting:'🤝',sign:'✍️',general:'📌'};const cC={exam:'i-purple',report:'i-blue',reward:'i-orange',education:'i-green',meeting:'i-blue',sign:'i-orange',general:'i-blue'};const tM={'t-imp':['t-imp','중요'],'t-reg':['t-reg','정기'],'t-ddl':['t-ddl','마감']};let h='';bdP.forEach(p=>{h+=`<div class="tc bday"><div class="tch"><div class="tci i-pink">🎂</div><div class="tcf"><div class="tcn">${p.name} 님 생일 축하! 🎉</div><div class="tcm">${p.org_center||''} ${p.birthday_type==='lunar'?'(음력)':''}</div></div><span class="tct t-bday">생일</span></div></div>`;});todayEv.forEach(ev=>{const acts=Array.isArray(ev.actions)?ev.actions:JSON.parse(ev.actions||'[]');const cat=ev.category||'general';const[tc,tt]=tM[ev.tag]||['t-reg','정기'];h+=`<div class="tc"><div class="tch"><div class="tci ${cC[cat]||'i-blue'}">${cI[cat]||'📌'}</div><div class="tcf"><div class="tcn">${ev.title}</div><div class="tcm">${ev.description||''}</div></div><span class="tct ${tc}">${tt}</span></div>${acts.length?`<div class="ta">${acts.map((a,i)=>`<div class="tai"><div class="tac" onclick="tgC(this)" data-key="td-${ev.id}-${i}">✓</div><div class="tat">${a}</div></div>`).join('')}</div>`:''}</div>`;});$('td-t').innerHTML=h||'<div class="te"><div class="tei">✅</div><div class="tet">오늘 예정 업무 없음</div></div>';
-const dow=now.getDay(),mon=new Date(now);mon.setDate(now.getDate()-(dow===0?6:dow-1));const sun=new Date(mon);sun.setDate(mon.getDate()+6);const wEv=EV.filter(e=>{const d=new Date(e.event_date);return d>=mon&&d<=sun&&e.event_date!==today;});const wBd=US.filter(u=>{if(!u.birthday||u.role==='admin')return false;const[bm,bd]=u.birthday.split('-').map(Number);for(let i=0;i<7;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);if(d.toISOString().split('T')[0]===today)continue;if(d.getMonth()+1===bm&&d.getDate()===bd)return true;}return false;});let wH='';wBd.forEach(p=>{wH+=`<div class="tc bday"><div class="tch"><div class="tci i-pink">🎂</div><div class="tcf"><div class="tcn">${p.name} 님 생일 (${p.birthday})</div><div class="tcm">${p.org_center||''}</div></div><span class="tct t-bday">생일</span></div></div>`;});wEv.forEach(ev=>{const cat=ev.category||'general';const[tc,tt]=tM[ev.tag]||['t-reg','정기'];const ed=new Date(ev.event_date);wH+=`<div class="tc"><div class="tch"><div class="tci ${cC[cat]||'i-blue'}">${cI[cat]||'📌'}</div><div class="tcf"><div class="tcn">${ev.title}</div><div class="tcm">${ed.getMonth()+1}/${ed.getDate()}(${days[ed.getDay()]}) · ${ev.description||''}</div></div><span class="tct ${tc}">${tt}</span></div></div>`;});$('td-w').innerHTML=wH||'<div class="ld">이번 주 추가 일정 없음</div>';
+function rToday(){const now=new Date(),days=['일','월','화','수','목','금','토'];$('td-d').textContent=`${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일 (${days[now.getDay()]})`;const today=kToday(),mm=String(now.getMonth()+1).padStart(2,'0'),dd=String(now.getDate()).padStart(2,'0'),todayMD=mm+'-'+dd;const bdP=US.filter(u=>u.birthday===todayMD&&u.role!=='admin');if(bdP.length===1)$('td-h').textContent=`오늘은 ${bdP[0].name} 님의 생일! 🎂 축하 메시지를 전해보세요`;else if(bdP.length>1)$('td-h').textContent=`오늘 생일자 ${bdP.length}명 🎂 모두 축하해드리세요`;else $('td-h').textContent=`${CU.name} 님, 오늘의 업무를 확인하세요`;const todayEv=EV.filter(e=>e.event_date===today);const cI={exam:'📝',report:'📊',reward:'🏆',education:'📚',meeting:'🤝',sign:'✍️',general:'📌'};const cC={exam:'i-purple',report:'i-blue',reward:'i-orange',education:'i-green',meeting:'i-blue',sign:'i-orange',general:'i-blue'};const tM={'t-imp':['t-imp','중요'],'t-reg':['t-reg','정기'],'t-ddl':['t-ddl','마감']};let h='';bdP.forEach(p=>{h+=`<div class="tc bday"><div class="tch"><div class="tci i-pink">🎂</div><div class="tcf"><div class="tcn">${p.name} 님 생일 축하! 🎉</div><div class="tcm">${p.org_center||''} ${p.birthday_type==='lunar'?'(음력)':''}</div></div><span class="tct t-bday">생일</span></div></div>`;});todayEv.forEach(ev=>{const acts=Array.isArray(ev.actions)?ev.actions:JSON.parse(ev.actions||'[]');const cat=ev.category||'general';const[tc,tt]=tM[ev.tag]||['t-reg','정기'];h+=`<div class="tc"><div class="tch"><div class="tci ${cC[cat]||'i-blue'}">${cI[cat]||'📌'}</div><div class="tcf"><div class="tcn">${ev.title}</div><div class="tcm">${ev.description||''}</div></div><span class="tct ${tc}">${tt}</span></div>${acts.length?`<div class="ta">${acts.map((a,i)=>`<div class="tai"><div class="tac" onclick="tgC(this)" data-key="td-${ev.id}-${i}">✓</div><div class="tat">${a}</div></div>`).join('')}</div>`:''}</div>`;});$('td-t').innerHTML=h||'<div class="te"><div class="tei">✅</div><div class="tet">오늘 예정 업무 없음</div></div>';
+const dow=now.getDay(),mon=new Date(now);mon.setDate(now.getDate()-(dow===0?6:dow-1));const sun=new Date(mon);sun.setDate(mon.getDate()+6);const wEv=EV.filter(e=>{const d=new Date(e.event_date);return d>=mon&&d<=sun&&e.event_date!==today;});const wBd=US.filter(u=>{if(!u.birthday||u.role==='admin')return false;const[bm,bd]=u.birthday.split('-').map(Number);for(let i=0;i<7;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);if(kDate(d)===today)continue;if(d.getMonth()+1===bm&&d.getDate()===bd)return true;}return false;});let wH='';wBd.forEach(p=>{wH+=`<div class="tc bday"><div class="tch"><div class="tci i-pink">🎂</div><div class="tcf"><div class="tcn">${p.name} 님 생일 (${p.birthday})</div><div class="tcm">${p.org_center||''}</div></div><span class="tct t-bday">생일</span></div></div>`;});wEv.forEach(ev=>{const cat=ev.category||'general';const[tc,tt]=tM[ev.tag]||['t-reg','정기'];const ed=new Date(ev.event_date);wH+=`<div class="tc"><div class="tch"><div class="tci ${cC[cat]||'i-blue'}">${cI[cat]||'📌'}</div><div class="tcf"><div class="tcn">${ev.title}</div><div class="tcm">${ed.getMonth()+1}/${ed.getDate()}(${days[ed.getDay()]}) · ${ev.description||''}</div></div><span class="tct ${tc}">${tt}</span></div></div>`;});$('td-w').innerHTML=wH||'<div class="ld">이번 주 추가 일정 없음</div>';
 const nMon=new Date(mon);nMon.setDate(mon.getDate()+7);const nSun=new Date(nMon);nSun.setDate(nMon.getDate()+6);
 const nwEv=EV.filter(e=>{const d=new Date(e.event_date);return d>=nMon&&d<=nSun;});
 const nwBd=US.filter(u=>{if(!u.birthday||u.role==='admin')return false;const[bm,bd]=u.birthday.split('-').map(Number);for(let i=0;i<7;i++){const d=new Date(nMon);d.setDate(nMon.getDate()+i);if(d.getMonth()+1===bm&&d.getDate()===bd)return true;}return false;});
 let nwH='';nwBd.forEach(p=>{nwH+=`<div class="tc bday"><div class="tch"><div class="tci i-pink">🎂</div><div class="tcf"><div class="tcn">${p.name} 님 생일 (${p.birthday})</div><div class="tcm">${p.org_center||''}</div></div><span class="tct t-bday">생일</span></div></div>`;});nwEv.forEach(ev=>{const cat=ev.category||'general';const[tc,tt]=tM[ev.tag]||['t-reg','정기'];const ed=new Date(ev.event_date);nwH+=`<div class="tc"><div class="tch"><div class="tci ${cC[cat]||'i-blue'}">${cI[cat]||'📌'}</div><div class="tcf"><div class="tcn">${ev.title}</div><div class="tcm">${ed.getMonth()+1}/${ed.getDate()}(${days[ed.getDay()]}) · ${ev.description||''}</div></div><span class="tct ${tc}">${tt}</span></div></div>`;});
 $('td-nw').innerHTML=nwH||'<div class="ld">다음 주 예정 일정 없음</div>';
 document.querySelectorAll('.tac').forEach(el=>{if(localStorage.getItem(el.dataset.key)==='1'){el.classList.add('done');el.nextElementSibling.classList.add('done');}});renderDailyExtra();}
-function tgC(el){el.classList.toggle('done');el.nextElementSibling.classList.toggle('done');const done=el.classList.contains('done');done?localStorage.setItem(el.dataset.key,'1'):localStorage.removeItem(el.dataset.key);const k=el.dataset.key||'';const parts=k.split('-');if(parts.length>=3){const evId=parts[1],actIdx=parseInt(parts[2]);if(CU&&evId){db.from('task_completions').upsert({user_id:CU.user_id,date:new Date().toISOString().split('T')[0],event_id:evId,action_index:actIdx,completed:done,completed_at:done?new Date().toISOString():null},{onConflict:'user_id,date,event_id,action_index'}).then(({error})=>{if(error)console.warn('task_completions upsert error:',error);});}}}
+function tgC(el){el.classList.toggle('done');el.nextElementSibling.classList.toggle('done');const done=el.classList.contains('done');done?localStorage.setItem(el.dataset.key,'1'):localStorage.removeItem(el.dataset.key);const k=el.dataset.key||'';const parts=k.split('-');if(parts.length>=3){const evId=parts[1],actIdx=parseInt(parts[2]);if(CU&&evId){db.from('task_completions').upsert({user_id:CU.user_id,date:kToday(),event_id:evId,action_index:actIdx,completed:done,completed_at:done?new Date().toISOString():null},{onConflict:'user_id,date,event_id,action_index'}).then(({error})=>{if(error)console.warn('task_completions upsert error:',error);});}}}
 
 // 데일리 재미
 const QUOTES=[
@@ -995,13 +1000,53 @@ async function saveN(){const id=parseInt($('nEId').value)||null;const n=id?NO.fi
 async function saveMyInfo(){const nm=$('myNm').value.trim(),dv=$('myDv').value.trim(),rg=$('myRg').value.trim(),su=$('mySu').value.trim(),ct=$('myCt').value.trim(),rl=$('myRl').value.trim(),bd=$('myBd').value.trim(),bt=$('myBt').value;if(!nm){toast('⚠ 이름');return;}if(bd&&!/^\d{2}-\d{2}$/.test(bd)){toast('생일: MM-DD');return;}const upd={name:nm,org_division:dv,org_region:rg,org_sub_region:su,org_center:ct,birthday:bd,birthday_type:bt};if(rl)upd.role=rl;const{error}=await db.from('members').update(upd).eq('id',CU.id);if(error){toast('수정 실패');return;}Object.assign(CU,upd);$('hname').textContent=CU.name;$('ds-name').textContent=CU.name;$('ds-role').textContent=CU.role||CU.org_title||'';updWM();const org=[CU.org_division,CU.org_region,CU.org_sub_region,CU.org_center].filter(Boolean).join(' > ')||'-';$('myI').innerHTML=`ID: <strong>${CU.user_id}</strong><br>이름: <strong>${CU.name}</strong><br>직책: <strong>${CU.role||CU.org_title||'-'}</strong><br>소속: <strong>${org}</strong><br>생일: <strong>${CU.birthday||'-'} ${CU.birthday_type==='lunar'?'(음력)':'(양력)'}</strong>`;toast('정보 수정 ✅');}
 
 // 체크 현황
-async function rChk(){const el=$('chkList');if(!el)return;el.innerHTML='<div class="ld">로딩 중...</div>';const today=new Date().toISOString().split('T')[0];const[{data:comps},{data:todayEvs}]=await Promise.all([db.from('task_completions').select('*').eq('date',today),db.from('events').select('*').eq('event_date',today)]);const totalActions=(todayEvs||[]).reduce((s,e)=>{const acts=Array.isArray(e.actions)?e.actions:JSON.parse(e.actions||'[]');return s+acts.length;},0);const members=US.filter(u=>u.role!=='admin'&&u.status==='active');if(!members.length){el.innerHTML='<div class="ld">활성 팀장 없음</div>';return;}let h='';members.forEach(u=>{const done=(comps||[]).filter(c=>c.user_id===u.user_id&&c.completed).length;const pct=totalActions>0?Math.round(done/totalActions*100):0;const org=[u.org_region,u.org_center].filter(Boolean).join(' > ');h+=`<div class="chk-card"><div class="chk-name">${u.name}</div><div class="chk-org">${org||'-'}</div><div class="chk-prog"><div class="chk-prog-bar" style="width:${pct}%"></div></div><div class="chk-stat">${done}/${totalActions} 완료 (${pct}%)</div></div>`;});el.innerHTML=h;}
+async function rChk(){const el=$('chkList');if(!el)return;el.innerHTML='<div class="ld">로딩 중...</div>';const today=kToday();const[{data:comps},{data:todayEvs}]=await Promise.all([db.from('task_completions').select('*').eq('date',today),db.from('events').select('*').eq('event_date',today)]);const totalActions=(todayEvs||[]).reduce((s,e)=>{const acts=Array.isArray(e.actions)?e.actions:JSON.parse(e.actions||'[]');return s+acts.length;},0);const members=US.filter(u=>u.role!=='admin'&&u.status==='active');if(!members.length){el.innerHTML='<div class="ld">활성 팀장 없음</div>';return;}let h='';members.forEach(u=>{const done=(comps||[]).filter(c=>c.user_id===u.user_id&&c.completed).length;const pct=totalActions>0?Math.round(done/totalActions*100):0;const org=[u.org_region,u.org_center].filter(Boolean).join(' > ');h+=`<div class="chk-card"><div class="chk-name">${u.name}</div><div class="chk-org">${org||'-'}</div><div class="chk-prog"><div class="chk-prog-bar" style="width:${pct}%"></div></div><div class="chk-stat">${done}/${totalActions} 완료 (${pct}%)</div></div>`;});el.innerHTML=h;}
+
+// 이용 통계 대시보드 (관리자 전용)
+let usDays=7;
+function usR(d,btn){usDays=d;document.querySelectorAll('#usRange .fchip').forEach(b=>b.classList.remove('active'));btn.classList.add('active');rUsage();}
+async function rUsage(){
+  const el=$('usBody');if(!el)return;el.innerHTML='<div class="ld">로딩 중...</div>';
+  const to=kToday();const toU=new Date(to+'T00:00:00Z');const fromU=new Date(toU.getTime()-(usDays-1)*86400000);const from=fromU.toISOString().split('T')[0];
+  const[al,tc]=await Promise.all([
+    db.from('activity_logs').select('*').gte('created_at',from+'T00:00:00+09:00'),
+    db.from('task_completions').select('*').gte('date',from)
+  ]);
+  if(al.error){el.innerHTML=`<div class="te"><div class="tei">⚠️</div><div class="tet">이용 로그 테이블(activity_logs)이 아직 없습니다</div><div class="tes">Supabase에 activity_logs 테이블을 먼저 생성하세요. 접속·안내문 통계는 생성 시점부터 집계됩니다.<br>(${al.error.message})</div></div>`;return;}
+  const logs=al.data||[],comps=tc.data||[];
+  const members=US.filter(u=>{const rl=u.role||u.org_title||'';return !(ADS.includes(u.user_id)||rl==='admin');});
+  const dstr=iso=>kDate(new Date(iso));
+  const logins=logs.filter(l=>l.action==='login'),wgs=logs.filter(l=>l.action==='welcome_guide');
+  const byUser={};members.forEach(u=>byUser[u.user_id]={loginDays:new Set(),lastLogin:null,wg:0,checks:0});
+  logins.forEach(l=>{const b=byUser[l.user_id];if(!b)return;b.loginDays.add(dstr(l.created_at));if(!b.lastLogin||l.created_at>b.lastLogin)b.lastLogin=l.created_at;});
+  wgs.forEach(l=>{const b=byUser[l.user_id];if(b)b.wg++;});
+  comps.filter(c=>c.completed).forEach(c=>{const b=byUser[c.user_id];if(b)b.checks++;});
+  const totalLogins=logins.length;
+  const activeUsers=new Set(logins.map(l=>l.user_id).filter(id=>byUser[id])).size;
+  const noAccess=members.filter(u=>byUser[u.user_id].loginDays.size===0).length;
+  const totalChecks=comps.filter(c=>c.completed).length,totalWg=wgs.length;
+  const days=[];for(let i=0;i<usDays;i++)days.push(new Date(fromU.getTime()+i*86400000).toISOString().split('T')[0]);
+  const wgByDay={};days.forEach(d=>wgByDay[d]=0);wgs.forEach(l=>{const d=dstr(l.created_at);if(d in wgByDay)wgByDay[d]++;});
+  const maxWg=Math.max(1,...Object.values(wgByDay));
+  let h=`<div class="sr" style="margin-bottom:14px"><div class="sb"><div class="sl">총 접속</div><div class="sv">${totalLogins}</div></div><div class="sb"><div class="sl">접속 인원</div><div class="sv">${activeUsers}</div></div><div class="sb"><div class="sl">미접속</div><div class="sv" style="color:${noAccess>0?'var(--err)':'inherit'}">${noAccess}</div></div><div class="sb"><div class="sl">할일 완료</div><div class="sv">${totalChecks}</div></div><div class="sb"><div class="sl">안내문 생성</div><div class="sv">${totalWg}</div></div></div>`;
+  h+=`<div class="fc" style="margin-bottom:14px"><div class="fct">📄 일자별 입과 안내문 생성 (${from} ~ ${to})</div>`;
+  if(totalWg===0)h+='<div class="ld">생성 내역 없음</div>';
+  else{h+='<div style="display:flex;align-items:flex-end;gap:4px;height:96px;padding:6px 2px;overflow-x:auto">';days.forEach(d=>{const v=wgByDay[d],hp=Math.round(v/maxWg*70)+4;h+=`<div style="flex:1;min-width:16px;display:flex;flex-direction:column;align-items:center;gap:3px" title="${d}: ${v}건"><div style="font-size:10px;font-weight:700;color:var(--g600);height:12px">${v||''}</div><div style="width:100%;height:${hp}px;background:var(--gr-hero);border-radius:4px 4px 0 0"></div><div style="font-size:9px;color:var(--g400)">${d.slice(5)}</div></div>`;});h+='</div>';}
+  h+='</div>';
+  const rows=members.map(u=>({u,...byUser[u.user_id]})).sort((a,b)=>a.loginDays.size-b.loginDays.size||a.checks-b.checks);
+  h+=`<div class="fc"><div class="fct">👥 사용자별 활용 현황 <span style="font-size:11px;color:var(--g400);font-weight:400">(활용 낮은 순)</span></div><div class="tw"><table><thead><tr><th>이름</th><th>소속</th><th>최근접속</th><th>접속일</th><th>할일완료</th><th>안내문</th></tr></thead><tbody>`;
+  rows.forEach(r=>{const org=[r.u.org_region,r.u.org_center].filter(Boolean).join(' > ')||'-';const rl=r.u.role||r.u.org_title||'';const none=r.loginDays.size===0;const last=none?'미접속':kDate(new Date(r.lastLogin));h+=`<tr${none?' style="background:#FFF0F0"':''}><td>${r.u.name} <span style="font-size:10px;color:var(--g400)">${rl}</span></td><td style="font-size:12px;color:var(--g600)">${org}</td><td style="${none?'color:var(--err);font-weight:700':''}">${last}</td><td style="text-align:center">${r.loginDays.size}</td><td style="text-align:center">${r.checks}</td><td style="text-align:center">${r.wg}</td></tr>`;});
+  h+='</tbody></table></div></div>';
+  el.innerHTML=h;
+}
 
 // 권역 현황
-async function rTeam(){
+async function rTeam(dateStr){
   const el=$('teamContent');if(!el)return;
   el.innerHTML='<div class="ld">로딩 중...</div>';
-  const today=new Date().toISOString().split('T')[0];
+  let today=dateStr||($('teamDate')&&$('teamDate').value)||kToday();
+  if(today>kToday())today=kToday();
+  if($('teamDate')){$('teamDate').max=kToday();$('teamDate').value=today;}
   const isA=ADS.includes(CU.user_id)||CU.role==='admin';
   const todayEvs=EV.filter(e=>e.event_date===today);
   const totalActions=todayEvs.reduce((s,e)=>{const acts=Array.isArray(e.actions)?e.actions:JSON.parse(e.actions||'[]');return s+acts.length;},0);
@@ -1024,7 +1069,8 @@ async function rTeam(){
   const allTotal=totalActions>0?targets.length*totalActions:0;
   const allPct=allTotal>0?Math.round(allDone/allTotal*100):0;
   const completedAll=totalActions>0?targets.filter(u=>(comps||[]).filter(c=>c.user_id===u.user_id&&c.completed).length>=totalActions).length:0;
-  let h=`<div class="tg" style="margin-bottom:20px"><div class="tdd" style="position:relative;z-index:2">📊 ${today} 기준 · 오늘 할일 ${totalActions}개</div><div class="thh" style="position:relative;z-index:2">${totalActions>0?`${completedAll}/${targets.length}명 완료 (${allPct}%)`:'오늘 등록된 할일이 없습니다'}</div>${totalActions>0?`<div style="margin-top:14px;height:8px;background:rgba(255,255,255,.2);border-radius:4px;overflow:hidden;position:relative;z-index:2"><div style="height:100%;background:#5DDCEC;border-radius:4px;width:${allPct}%;transition:width .3s"></div></div>`:''}</div>`;
+  const isTodayView=today===kToday();
+  let h=`<div class="tg" style="margin-bottom:20px"><div class="tdd" style="position:relative;z-index:2">📊 ${today} 기준${isTodayView?' (오늘)':''} · 할일 ${totalActions}개</div><div class="thh" style="position:relative;z-index:2">${totalActions>0?`${completedAll}/${targets.length}명 완료 (${allPct}%)`:'해당 날짜에 등록된 할일이 없습니다'}</div>${totalActions>0?`<div style="margin-top:14px;height:8px;background:rgba(255,255,255,.2);border-radius:4px;overflow:hidden;position:relative;z-index:2"><div style="height:100%;background:#5DDCEC;border-radius:4px;width:${allPct}%;transition:width .3s"></div></div>`:''}</div>`;
   Object.entries(rMap).sort(([a],[b])=>a.localeCompare(b,'ko')).forEach(([rg,mbs])=>{
     const rgDone=mbs.reduce((s,u)=>s+(comps||[]).filter(c=>c.user_id===u.user_id&&c.completed).length,0);
     const rgTotal=totalActions>0?mbs.length*totalActions:0;
@@ -1036,20 +1082,22 @@ async function rTeam(){
       const pct=totalActions>0?Math.round(done/totalActions*100):0;
       let stCls='none',stTx='할일 없음';
       if(totalActions>0){stCls=pct>=100?'done':pct>0?'part':'none';stTx=pct>=100?'✅ 완료':pct>0?'⏳ 진행중':'⭕ 미시작';}
-      h+=`<div class="chk-card" style="cursor:pointer" onclick="openMemberDet('${u.user_id}')" title="클릭하여 상세 업무 현황 보기"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><div class="chk-name">${u.name} <span style="font-size:11px;color:var(--g400);font-weight:400">${rl}</span> <span style="font-size:11px;color:var(--brand,#2563eb);font-weight:700">상세 ›</span></div><span class="chk-st ${stCls}">${stTx}</span></div><div class="chk-org">${[u.org_sub_region,u.org_center].filter(Boolean).join(' · ')||'-'}</div>${totalActions>0?`<div class="chk-prog" style="margin-top:6px"><div class="chk-prog-bar" style="width:${pct}%"></div></div><div class="chk-stat">${done}/${totalActions} (${pct}%)</div>`:''}</div>`;
+      h+=`<div class="chk-card" style="cursor:pointer" onclick="openMemberDet('${u.user_id}','${today}')" title="클릭하여 상세 업무 현황 보기"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><div class="chk-name">${u.name} <span style="font-size:11px;color:var(--g400);font-weight:400">${rl}</span> <span style="font-size:11px;color:var(--brand,#2563eb);font-weight:700">상세 ›</span></div><span class="chk-st ${stCls}">${stTx}</span></div><div class="chk-org">${[u.org_sub_region,u.org_center].filter(Boolean).join(' · ')||'-'}</div>${totalActions>0?`<div class="chk-prog" style="margin-top:6px"><div class="chk-prog-bar" style="width:${pct}%"></div></div><div class="chk-stat">${done}/${totalActions} (${pct}%)</div>`:''}</div>`;
     });
     h+='</div></div>';
   });
-  h+=`<div style="text-align:right;margin-top:4px"><button class="sbtn sm" onclick="rTeam()">🔄 새로고침</button></div>`;
+  h+=`<div style="text-align:right;margin-top:4px"><button class="sbtn sm" onclick="rTeam('${today}')">🔄 새로고침</button></div>`;
   el.innerHTML=h;
 }
-async function openMemberDet(uid){
+function shiftTeamDate(delta){const cur=($('teamDate')&&$('teamDate').value)||kToday();const d=new Date(cur+'T00:00:00');d.setDate(d.getDate()+delta);let ns=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;if(ns>kToday())ns=kToday();rTeam(ns);}
+function teamToday(){rTeam(kToday());}
+async function openMemberDet(uid,dateStr){
   const u=US.find(x=>x.user_id===uid);if(!u)return;
   const rl=u.role||u.org_title||'';
-  $('mDetMt').textContent=`${u.name} 님 업무 현황`;
+  const today=dateStr||kToday();
+  $('mDetMt').textContent=`${u.name} 님 업무 현황 · ${today}`;
   $('mDetMb').innerHTML='<div class="ld">로딩 중...</div>';
   $('mDetO').classList.add('open');
-  const today=new Date().toISOString().split('T')[0];
   const todayEvs=EV.filter(e=>e.event_date===today);
   const{data:comps}=await db.from('task_completions').select('*').eq('date',today).eq('user_id',uid);
   const doneSet=new Set((comps||[]).filter(c=>c.completed).map(c=>c.event_id+'-'+c.action_index));
@@ -1067,7 +1115,7 @@ async function openMemberDet(uid){
   });
   const pct=totalA>0?Math.round(doneA/totalA*100):0;
   let h=`<div class="msc">소속</div><div class="mtx">${[u.org_region,u.org_sub_region,u.org_center].filter(Boolean).join(' > ')||'-'}${rl?` · <b>${rl}</b>`:''}</div>`;
-  if(!totalA){h+='<div class="te" style="padding:24px 0"><div class="tei">🗓️</div><div class="tet">오늘 등록된 업무가 없습니다</div></div>';}
+  if(!totalA){h+='<div class="te" style="padding:24px 0"><div class="tei">🗓️</div><div class="tet">해당 날짜에 등록된 업무가 없습니다</div></div>';}
   else{h+=`<div class="msc">진행률</div><div class="mtx"><b style="color:${pct>=100?'#16a34a':pct>0?'#d97706':'#dc2626'}">${doneA}/${totalA}</b> 완료 (${pct}%)</div>${detail}`;}
   $('mDetMb').innerHTML=h;
 }
@@ -1075,7 +1123,7 @@ async function openMemberDet(uid){
 // TABS
 function sT(n,btn){document.querySelectorAll('.tp').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.ds-btn').forEach(b=>b.classList.remove('active'));$('tab-'+n).classList.add('active');btn?.classList.add('active');if(n==='calendar'){rCal();rEv();}else if(n==='team')rTeam();else if(n==='welcome')initWG();}
 function sTM(n,btn){document.querySelectorAll('.tp').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.mnb').forEach(b=>b.classList.remove('active'));$('tab-'+n).classList.add('active');btn.classList.add('active');if(n==='calendar'){rCal();rEv();}else if(n==='team')rTeam();else if(n==='welcome')initWG();}
-function sA(n,btn){document.querySelectorAll('.ap').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.atbn').forEach(b=>b.classList.remove('active'));$('adm-'+n).classList.add('active');btn.classList.add('active');if(n==='gr')rGL_adm();else if(n==='ev')rEL_adm();else if(n==='no')rNL_adm();else if(n==='chk')rChk();}
+function sA(n,btn){document.querySelectorAll('.ap').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.atbn').forEach(b=>b.classList.remove('active'));$('adm-'+n).classList.add('active');btn.classList.add('active');if(n==='gr')rGL_adm();else if(n==='ev')rEL_adm();else if(n==='no')rNL_adm();else if(n==='chk')rChk();else if(n==='use')rUsage();}
 
 // ─── 입과 안내문 (Canvas 합성) ───────────────────────────────────────────
 const WG_W=1055,WG_H=1491;
@@ -1246,6 +1294,7 @@ function dlWelcome(){
     a.href=$('wg-canvas').toDataURL('image/png');
     a.click();
     toast('📥 이미지 다운로드 완료!');
+    if(CU){try{db.from('activity_logs').insert({user_id:CU.user_id,action:'welcome_guide',meta:{cname:nm}}).then(({error})=>{if(error)console.warn('activity_logs welcome:',error.message);});}catch(e){}}
   },100);
 }
 
@@ -1259,7 +1308,7 @@ function findGuides(query){const q=query.toLowerCase();return G.filter(g=>(g.tit
 function findNotices(query){const q=query.toLowerCase();return NO.filter(n=>(n.title+(n.body||'')).toLowerCase().includes(q)).slice(0,2);}
 function sendChat(forceQ){const input=$('chatInput');const q=(forceQ||input.value).trim();if(!q)return;input.value='';pushMsg(q,'usr');
 // 일정 관련 키워드
-if(/일정|schedule|오늘|이번달|이번\s*주/.test(q)){const today=new Date().toISOString().split('T')[0];const isToday=/오늘/.test(q);const evs=isToday?EV.filter(e=>e.event_date===today):EV.filter(e=>e.event_date>=today).slice(0,5);if(evs.length){let h=`<strong>${isToday?'오늘':'다가오는'} 일정 ${evs.length}건</strong><br><br>`;h+=evs.map(e=>`<div style="margin:4px 0;padding:7px 10px;background:var(--g50);border-radius:8px;font-size:13px;cursor:pointer" onclick="openEvDet(${e.id});toggleChat()"><strong>${e.event_date.slice(5)}</strong> ${e.title}</div>`).join('');pushMsg(h,'bot');}else{pushMsg('예정된 일정이 없어요. 📅 월력 탭을 확인해 보세요!','bot');}renderSug(['신입 유입 절차','이관 진행 방법','자주 묻는 질문']);return;}
+if(/일정|schedule|오늘|이번달|이번\s*주/.test(q)){const today=kToday();const isToday=/오늘/.test(q);const evs=isToday?EV.filter(e=>e.event_date===today):EV.filter(e=>e.event_date>=today).slice(0,5);if(evs.length){let h=`<strong>${isToday?'오늘':'다가오는'} 일정 ${evs.length}건</strong><br><br>`;h+=evs.map(e=>`<div style="margin:4px 0;padding:7px 10px;background:var(--g50);border-radius:8px;font-size:13px;cursor:pointer" onclick="openEvDet(${e.id});toggleChat()"><strong>${e.event_date.slice(5)}</strong> ${e.title}</div>`).join('');pushMsg(h,'bot');}else{pushMsg('예정된 일정이 없어요. 📅 월력 탭을 확인해 보세요!','bot');}renderSug(['신입 유입 절차','이관 진행 방법','자주 묻는 질문']);return;}
 // 공지 키워드
 if(/공지|notice|안내/.test(q)){const nm=findNotices(q.replace(/공지|notice|안내/g,'').trim()||'');const show=nm.length?nm:NO.slice(0,3);if(show.length){let h=`<strong>공지 ${show.length}건</strong><br><br>`;h+=show.map(n=>`<div style="margin:6px 0;padding:8px 10px;background:var(--g50);border-radius:8px;cursor:pointer" onclick="oN(${NO.indexOf(n)});toggleChat()"><strong style="color:var(--p)">${n.title}</strong><br><span style="font-size:11px;color:var(--g600)">${n.author||''}</span></div>`).join('');pushMsg(h,'bot');}else{pushMsg('등록된 공지가 없어요.','bot');}renderSug(['가이드 검색','오늘 일정','이관 진행 방법']);return;}
 // 가이드 + 공지 통합 검색
